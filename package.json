@@ -1,0 +1,7 @@
+{
+  "name": "enrikacreates",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve . -l 3009"
+  }
+}
