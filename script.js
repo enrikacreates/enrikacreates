@@ -13,7 +13,7 @@ const PORTFOLIO = [
     title: "3D Pattern Design Collection",
     category: "fashion",
     color: "#3498CE",
-    year: "2023",
+    year: "2026",
     tagline: "Textile patterns for daily wear",
     image: "/assets/patterndesigns/CoverColorBlockAfroPrintDressImg.png",
     slides: ["/assets/patterndesigns/1.png", "/assets/patterndesigns/2.png", "/assets/patterndesigns/3.png", "/assets/patterndesigns/4.png"],
