@@ -28,17 +28,16 @@ const customStructure = (S: any) =>
     .title("Content")
     .items([
       // Portfolio projects — sorted by manual order, then newest
-      S.documentTypeListItem("project").title("Projects").icon(() => "📁"),
+      S.documentTypeListItem("project").title("Projects"),
 
       // Blog posts
-      S.documentTypeListItem("blogPost").title("Blog posts").icon(() => "✍️"),
+      S.documentTypeListItem("blogPost").title("Blog posts"),
 
       S.divider(),
 
       // Site settings — singleton (one doc, no list view)
       S.listItem()
         .title("Site settings")
-        .icon(() => "⚙️")
         .child(
           S.document()
             .schemaType("siteSettings")

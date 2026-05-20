@@ -50,8 +50,7 @@ export const siteSettings = defineType({
       name: "newsletterTitle",
       title: "Newsletter title",
       type: "string",
-      group: "newsletter",
-      initialValue: "Enrika Creates",
+initialValue: "Enrika Creates",
     }),
     defineField({
       name: "newsletterSub",
