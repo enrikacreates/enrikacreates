@@ -1,0 +1,29 @@
+/* Phase 1 placeholder — the full styles port lands in Phase 3.
+   Keeping this minimal so the placeholder home page reads cleanly. */
+
+:root {
+  --off-white: #F3EDE4;
+  --ink: #2C2520;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--off-white);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+}
