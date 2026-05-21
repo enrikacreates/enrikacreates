@@ -15,6 +15,7 @@
 
 import { getSiteSettings } from "@/lib/sanity/fetch";
 import { HeroLogo } from "@/components/HeroLogo";
+import { HeroCollage } from "@/components/HeroCollage";
 
 export default async function HomePage() {
   const settings = await getSiteSettings();
@@ -29,33 +30,7 @@ export default async function HomePage() {
         }
       />
 
-      {/* GSAP collage scroll zone — placeholder until Phase 3b */}
-      <section
-        style={{
-          minHeight: "60vh",
-          display: "grid",
-          placeItems: "center",
-          padding: "4rem 2rem",
-          background: "var(--off-white)",
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "0.75rem",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "var(--text-dim)",
-            textAlign: "center",
-          }}
-        >
-          Phase 3b will land the GSAP collage scroll here
-          <br />
-          <a href="/studio" style={{ marginTop: "1.5rem", display: "inline-block" }}>
-            Open Studio →
-          </a>
-        </p>
-      </section>
+      <HeroCollage />
     </>
   );
 }
