@@ -98,8 +98,10 @@ export function HeroCollage() {
         const t = 0.0;
         const d = 0.85;
 
-        // Portrait — rises and is revealed as plants spread away
-        tl.fromTo("#layer-portrait", { y: 600, scale: 0.65 }, { y: -80, scale: 1, duration: d }, t);
+        // Portrait — stays hidden low/behind the foliage for most of the scroll,
+        // then rises into view over the last leg (starts at 0.55, ends at 1.0).
+        // Keeps the reveal a late, deliberate moment instead of an early pop.
+        tl.fromTo("#layer-portrait", { y: 600, scale: 0.65 }, { y: -80, scale: 1, duration: 0.45 }, 0.55);
 
         // Plants spread outward
         tl.fromTo("#layer-banana", { x: 0, y: 0 }, { x: -200, y: -20, duration: d }, t);
