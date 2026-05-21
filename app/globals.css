@@ -648,6 +648,13 @@ body {
   color: #2C2520;
 }
 
+/* Card links carry no underline — the whole card is the click affordance */
+.catalog-item,
+.featured-item,
+.blog-card {
+  text-decoration: none;
+}
+
 /* Light-text variant for graphic cards with dark bg colors */
 .catalog-item.style-graphic.dark-card {
   color: #F3EDE4;
