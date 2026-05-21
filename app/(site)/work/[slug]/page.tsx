@@ -76,10 +76,17 @@ export default async function ProjectDetailPage({
       </Link>
 
       <div className="project-detail-inner" id="project-detail-inner">
-        {/* Card-as-hero */}
+        {/* Card-as-hero — image + shapes only; title drops below */}
         <div className={heroClass} style={{ "--card-color": item.color } as React.CSSProperties}>
-          <CardInner layout={layout} item={item} collageUrl={collageUrl} />
+          <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
         </div>
+
+        {/* Title block — below the header image */}
+        <header className="project-hero-caption">
+          <span className="card-year">{item.year}</span>
+          <h1 className="card-title">{item.title}</h1>
+          <p className="card-tagline">{item.tagline}</p>
+        </header>
 
         {/* Story */}
         <div className="project-story">

@@ -1073,6 +1073,43 @@ body.detail-open {
   transform: translateX(-50%);
 }
 
+/* Title block — sits below the hero image on the detail page */
+.project-hero-caption {
+  text-align: center;
+  max-width: 800px;
+  margin: -1.5rem auto 3.5rem;
+  padding: 0 2rem;
+  color: inherit;
+}
+
+.project-hero-caption .card-year {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 0.6rem;
+}
+
+.project-hero-caption .card-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.6rem;
+}
+
+.project-hero-caption .card-tagline {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  opacity: 0.85;
+  margin: 0;
+}
+
 /* White story box */
 .project-story {
   background: #FFFFFF;

@@ -13,19 +13,77 @@ export function CardInner({
   layout,
   item,
   collageUrl,
+  hideContent = false,
 }: {
   layout: number;
   item: ProjectListItem;
   collageUrl?: string;
+  /** When true, omit the text band — used by the detail hero, which renders
+   *  its title block BELOW the image instead of overlaid on it. */
+  hideContent?: boolean;
 }) {
   const year = item.year || "";
-  const title = item.title;
-  const tagline = item.tagline || "";
+  const title = hideContent ? "" : item.title;
+  const tagline = hideContent ? "" : item.tagline || "";
 
   const collage = collageUrl ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img className="card-collage" src={collageUrl} alt="" loading="lazy" aria-hidden="true" />
   ) : null;
+
+  if (hideContent) {
+    // Image + shapes only (no text band) — for the detail-page hero.
+    switch (layout) {
+      case 1:
+        return (
+          <>
+            <div className="card-shape-zone">
+              <span className="shape shape-circle" />
+              <span className="shape shape-half" />
+            </div>
+            {collage}
+          </>
+        );
+      case 3:
+        return (
+          <>
+            <div className="card-year-hero">{year}</div>
+            {collage}
+          </>
+        );
+      case 4:
+        return (
+          <>
+            <div className="card-split" />
+            <div className="card-shape-zone tucked">
+              <span className="shape shape-half" />
+            </div>
+            {collage}
+          </>
+        );
+      case 5:
+        return (
+          <>
+            <div className="card-shape-zone grid">
+              <span className="shape shape-square" />
+              <span className="shape shape-circle small" />
+            </div>
+            {collage}
+          </>
+        );
+      case 2:
+      default:
+        return (
+          <>
+            <div className="card-shape-zone center">
+              <span className="shape shape-circle big" />
+              <span className="shape shape-triangle" />
+            </div>
+            {collage}
+          </>
+        );
+    }
+  }
 
   switch (layout) {
     case 1:

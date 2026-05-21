@@ -98,9 +98,9 @@ export function HeroCollage() {
         const t = 0.0;
         const d = 0.85;
 
-        // Portrait — quick start: rises from below across the full scroll.
-        // It stays HIDDEN because the plants (z-index 4) cover it until the
-        // late z-index swap below — the swap timing controls the reveal.
+        // Portrait — quick-start rise from below across the full scroll.
+        // Peek-through during the spread is intentional; the full reveal is
+        // governed by the plants' z-index drop (see plantsBack timing below).
         tl.fromTo("#layer-portrait", { y: 600, scale: 0.65 }, { y: -80, scale: 1, duration: d }, t);
 
         // Plants spread outward
