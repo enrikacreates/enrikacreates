@@ -1073,13 +1073,18 @@ body.detail-open {
   transform: translateX(-50%);
 }
 
-/* Title block — sits below the hero image on the detail page */
+/* Title block — sits below the hero image on the detail page.
+   Always ink/black (overrides the dark-detail white) per design preference. */
 .project-hero-caption {
   text-align: center;
   max-width: 800px;
   margin: -1.5rem auto 3.5rem;
   padding: 0 2rem;
-  color: inherit;
+  color: #2C2520;
+}
+
+.project-detail.dark-detail .project-hero-caption {
+  color: #2C2520;
 }
 
 .project-hero-caption .card-year {
@@ -1559,6 +1564,75 @@ body.detail-open {
   flex-direction: column;
   gap: 0.75rem;
   z-index: 800;
+}
+
+/* Top-right header actions — same email + newsletter, persistent per page */
+.top-actions {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 810;
+}
+
+.top-action {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(250, 245, 238, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #2C2520;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(44, 37, 32, 0.14);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease;
+  position: relative;
+}
+
+.top-action svg {
+  width: 17px;
+  height: 17px;
+}
+
+.top-action:hover {
+  transform: translateY(-1px);
+  background: rgba(250, 245, 238, 1);
+  box-shadow: 0 6px 18px rgba(44, 37, 32, 0.2);
+}
+
+.top-action[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  background: rgba(44, 37, 32, 0.92);
+  color: #FAF5EE;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.top-action:hover[data-tooltip]::before {
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .top-actions {
+    top: 1rem;
+    right: 1rem;
+  }
 }
 
 .fab {
