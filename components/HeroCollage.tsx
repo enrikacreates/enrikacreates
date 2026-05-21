@@ -198,7 +198,7 @@ export function HeroCollage({ onViewWork }: { onViewWork?: () => void }) {
           id="view-work-cue"
           onClick={handleViewWork}
         >
-          <p className="view-work-text">View Work</p>
+          <p className="view-work-text">View My Work</p>
           <svg
             className="view-work-chevron"
             width="20"
