@@ -98,10 +98,10 @@ export function HeroCollage() {
         const t = 0.0;
         const d = 0.85;
 
-        // Portrait — stays hidden low/behind the foliage for most of the scroll,
-        // then rises into view over the last leg (starts at 0.55, ends at 1.0).
-        // Keeps the reveal a late, deliberate moment instead of an early pop.
-        tl.fromTo("#layer-portrait", { y: 600, scale: 0.65 }, { y: -80, scale: 1, duration: 0.45 }, 0.55);
+        // Portrait — quick start: rises from below across the full scroll.
+        // It stays HIDDEN because the plants (z-index 4) cover it until the
+        // late z-index swap below — the swap timing controls the reveal.
+        tl.fromTo("#layer-portrait", { y: 600, scale: 0.65 }, { y: -80, scale: 1, duration: d }, t);
 
         // Plants spread outward
         tl.fromTo("#layer-banana", { x: 0, y: 0 }, { x: -200, y: -20, duration: d }, t);
@@ -148,7 +148,7 @@ export function HeroCollage() {
         // Mid-spread: plants drop behind portrait
         const plantsBack =
           "#layer-palm-left, #layer-palm-right, #layer-palm-right-mirror, #layer-banana, #layer-leaf-1, #layer-leaf-2, #layer-leaf-3, #layer-leaf-4";
-        tl.set(plantsBack, { zIndex: 2 }, 0.5);
+        tl.set(plantsBack, { zIndex: 2 }, 0.8);
 
         // Designer quote fades in mid-spread
         tl.fromTo("#hero-quote", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.2 }, 0.55);
