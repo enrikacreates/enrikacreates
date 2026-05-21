@@ -111,8 +111,8 @@ export function HeroCollage() {
         // Tracks palm-right's spread so the pair moves together.
         tl.fromTo(
           "#layer-palm-right-mirror",
-          { x: 0, rotation: 0, scaleX: -1, transformOrigin: "78% 50%" },
-          { x: 10, rotation: -12, scaleX: -1, transformOrigin: "78% 50%", duration: d },
+          { x: 0, rotation: 0, scaleX: -1, transformOrigin: "66% 50%" },
+          { x: 10, rotation: -12, scaleX: -1, transformOrigin: "66% 50%", duration: d },
           t
         );
         tl.fromTo("#layer-leaf-2", { y: 0 }, { y: 280, duration: d }, t);
