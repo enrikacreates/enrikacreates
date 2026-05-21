@@ -105,9 +105,16 @@ export function HeroCollage() {
         tl.fromTo("#layer-banana", { x: 0, y: 0 }, { x: -200, y: -20, duration: d }, t);
         tl.fromTo("#layer-palm-left", { x: 0, y: 0, scaleX: -1, rotation: 0 }, { x: -120, y: 30, scaleX: -1, rotation: -20, duration: d }, t);
         tl.fromTo("#layer-palm-right", { x: 0, rotation: 0 }, { x: 10, rotation: -12, duration: d }, t);
-        // Mirrored palm — flipped (scaleX -1), spreads opposite so the two
-        // blunt edges hide each other in the center at the clustered start.
-        tl.fromTo("#layer-palm-right-mirror", { x: 0, rotation: 0, scaleX: -1 }, { x: -10, rotation: 12, scaleX: -1, duration: d }, t);
+        // Mirrored palm — flipped IN PLACE around the frond's own center
+        // (transformOrigin ~78% = where the palm sits) so it stays at the
+        // same x,y as palm-right and just mirrors, masking the blunt edge.
+        // Tracks palm-right's spread so the pair moves together.
+        tl.fromTo(
+          "#layer-palm-right-mirror",
+          { x: 0, rotation: 0, scaleX: -1, transformOrigin: "78% 50%" },
+          { x: 10, rotation: -12, scaleX: -1, transformOrigin: "78% 50%", duration: d },
+          t
+        );
         tl.fromTo("#layer-leaf-2", { y: 0 }, { y: 280, duration: d }, t);
         tl.fromTo("#layer-leaf-large", { y: 0 }, { y: 280, duration: d }, t);
         tl.fromTo("#layer-leaf-1", { y: 0 }, { y: 250, duration: d }, t);
