@@ -13,6 +13,12 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  // Clean URL for the internal app-plan reference page (static file in /public).
+  async rewrites() {
+    return [
+      { source: "/appplan", destination: "/appplan.html" },
+    ];
+  },
 };
 
 export default nextConfig;

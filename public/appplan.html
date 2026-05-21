@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>App Stack &amp; Mobile Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f6f1e9;
+    --bg-soft: #efe8db;
+    --card: #fffdf9;
+    --text: #1a1a1a;
+    --muted: #6f6a61;
+    --line: rgba(26,26,26,.06);
+    --orange: #fa9b64;
+    --green: #79c9b1;
+    --pink: #fdc4c5;
+    --sky: #33a7ff;
+    --red: #e5484d;
+    --shadow: 0 1px 3px rgba(0,0,0,.07);
+    --shadow-h: 0 6px 20px rgba(0,0,0,.10);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    padding: 32px 20px 80px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  .eyebrow { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 0 0 6px; }
+  h1 { font-family: Fredoka, Inter, sans-serif; font-size: 30px; font-weight: 700; margin: 0 0 6px; }
+  .sub { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0 0 26px; }
+  .stat { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 14px 16px; }
+  .stat b { font-family: Fredoka, Inter, sans-serif; font-size: 26px; display: block; line-height: 1; }
+  .stat span { font-size: 12px; color: var(--muted); }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 18px; }
+  .search { flex: 1; min-width: 220px; }
+  .search input {
+    width: 100%; font: inherit; font-size: 14px; padding: 11px 14px;
+    border: none; border-radius: 999px; background: var(--card); box-shadow: var(--shadow); color: var(--text);
+  }
+  .search input:focus { outline: 2px solid var(--orange); outline-offset: 1px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font: inherit; font-size: 12px; font-weight: 600; padding: 8px 13px; border: none; cursor: pointer;
+    border-radius: 999px; background: var(--card); color: var(--muted); box-shadow: var(--shadow); transition: all .12s ease;
+  }
+  .chip:hover { color: var(--text); transform: translateY(-1px); }
+  .chip.on { background: var(--text); color: #fff; }
+
+  .tablewrap { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+    font-weight: 700; padding: 13px 14px; cursor: pointer; user-select: none; white-space: nowrap;
+    background: var(--bg-soft);
+  }
+  thead th:hover { color: var(--text); }
+  thead th .arrow { opacity: .4; font-size: 10px; }
+  tbody td { padding: 13px 14px; border-top: 1px solid var(--line); vertical-align: top; }
+  tbody tr:hover { background: rgba(250,155,100,.05); }
+  .app-name { font-weight: 700; }
+  .folder { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--muted); }
+
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .b-neon { background: rgba(51,167,255,.16); color: #1d6fb0; }
+  .b-supa { background: rgba(121,201,177,.22); color: #2f7d65; }
+  .b-none { background: var(--bg-soft); color: var(--muted); }
+  .b-easy { background: rgba(121,201,177,.22); color: #2f7d65; }
+  .b-medium { background: rgba(250,155,100,.2); color: #b5662f; }
+  .b-hard { background: rgba(229,72,77,.14); color: #b3373b; }
+  .b-native { background: rgba(51,167,255,.16); color: #1d6fb0; }
+  .b-na { background: var(--bg-soft); color: var(--muted); }
+  .pri-top { color: var(--text); font-weight: 700; }
+  .pri-near { color: #b5662f; font-weight: 700; }
+  .star { color: var(--orange); }
+
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+
+  section.notes { margin-top: 34px; }
+  section.notes h2 { font-family: Fredoka, Inter, sans-serif; font-size: 19px; margin: 26px 0 10px; }
+  .note-card { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 16px 18px; font-size: 14px; }
+  .note-card ul { margin: 0; padding-left: 20px; }
+  .note-card li { margin: 6px 0; }
+  .note-card li b { font-weight: 700; }
+  footer { margin-top: 40px; text-align: center; color: var(--muted); font-size: 12px; }
+
+  @media (max-width: 760px) {
+    body { padding: 22px 14px 60px; }
+    thead { display: none; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tbody tr { padding: 12px 4px; border-top: 8px solid var(--bg); }
+    tbody td { border: none; padding: 4px 14px; display: flex; justify-content: space-between; gap: 14px; }
+    tbody td::before {
+      content: attr(data-label); font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--muted); font-weight: 700; flex-shrink: 0;
+    }
+    tbody td.app-cell { padding-top: 8px; }
+    tbody td.app-cell::before { display: none; }
+    .app-name { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Internal reference</p>
+  <h1>App Stack &amp; Mobile Plan</h1>
+  <p class="sub">Which apps run on which backend, what's a priority, and what it takes to take each one mobile. Stack &amp; database are facts from each app's <code>package.json</code>. Last updated 2026-05-21.</p>
+
+  <div class="cards" id="stats"></div>
+
+  <div class="controls">
+    <div class="search"><input id="search" type="search" placeholder="Search apps, folders, stacks…" /></div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-key="app">App <span class="arrow"></span></th>
+          <th data-key="folder">Folder <span class="arrow"></span></th>
+          <th data-key="framework">Framework <span class="arrow"></span></th>
+          <th data-key="db">Database <span class="arrow"></span></th>
+          <th data-key="wm">Web / Mobile <span class="arrow"></span></th>
+          <th data-key="path">Mobile path <span class="arrow"></span></th>
+          <th data-key="priority">Priority <span class="arrow"></span></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">No apps match that filter.</div>
+  </div>
+
+  <section class="notes">
+    <h2>Mobile-conversion effort (by stack)</h2>
+    <div class="note-card">
+      <ul>
+        <li><b>Vite SPA + Supabase → Capacitor wrap:</b> ~3–10 days, ~90–95% code reuse. Swap web camera/file APIs for Capacitor plugins.</li>
+        <li><b>Next + Supabase → Capacitor</b> (after client-render restructure): ~1–3 weeks, ~75–85% reuse. Risk of Apple 4.2 "thin wrapper" rejection if you just wrap the hosted site.</li>
+        <li><b>Next + Payload + Neon → new Expo client vs the Payload API:</b> ~3–8 weeks. Backend reused ~100%, frontend rebuilt (~0%).</li>
+        <li><b>Already Expo/RN (ReachOut):</b> zero conversion — just <code>eas build</code>.</li>
+        <li>The bottleneck is developer time, not compute. Backend &amp; its cost are unchanged. Builds run on EAS free tier or locally on a Mac.</li>
+      </ul>
+    </div>
+
+    <h2>Recommendations</h2>
+    <div class="note-card">
+      <ul>
+        <li><b>SPAs</b> (SignatureStyle, StoryKeepr, The Daily Story, etc.): "build web first, Capacitor-wrap when demand appears" is cheap and correct (~days each).</li>
+        <li><b>Create Space v2</b> (top app, not built yet, wants web + mobile): build greenfield in <b>Expo + Expo Router + Supabase</b> — one codebase ships web + iOS + Android, zero conversion tax. Use it as the proof-of-concept for the Expo-default decision. (Expo and Vite are alternative frontends, not a combo — Expo Router covers web too.)</li>
+        <li><b>Vision Map</b> (near-future, hardest path): plan the "Expo client against the Payload API" approach early; keep all data access via the API.</li>
+        <li><b>Store It:</b> same Payload→Expo path, but most mature so the effort is most justified.</li>
+        <li><b>Cheapest demand-test:</b> ship a PWA (installable, $0, no rebuild) before committing to Capacitor or Expo.</li>
+      </ul>
+    </div>
+
+    <h2>Cost reference</h2>
+    <div class="note-card">
+      <ul>
+        <li><b>Supabase:</b> Pro = $25/mo per org (covers one Micro instance). All Supabase apps share ONE project (schema per app) = flat $25/mo. Each additional Supabase project ≈ +$10/mo.</li>
+        <li><b>Neon:</b> the 5 Payload apps each have their own DB (already isolated). Free tier + usage-based scaling.</li>
+        <li><b>Mobile (per app):</b> Apple Developer $99/yr, Google Play $25 one-time. Expo SDK free; EAS has a free build tier (or build locally for $0). Going mobile adds no backend/DB cost.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>Private internal document — not for public distribution.</footer>
+</div>
+
+<script>
+const APPS = [
+  { app:"Store It", folder:"storeit", framework:"Next + Payload", db:"Neon (+R2)", dbCat:"neon", wm:"web, mobile", path:"Hard (Expo rebuild)", pathCat:"hard", priority:"Top", priCat:"top" },
+  { app:"Vision Map", folder:"visionmap", framework:"Next + Payload", db:"Neon (+R2)", dbCat:"neon", wm:"web, mobile", path:"Hard (Expo rebuild)", pathCat:"hard", priority:"Top · near-future", priCat:"top" },
+  { app:"Create Space", folder:"create-space (v1) — v2 not built", framework:"v1 Next → v2 Expo", db:"Supabase", dbCat:"supa", wm:"web, mobile", path:"v2 native from day one", pathCat:"native", priority:"Top", priCat:"top" },
+  { app:"The Daily Story", folder:"theDailyStory", framework:"Vite SPA", db:"Supabase", dbCat:"supa", wm:"web, mobile", path:"Easy (Capacitor)", pathCat:"easy", priority:"Top", priCat:"top" },
+  { app:"StoryKeepr", folder:"storykeepr", framework:"Vite SPA", db:"Supabase", dbCat:"supa", wm:"web, mobile", path:"Easy (Capacitor)", pathCat:"easy", priority:"Top", priCat:"top" },
+  { app:"Signature Style", folder:"signaturestyle", framework:"Vite SPA", db:"Supabase", dbCat:"supa", wm:"web, mobile", path:"Easy (Capacitor)", pathCat:"easy", priority:"Near-future", priCat:"near" },
+  { app:"Signature Style (plugin)", folder:"signaturestyle-extension", framework:"Vite", db:"Supabase", dbCat:"supa", wm:"browser extension", path:"n/a", pathCat:"na", priority:"Companion", priCat:"other" },
+  { app:"Go Go Magic List", folder:"gogomagiclist", framework:"Vite SPA", db:"Supabase", dbCat:"supa", wm:"mobile-first", path:"Easy (Capacitor)", pathCat:"easy", priority:"Built", priCat:"other" },
+  { app:"Pattern Design 101", folder:"pattern-design-101-app", framework:"Next + Payload", db:"Neon (+R2)", dbCat:"neon", wm:"web", path:"Hard", pathCat:"hard", priority:"Scaling", priCat:"scaling" },
+  { app:"Speak Up", folder:"theSpeakUp", framework:"Vite SPA", db:"Supabase", dbCat:"supa", wm:"web first", path:"Easy (Capacitor)", pathCat:"easy", priority:"Scaling", priCat:"scaling" },
+  { app:"Workshop Blocks", folder:"workshopblocks", framework:"Vite SPA", db:"Supabase", dbCat:"supa", wm:"web first", path:"Easy (Capacitor)", pathCat:"easy", priority:"Scaling", priCat:"scaling" },
+  { app:"Knowledge Nook", folder:"knowledgenook", framework:"Vite SPA", db:"Supabase", dbCat:"supa", wm:"web first", path:"Easy (Capacitor)", pathCat:"easy", priority:"Scaling", priCat:"scaling" },
+  { app:"Caashflow", folder:"caashflow", framework:"Next", db:"Supabase", dbCat:"supa", wm:"web first", path:"Medium", pathCat:"medium", priority:"MVP live", priCat:"other" },
+  { app:"Meaningful Metrics", folder:"meaningfulmetrics", framework:"Next + Payload", db:"Neon", dbCat:"neon", wm:"web", path:"Hard", pathCat:"hard", priority:"SGC / business", priCat:"other" },
+  { app:"Delivery.hub", folder:"Delivery", framework:"Next + Payload", db:"Neon (+R2)", dbCat:"neon", wm:"web", path:"Hard", pathCat:"hard", priority:"Multi-brand infra", priCat:"other" },
+  { app:"ReachOut / MOJO Connect", folder:"reachout", framework:"Expo + React Native", db:"Supabase", dbCat:"supa", wm:"mobile (native)", path:"Already native", pathCat:"native", priority:"SGC outreach", priCat:"other" },
+  { app:"Beat the Timer", folder:"beatTimer", framework:"Vite", db:"none (local)", dbCat:"none", wm:"web", path:"Easy", pathCat:"easy", priority:"Utility", priCat:"other" },
+  { app:"enrikacreates site", folder:"enrikacreates", framework:"Next", db:"none", dbCat:"none", wm:"web", path:"n/a", pathCat:"na", priority:"Marketing/portfolio", priCat:"other" },
+];
+
+const FILTERS = [
+  { key:"all", label:"All" },
+  { key:"top", label:"Top apps", test: a => a.priCat === "top" },
+  { key:"near", label:"Near-future", test: a => a.priCat === "near" || /near-future/i.test(a.priority) },
+  { key:"neon", label:"Neon", test: a => a.dbCat === "neon" },
+  { key:"supa", label:"Supabase", test: a => a.dbCat === "supa" },
+  { key:"easy", label:"Easy to mobile", test: a => a.pathCat === "easy" || a.pathCat === "native" },
+];
+
+let activeFilter = "all";
+let sortKey = null, sortDir = 1;
+
+const dbBadge = a => `<span class="badge b-${a.dbCat === 'neon' ? 'neon' : a.dbCat === 'supa' ? 'supa' : 'none'}">${a.db}</span>`;
+const pathBadge = a => `<span class="badge b-${a.pathCat}">${a.path}</span>`;
+const priClass = a => a.priCat === 'top' ? 'pri-top' : a.priCat === 'near' ? 'pri-near' : '';
+const priText = a => a.priority.replace('·','★').replace('near-future','near-future');
+
+function rowHTML(a) {
+  const pri = a.priCat === 'top'
+    ? `<span class="pri-top">Top${/near-future/i.test(a.priority) ? ' <span class="star">★</span> near-future' : ''}</span>`
+    : a.priCat === 'near' ? `<span class="pri-near">Near-future</span>`
+    : a.priority;
+  return `<tr>
+    <td class="app-cell" data-label="App"><span class="app-name">${a.app}</span></td>
+    <td data-label="Folder"><span class="folder">${a.folder}</span></td>
+    <td data-label="Framework">${a.framework}</td>
+    <td data-label="Database">${dbBadge(a)}</td>
+    <td data-label="Web / Mobile">${a.wm}</td>
+    <td data-label="Mobile path">${pathBadge(a)}</td>
+    <td data-label="Priority">${pri}</td>
+  </tr>`;
+}
+
+function render() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const f = FILTERS.find(x => x.key === activeFilter);
+  let list = APPS.filter(a => {
+    if (f && f.test && !f.test(a)) return false;
+    if (!q) return true;
+    return [a.app, a.folder, a.framework, a.db, a.wm, a.path, a.priority].join(' ').toLowerCase().includes(q);
+  });
+  if (sortKey) {
+    list = [...list].sort((x, y) => String(x[sortKey]).localeCompare(String(y[sortKey])) * sortDir);
+  }
+  document.getElementById('rows').innerHTML = list.map(rowHTML).join('');
+  document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+}
+
+function renderStats() {
+  const neon = APPS.filter(a => a.dbCat === 'neon').length;
+  const supa = APPS.filter(a => a.dbCat === 'supa').length;
+  const top = APPS.filter(a => a.priCat === 'top').length;
+  const easy = APPS.filter(a => a.pathCat === 'easy' || a.pathCat === 'native').length;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><b>${APPS.length}</b><span>apps tracked</span></div>
+    <div class="stat"><b>${supa}</b><span>on Supabase (shared)</span></div>
+    <div class="stat"><b>${neon}</b><span>on Neon (own DB)</span></div>
+    <div class="stat"><b>${top}</b><span>top-priority apps</span></div>
+    <div class="stat"><b>${easy}</b><span>easy / already mobile</span></div>`;
+}
+
+function renderChips() {
+  document.getElementById('chips').innerHTML = FILTERS.map(f =>
+    `<button class="chip ${f.key === activeFilter ? 'on' : ''}" data-f="${f.key}">${f.label}</button>`).join('');
+  document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+    activeFilter = c.dataset.f; renderChips(); render();
+  }));
+}
+
+document.querySelectorAll('thead th').forEach(th => th.addEventListener('click', () => {
+  const k = th.dataset.key;
+  if (sortKey === k) sortDir *= -1; else { sortKey = k; sortDir = 1; }
+  document.querySelectorAll('thead th .arrow').forEach(a => a.textContent = '');
+  th.querySelector('.arrow').textContent = sortDir === 1 ? '↑' : '↓';
+  render();
+}));
+
+document.getElementById('search').addEventListener('input', render);
+renderStats(); renderChips(); render();
+</script>
+</body>
+</html>
