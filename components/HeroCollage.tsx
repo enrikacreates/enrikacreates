@@ -33,6 +33,9 @@ const LAYERS: { id: string; src: string }[] = [
   { id: "layer-banana", src: "/assets/layers/image06.png" },
   { id: "layer-palm-left", src: "/assets/layers/image04.png" },
   { id: "layer-palm-right", src: "/assets/layers/image05.png" },
+  // Mirrored duplicate of palm-right — flipped to hide the blunt edge where
+  // the two join in the center. Tweak x/rotation below to refine the seam.
+  { id: "layer-palm-right-mirror", src: "/assets/layers/image05.png" },
   { id: "layer-leaf-1", src: "/assets/layers/image08.png" },
   { id: "layer-leaf-3", src: "/assets/layers/image13.png" },
   { id: "layer-leaf-4", src: "/assets/layers/image16.png" },
@@ -102,6 +105,9 @@ export function HeroCollage() {
         tl.fromTo("#layer-banana", { x: 0, y: 0 }, { x: -200, y: -20, duration: d }, t);
         tl.fromTo("#layer-palm-left", { x: 0, y: 0, scaleX: -1, rotation: 0 }, { x: -120, y: 30, scaleX: -1, rotation: -20, duration: d }, t);
         tl.fromTo("#layer-palm-right", { x: 0, rotation: 0 }, { x: 10, rotation: -12, duration: d }, t);
+        // Mirrored palm — flipped (scaleX -1), spreads opposite so the two
+        // blunt edges hide each other in the center at the clustered start.
+        tl.fromTo("#layer-palm-right-mirror", { x: 0, rotation: 0, scaleX: -1 }, { x: -10, rotation: 12, scaleX: -1, duration: d }, t);
         tl.fromTo("#layer-leaf-2", { y: 0 }, { y: 280, duration: d }, t);
         tl.fromTo("#layer-leaf-large", { y: 0 }, { y: 280, duration: d }, t);
         tl.fromTo("#layer-leaf-1", { y: 0 }, { y: 250, duration: d }, t);
@@ -132,7 +138,7 @@ export function HeroCollage() {
 
         // Mid-spread: plants drop behind portrait
         const plantsBack =
-          "#layer-palm-left, #layer-palm-right, #layer-banana, #layer-leaf-1, #layer-leaf-2, #layer-leaf-3, #layer-leaf-4";
+          "#layer-palm-left, #layer-palm-right, #layer-palm-right-mirror, #layer-banana, #layer-leaf-1, #layer-leaf-2, #layer-leaf-3, #layer-leaf-4";
         tl.set(plantsBack, { zIndex: 2 }, 0.5);
 
         // Designer quote fades in mid-spread

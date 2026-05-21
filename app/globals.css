@@ -169,6 +169,7 @@ body {
 /* Plants — in front of portrait at start (drop behind at mid-spread via JS) */
 #layer-palm-left,
 #layer-palm-right,
+#layer-palm-right-mirror,
 #layer-banana,
 #layer-leaf-1,
 #layer-leaf-2,
