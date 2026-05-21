@@ -16,7 +16,6 @@
  */
 
 import { useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 /** Layer paint order (back → front) — matches vanilla DOM order exactly. */
 const LAYERS: { id: string; src: string }[] = [
@@ -54,9 +53,8 @@ const LAYERS: { id: string; src: string }[] = [
   { id: "layer-colorchips", src: "/assets/layers/image25.png" },
 ];
 
-export function HeroCollage() {
+export function HeroCollage({ onViewWork }: { onViewWork?: () => void }) {
   const rootRef = useRef<HTMLElement>(null);
-  const router = useRouter();
 
   useEffect(() => {
     let ctx: { revert: () => void } | undefined;
@@ -166,8 +164,8 @@ export function HeroCollage() {
 
   function handleViewWork(e: React.MouseEvent) {
     e.preventDefault();
-    // Phase 3c will wire this to the catalog. For now, route to /work.
-    router.push("/work");
+    // Single-page model: reveal + scroll to the catalog below (parent handles).
+    onViewWork?.();
   }
 
   return (
@@ -195,7 +193,7 @@ export function HeroCollage() {
 
         {/* View Work cue */}
         <a
-          href="/work"
+          href="#work"
           className="view-work-cue"
           id="view-work-cue"
           onClick={handleViewWork}

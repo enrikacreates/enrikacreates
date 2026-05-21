@@ -1,24 +1,30 @@
 /**
- * Home page.
+ * Home page — single-page experience (vanilla model restored).
  *
- * Phase 3a (this commit): Logo hero ports from the vanilla site, statically
- * rendered with placeholder for the GSAP collage zone.
- *
- * Phase 3b adds: the scroll-driven collage animation (the soul of the page).
- * Phase 3c adds: the work catalog grid below the heroes.
+ * Logo hero → scroll-driven collage → "View Work" reveals the catalog below
+ * on the SAME page and scrolls to it. Scrolling back up returns to the
+ * animation. Project cards still open detail pages at /work/[slug].
  *
  * MIGRATION TEMPLATE NOTE:
- *   Page is a Server Component — fetches site settings at request time
- *   (cached 60s). Interactive bits (GSAP scroll, modals) become client
- *   components in their own files.
+ *   Server Component fetches all data once (settings + projects + featured),
+ *   then hands the interactive collage + catalog to <HomeExperience> (client),
+ *   which coordinates the reveal-and-scroll.
  */
 
-import { getSiteSettings } from "@/lib/sanity/fetch";
+import {
+  getSiteSettings,
+  getAllProjects,
+  getFeaturedProjects,
+} from "@/lib/sanity/fetch";
 import { HeroLogo } from "@/components/HeroLogo";
-import { HeroCollage } from "@/components/HeroCollage";
+import { HomeExperience } from "@/components/HomeExperience";
 
 export default async function HomePage() {
-  const settings = await getSiteSettings();
+  const [settings, projects, featured] = await Promise.all([
+    getSiteSettings(),
+    getAllProjects(),
+    getFeaturedProjects(),
+  ]);
 
   return (
     <>
@@ -30,7 +36,7 @@ export default async function HomePage() {
         }
       />
 
-      <HeroCollage />
+      <HomeExperience projects={projects} featured={featured} />
     </>
   );
 }

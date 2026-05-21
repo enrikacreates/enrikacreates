@@ -19,6 +19,13 @@ const nextConfig = {
       { source: "/appplan", destination: "/appplan.html" },
     ];
   },
+  // Single-page model: the catalog lives on the home page now. Old /work
+  // links land on home (the #work hash reveals + scrolls client-side).
+  async redirects() {
+    return [
+      { source: "/work", destination: "/#work", permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;
