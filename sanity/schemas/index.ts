@@ -18,6 +18,7 @@ import { pullQuote } from "./objects/pullQuote";
 import { project } from "./documents/project";
 import { blogPost } from "./documents/blogPost";
 import { siteSettings } from "./documents/siteSettings";
+import { subscriber } from "./documents/subscriber";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // objects first
@@ -28,6 +29,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   project,
   blogPost,
   siteSettings,
+  subscriber,
 ];
 
 // Re-export the color palette so the frontend can use it too.

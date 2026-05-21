@@ -1846,6 +1846,13 @@ body.detail-open {
   margin: 0;
 }
 
+.newsletter-error {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  color: #C0432F;
+  margin: 0;
+}
+
 .newsletter-form.is-success input,
 .newsletter-form.is-success button {
   display: none;

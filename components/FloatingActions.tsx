@@ -31,6 +31,8 @@ export function FloatingActions({
 }: FloatingActionsProps) {
   const [open, setOpen] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -48,16 +50,32 @@ export function FloatingActions({
     };
   }, [open]);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const email = inputRef.current?.value?.trim();
-    if (!email) return;
-    // TODO: wire to real subscription endpoint (ConvertKit / Beehiiv / etc.)
-    setSuccess(true);
-    setTimeout(() => {
-      setOpen(false);
-      setSuccess(false);
-    }, 1800);
+    if (!email || submitting) return;
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || "Something went wrong.");
+      }
+      setSuccess(true);
+      setTimeout(() => {
+        setOpen(false);
+        setSuccess(false);
+      }, 1800);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   // Shared SVGs so the top-right header + bottom-right fabs stay identical.
@@ -118,10 +136,16 @@ export function FloatingActions({
             ))}
           </ul>
           <form className={`newsletter-form${success ? " is-success" : ""}`} noValidate onSubmit={handleSubmit}>
-            <input ref={inputRef} type="email" name="email" placeholder="your@email.com" required aria-label="Email address" />
-            <button type="submit">Subscribe</button>
+            <input ref={inputRef} type="email" name="email" placeholder="your@email.com" required aria-label="Email address" disabled={submitting} />
+            <button type="submit" disabled={submitting}>
+              {submitting ? "…" : "Subscribe"}
+            </button>
           </form>
-          <p className="newsletter-note">No spam. Unsubscribe anytime.</p>
+          {error ? (
+            <p className="newsletter-error">{error}</p>
+          ) : (
+            <p className="newsletter-note">No spam. Unsubscribe anytime.</p>
+          )}
         </div>
       </div>
     </>

@@ -33,6 +33,9 @@ const customStructure = (S: any) =>
       // Blog posts
       S.documentTypeListItem("blogPost").title("Blog posts"),
 
+      // Newsletter subscribers (read-only, captured from the form)
+      S.documentTypeListItem("subscriber").title("Subscribers"),
+
       S.divider(),
 
       // Site settings — singleton (one doc, no list view)
@@ -63,10 +66,11 @@ export default defineConfig({
     types: schemaTypes,
 
     /**
-     * Hide `siteSettings` from the global "Create new" menu since it's
-     * a singleton (only one of these should ever exist).
+     * Hide `siteSettings` (singleton) and `subscriber` (form-only) from the
+     * global "Create new" menu.
      */
-    templates: (prev) => prev.filter((t) => t.schemaType !== "siteSettings"),
+    templates: (prev) =>
+      prev.filter((t) => !["siteSettings", "subscriber"].includes(t.schemaType)),
   },
 
   document: {
