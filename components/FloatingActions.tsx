@@ -76,15 +76,15 @@ export function FloatingActions({
 
   return (
     <>
-      {/* Top-right header icons — same actions, persistent on every page */}
-      <div className="top-actions" aria-label="Contact & subscribe">
-        <a className="top-action" href={`mailto:${contactEmail}`} aria-label="Email Enrika" data-tooltip="Email me">
-          {emailIcon}
+      {/* Top-right masthead links — same actions, persistent on every page */}
+      <nav className="top-actions" aria-label="Contact & subscribe">
+        <a className="top-action" href={`mailto:${contactEmail}`}>
+          Email
         </a>
-        <button className="top-action" aria-label="Open newsletter" data-tooltip="Newsletter" onClick={() => setOpen(true)}>
-          {newsletterIcon}
+        <button className="top-action" type="button" onClick={() => setOpen(true)}>
+          Newsletter
         </button>
-      </div>
+      </nav>
 
       <div className="floating-actions" aria-label="Contact & subscribe">
         <a className="fab" href={`mailto:${contactEmail}`} aria-label="Email Enrika" data-tooltip="Email me">
