@@ -88,7 +88,24 @@ export function FloatingActions({
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M5 2H15L20 7V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V3C4 2.44772 4.44772 2 5 2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
       <path d="M15 2V7H20" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="M12 17.5C12 17.5 8 15.3 8 12.6C8 11.3 9 10.4 10.2 10.4C10.95 10.4 11.6 10.85 12 11.5C12.4 10.85 13.05 10.4 13.8 10.4C15 10.4 16 11.3 16 12.6C16 15.3 12 17.5 12 17.5Z" fill="currentColor" />
+      <path d="M12 17.5C12 17.5 8 15.3 8 12.6C8 11.3 9 10.4 10.2 10.4C10.95 10.4 11.6 10.85 12 11.5C12.4 10.85 13.05 10.4 13.8 10.4C15 10.4 16 11.3 16 12.6C16 15.3 12 17.5 12 17.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
+  );
+
+  /**
+   * Masthead versions: same two marks at text scale, single weight throughout
+   * so they sit beside letter-spaced uppercase without out-weighing it.
+   */
+  const emailMark = (
+    <svg className="top-action-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M3 6L12 13L21 6M3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6M3 6C3 5.44772 3.44772 5 4 5H20C20.5523 5 21 5.44772 21 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+  const newsletterMark = (
+    <svg className="top-action-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M5 2H15L20 7V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V3C4 2.44772 4.44772 2 5 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M15 2V7H20" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M12 17.5C12 17.5 8 15.3 8 12.6C8 11.3 9 10.4 10.2 10.4C10.95 10.4 11.6 10.85 12 11.5C12.4 10.85 13.05 10.4 13.8 10.4C15 10.4 16 11.3 16 12.6C16 15.3 12 17.5 12 17.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
     </svg>
   );
 
@@ -97,10 +114,12 @@ export function FloatingActions({
       {/* Top-right masthead links — same actions, persistent on every page */}
       <nav className="top-actions" aria-label="Contact & subscribe">
         <a className="top-action" href={`mailto:${contactEmail}`}>
-          Email
+          {emailMark}
+          <span>Email</span>
         </a>
         <button className="top-action" type="button" onClick={() => setOpen(true)}>
-          Newsletter
+          {newsletterMark}
+          <span>Newsletter</span>
         </button>
       </nav>
 

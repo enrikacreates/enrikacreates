@@ -6,8 +6,8 @@
  *
  * MIGRATION TEMPLATE NOTE:
  *   Client-side filtering (local state, no navigation) so changing a filter
- *   doesn't reload or scroll. Hidden until `revealed` (set when "View Work"
- *   is clicked) — matches the vanilla reveal-then-scroll behavior.
+ *   doesn't reload or scroll. Always in the document: scrolling past the hero
+ *   carries you into it, no click required.
  */
 
 import Link from "next/link";
@@ -21,14 +21,12 @@ interface WorkSectionProps {
   featured: ProjectListItem[];
   /** Public categories, in display order. Drives the pills. */
   categories: Category[];
-  revealed: boolean;
 }
 
 export function WorkSection({
   projects,
   featured,
   categories,
-  revealed,
 }: WorkSectionProps) {
   const [filter, setFilter] = useState("all");
 
@@ -45,7 +43,7 @@ export function WorkSection({
   ];
 
   return (
-    <section className={`work${revealed ? " is-revealed" : ""}`} id="work">
+    <section className="work" id="work">
       <nav className="filter-bar" id="filter-bar">
         {pills.map(({ value, label }) => (
           <button

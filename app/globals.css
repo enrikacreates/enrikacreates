@@ -410,10 +410,6 @@ body {
   min-height: 100vh;
   background: var(--black);
   scroll-snap-align: start;
-  display: none;
-}
-
-.work.is-revealed {
   display: block;
 }
 
@@ -1681,15 +1677,25 @@ body.detail-open {
   text-decoration: none;
   position: relative;
   transition: opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* The mark sits slightly above the cap-height of letter-spaced uppercase, so
+   nudge it down to share an optical baseline with the label. */
+.top-action-icon {
+  flex: none;
+  transform: translateY(0.5px);
 }
 
 /* Subtle underline grows on hover (editorial nav feel) */
 .top-action::after {
   content: "";
   position: absolute;
-  left: 0;
+  left: calc(15px + 0.45rem);
   bottom: -4px;
-  width: 100%;
+  width: calc(100% - 15px - 0.45rem);
   height: 1px;
   background: currentColor;
   transform: scaleX(0);
