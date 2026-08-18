@@ -10,7 +10,11 @@
 
 import { client } from "./client";
 import {
+  ALL_CATEGORIES_QUERY,
+  LISTED_CATEGORIES_QUERY,
+  CATEGORY_BY_SLUG_QUERY,
   ALL_PROJECTS_QUERY,
+  LISTED_PROJECTS_QUERY,
   PROJECTS_BY_CATEGORY_QUERY,
   FEATURED_PROJECTS_QUERY,
   PROJECT_BY_SLUG_QUERY,
@@ -21,9 +25,9 @@ import {
   SITE_SETTINGS_QUERY,
 } from "./queries";
 import type {
+  Category,
   Project,
   ProjectListItem,
-  ProjectCategory,
   BlogPost,
   BlogPostListItem,
   SiteSettings,
@@ -34,14 +38,37 @@ const DEFAULT_NEXT_OPTS = {
   next: { revalidate: 60, tags: ["sanity"] as string[] },
 };
 
+/* ---------- Categories ---------- */
+
+/** Every category, listed or not. Used by /all and generateStaticParams. */
+export async function getAllCategories(): Promise<Category[]> {
+  return client.fetch(ALL_CATEGORIES_QUERY, {}, DEFAULT_NEXT_OPTS);
+}
+
+/** Public categories only. Used by the filter bar and the sitemap. */
+export async function getListedCategories(): Promise<Category[]> {
+  return client.fetch(LISTED_CATEGORIES_QUERY, {}, DEFAULT_NEXT_OPTS);
+}
+
+export async function getCategoryBySlug(slug: string): Promise<Category | null> {
+  return client.fetch(CATEGORY_BY_SLUG_QUERY, { slug }, DEFAULT_NEXT_OPTS);
+}
+
 /* ---------- Projects ---------- */
 
+/** Every project, hidden categories included. For /all only. */
 export async function getAllProjects(): Promise<ProjectListItem[]> {
   return client.fetch(ALL_PROJECTS_QUERY, {}, DEFAULT_NEXT_OPTS);
 }
 
+/** Projects in public categories. For the home catalog and /work. */
+export async function getListedProjects(): Promise<ProjectListItem[]> {
+  return client.fetch(LISTED_PROJECTS_QUERY, {}, DEFAULT_NEXT_OPTS);
+}
+
+/** @param category the category's slug, e.g. "mobile". */
 export async function getProjectsByCategory(
-  category: ProjectCategory
+  category: string
 ): Promise<ProjectListItem[]> {
   return client.fetch(PROJECTS_BY_CATEGORY_QUERY, { category }, DEFAULT_NEXT_OPTS);
 }

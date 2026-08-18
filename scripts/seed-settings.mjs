@@ -20,9 +20,9 @@ await client.createOrReplace({
   socialLinks: [
     { _key: "s1", platform: "instagram", url: "https://instagram.com" },
     { _key: "s2", platform: "pinterest", url: "https://pinterest.com" },
-    { _key: "s3", platform: "email", url: "mailto:enrika@smallgorillamarketing.com", label: "Email" },
+    { _key: "s3", platform: "email", url: "mailto:enrika@smallgorillacreative.com", label: "Email" },
   ],
-  contactEmail: "enrika@smallgorillamarketing.com",
+  contactEmail: "enrika@smallgorillacreative.com",
   footerCopy: "© {year} Enrika Greathouse",
 });
 console.log("✓ siteSettings seeded");

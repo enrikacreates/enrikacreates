@@ -14,14 +14,19 @@
 import { useState, useEffect, useCallback } from "react";
 import { HeroCollage } from "./HeroCollage";
 import { WorkSection } from "./WorkSection";
-import type { ProjectListItem } from "@/lib/types";
+import type { Category, ProjectListItem } from "@/lib/types";
 
 interface HomeExperienceProps {
   projects: ProjectListItem[];
   featured: ProjectListItem[];
+  categories: Category[];
 }
 
-export function HomeExperience({ projects, featured }: HomeExperienceProps) {
+export function HomeExperience({
+  projects,
+  featured,
+  categories,
+}: HomeExperienceProps) {
   const [revealed, setRevealed] = useState(false);
 
   const revealWork = useCallback((smooth = true) => {
@@ -44,7 +49,12 @@ export function HomeExperience({ projects, featured }: HomeExperienceProps) {
   return (
     <>
       <HeroCollage onViewWork={() => revealWork(true)} />
-      <WorkSection projects={projects} featured={featured} revealed={revealed} />
+      <WorkSection
+        projects={projects}
+        featured={featured}
+        categories={categories}
+        revealed={revealed}
+      />
     </>
   );
 }

@@ -27,15 +27,31 @@ export interface SanityImage {
   alt?: string;
 }
 
-export type ProjectCategory =
-  | "fashion"
-  | "product"
-  | "apps"
-  | "web"
-  | "event"
-  | "writing";
-
 export type BlogCategory = "fashion" | "product" | "community" | "hope";
+
+/* ---------- Category ---------- */
+
+/**
+ * A portfolio section. `listed` decides whether it shows in the filter bar,
+ * the sitemap, and to search engines; unlisted categories stay live at their
+ * own URL and stay included in /all.
+ */
+export interface Category {
+  _id: string;
+  title: string;
+  slug: string;
+  listed: boolean;
+  order?: number;
+  blurb?: string;
+  color?: string;
+}
+
+/** The dereferenced shape carried on every project. */
+export interface CategoryRef {
+  title: string;
+  slug: string;
+  listed: boolean;
+}
 
 /* ---------- Project ---------- */
 
@@ -54,7 +70,7 @@ export interface ProjectListItem {
   _id: string;
   title: string;
   slug: string;
-  category: ProjectCategory;
+  category: CategoryRef;
   color: string;
   year: string;
   tagline: string;

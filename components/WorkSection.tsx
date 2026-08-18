@@ -13,30 +13,47 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ProjectCard } from "./ProjectCard";
-import { FILTER_LABELS, isDarkColor } from "@/lib/colorUtils";
-import type { ProjectListItem } from "@/lib/types";
+import { isDarkColor } from "@/lib/colorUtils";
+import type { Category, ProjectListItem } from "@/lib/types";
 
 interface WorkSectionProps {
   projects: ProjectListItem[];
   featured: ProjectListItem[];
+  /** Public categories, in display order. Drives the pills. */
+  categories: Category[];
   revealed: boolean;
 }
 
-export function WorkSection({ projects, featured, revealed }: WorkSectionProps) {
+export function WorkSection({
+  projects,
+  featured,
+  categories,
+  revealed,
+}: WorkSectionProps) {
   const [filter, setFilter] = useState("all");
 
   const items =
-    filter === "all" ? projects : projects.filter((p) => p.category === filter);
+    filter === "all"
+      ? projects
+      : projects.filter((p) => p.category?.slug === filter);
+
+  // "All" first, then each public category. Hidden categories are absent by
+  // design; they're reachable at their own URL and from /all.
+  const pills = [
+    { value: "all", label: "All" },
+    ...categories.map((c) => ({ value: c.slug, label: c.title })),
+  ];
 
   return (
     <section className={`work${revealed ? " is-revealed" : ""}`} id="work">
       <nav className="filter-bar" id="filter-bar">
-        {Object.entries(FILTER_LABELS).map(([value, label]) => (
+        {pills.map(({ value, label }) => (
           <button
             key={value}
             type="button"
             className={`filter-btn${filter === value ? " active" : ""}`}
             data-filter={value}
+            aria-pressed={filter === value}
             onClick={() => setFilter(value)}
           >
             {label}

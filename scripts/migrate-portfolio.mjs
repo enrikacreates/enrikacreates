@@ -108,6 +108,22 @@ async function uploadImage(localPath) {
   return ref;
 }
 
+/**
+ * `project.category` used to be a plain string. It's a reference to a
+ * `category` document now, so the legacy PORTFOLIO values are mapped onto the
+ * deterministic ids that scripts/seed-categories.mjs creates. Run that script
+ * first: this one only points at the categories, it doesn't create them.
+ */
+const LEGACY_CATEGORY_SLUGS = {
+  apps: "mobile",
+  event: "events",
+};
+
+function categoryRef(legacyValue) {
+  const slug = LEGACY_CATEGORY_SLUGS[legacyValue] ?? legacyValue;
+  return { _type: "reference", _ref: `category-${slug}` };
+}
+
 async function migrate() {
   console.log(`Migrating ${PORTFOLIO.length} projects → ${env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${env.NEXT_PUBLIC_SANITY_DATASET}\n`);
 
@@ -135,7 +151,7 @@ async function migrate() {
       _type: "project",
       title: p.title,
       slug: { _type: "slug", current: slug },
-      category: p.category,
+      category: categoryRef(p.category),
       color: p.color,
       year: p.year,
       tagline: p.tagline || "",

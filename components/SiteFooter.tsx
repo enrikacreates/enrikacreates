@@ -44,7 +44,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
             <>
               <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
               <a href="https://pinterest.com" target="_blank" rel="noopener">Pinterest</a>
-              <a href={`mailto:${settings?.contactEmail ?? "enrika@smallgorillamarketing.com"}`}>Email</a>
+              <a href={`mailto:${settings?.contactEmail ?? "enrika@smallgorillacreative.com"}`}>Email</a>
             </>
           )}
         </div>

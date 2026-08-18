@@ -11,13 +11,51 @@
  *   Pre-typegen we use plain string templates; Phase 5 swaps to defineQuery.
  */
 
+/* ---------- Category ---------- */
+
+const CATEGORY_FIELDS = /* groq */ `
+  _id,
+  title,
+  "slug": slug.current,
+  "listed": listed == true,
+  order,
+  blurb,
+  color
+`;
+
+/**
+ * Every category, listed or not. Drives /all, the sitemap's exclusion logic,
+ * and generateStaticParams for the /[category] route.
+ */
+export const ALL_CATEGORIES_QUERY = /* groq */ `
+  *[_type == "category" && defined(slug.current)]
+    | order(order asc, title asc) {
+    ${CATEGORY_FIELDS}
+  }
+`;
+
+/** Only the public ones — the filter bar and sitemap use this. */
+export const LISTED_CATEGORIES_QUERY = /* groq */ `
+  *[_type == "category" && defined(slug.current) && listed == true]
+    | order(order asc, title asc) {
+    ${CATEGORY_FIELDS}
+  }
+`;
+
+/** One category by slug — for the /[category] page header + metadata. */
+export const CATEGORY_BY_SLUG_QUERY = /* groq */ `
+  *[_type == "category" && slug.current == $slug][0] {
+    ${CATEGORY_FIELDS}
+  }
+`;
+
 /* ---------- Project ---------- */
 
 const PROJECT_FIELDS = /* groq */ `
   _id,
   title,
   "slug": slug.current,
-  category,
+  category->{ title, "slug": slug.current, "listed": listed == true },
   color,
   year,
   tagline,
@@ -47,23 +85,41 @@ const PROJECT_FULL_FIELDS = /* groq */ `
   }
 `;
 
-/** All projects — for the catalog grid. */
+/** Every project, regardless of category visibility. Powers /all. */
 export const ALL_PROJECTS_QUERY = /* groq */ `
   *[_type == "project"] | order(displayOrder asc, publishedAt desc) {
     ${PROJECT_FIELDS}
   }
 `;
 
-/** Projects filtered by category. */
-export const PROJECTS_BY_CATEGORY_QUERY = /* groq */ `
-  *[_type == "project" && category == $category] | order(displayOrder asc, publishedAt desc) {
+/**
+ * Projects whose category is public. This is what the home catalog and /work
+ * show, so hiding a category genuinely removes its work from the public read
+ * rather than just removing the nav pill.
+ */
+export const LISTED_PROJECTS_QUERY = /* groq */ `
+  *[_type == "project" && category->listed == true]
+    | order(displayOrder asc, publishedAt desc) {
     ${PROJECT_FIELDS}
   }
 `;
 
-/** Featured projects — for the top row above the catalog. */
+/** Projects in one category, looked up by the category's slug. */
+export const PROJECTS_BY_CATEGORY_QUERY = /* groq */ `
+  *[_type == "project" && category->slug.current == $category]
+    | order(displayOrder asc, publishedAt desc) {
+    ${PROJECT_FIELDS}
+  }
+`;
+
+/**
+ * Featured projects — the top row above the catalog. Constrained to public
+ * categories: the featured row appears on public pages, so a starred project
+ * in a hidden category must not leak through it.
+ */
 export const FEATURED_PROJECTS_QUERY = /* groq */ `
-  *[_type == "project" && featured == true] | order(displayOrder asc, publishedAt desc)[0..2] {
+  *[_type == "project" && featured == true && category->listed == true]
+    | order(displayOrder asc, publishedAt desc)[0..2] {
     ${PROJECT_FIELDS}
   }
 `;
@@ -86,7 +142,7 @@ const POST_LIST_FIELDS = /* groq */ `
   _id,
   title,
   "slug": slug.current,
-  category,
+  category->{ title, "slug": slug.current, "listed": listed == true },
   color,
   tagline,
   excerpt,
