@@ -6,13 +6,14 @@
  *
  * MIGRATION TEMPLATE NOTE:
  *   "View Work" reveals the catalog (display:none → block) and smooth-scrolls
- *   to it. Arriving with #work in the URL (e.g. "Back to work" from a detail
+ *   to it. The hero itself is now <HeroVideo> (scroll-scrubbed clip); the old
+ *   GSAP layer timeline lives on in HeroCollage.tsx until the video is signed off. Arriving with #work in the URL (e.g. "Back to work" from a detail
  *   page) auto-reveals + scrolls on mount. Scrolling back up returns to the
  *   collage animation — no separate route, no missing navigation.
  */
 
 import { useState, useEffect, useCallback } from "react";
-import { HeroCollage } from "./HeroCollage";
+import { HeroVideo } from "./HeroVideo";
 import { WorkSection } from "./WorkSection";
 import type { Category, ProjectListItem } from "@/lib/types";
 
@@ -48,7 +49,7 @@ export function HomeExperience({
 
   return (
     <>
-      <HeroCollage onViewWork={() => revealWork(true)} />
+      <HeroVideo onViewWork={() => revealWork(true)} />
       <WorkSection
         projects={projects}
         featured={featured}

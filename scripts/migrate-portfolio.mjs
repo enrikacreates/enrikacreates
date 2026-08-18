@@ -95,8 +95,17 @@ const assetCache = new Map();
 async function uploadImage(localPath) {
   if (!localPath) return null;
   if (assetCache.has(localPath)) return assetCache.get(localPath);
-  const filePath = path.join(ROOT, "public", localPath.replace(/^\//, ""));
-  if (!existsSync(filePath)) {
+  // These source images were moved out of public/ once they lived in Sanity:
+  // shipping 50MB of already-uploaded originals on every deploy is pure waste.
+  // Look in public/ first (for anything still served directly), then in the
+  // out-of-tree source folder.
+  const rel = localPath.replace(/^\//, "");
+  const candidates = [
+    path.join(ROOT, "public", rel),
+    path.join(ROOT, "_source-images", "migration-assets", rel),
+  ];
+  const filePath = candidates.find((c) => existsSync(c));
+  if (!filePath) {
     console.warn(`  ⚠ missing: ${localPath}`);
     return null;
   }

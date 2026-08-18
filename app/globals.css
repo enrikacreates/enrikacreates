@@ -140,6 +140,44 @@ body {
   pointer-events: none;
 }
 
+/* The video hero doesn't need the masking band: the rendered clip already has
+   a finished bottom edge, so a solid block just crops the sewing machine and
+   typewriter off. A short gradient keeps the footing without eating content. */
+.hero-pin--video::after {
+  height: 26%;
+  background: linear-gradient(to bottom, transparent, var(--off-white) 55%);
+}
+
+/* Scroll-scrubbed hero video (replaces the collage layer stack).
+   multiply drops the clip's near-white (#FEFEFE) matte into the cream page
+   background, so the collage reads as cut out with no visible video box.
+   The cream is light enough that the darkening is imperceptible. */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+
+/* Portrait phones: the 16:9 clip would crop her out of frame under `cover`,
+   so fit the whole collage and let it sit above the fold band. */
+@media (max-width: 768px) {
+  .hero-video {
+    object-fit: contain;
+  }
+}
+
+/* The overlays are driven from JS (see HeroVideo), so they start hidden and
+   get their opacity/transform set per frame. Transition would fight the scrub. */
+.hero-quote,
+.view-work-cue {
+  opacity: 0;
+}
+
 /* Collage layers */
 .hero-collage {
   position: absolute;

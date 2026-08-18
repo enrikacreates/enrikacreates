@@ -37,3 +37,5 @@ yarn-error.log*
 
 # TypeScript incremental build info
 tsconfig.tsbuildinfo
+_source-images/
+public/_review/
