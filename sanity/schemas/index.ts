@@ -15,6 +15,7 @@ import { galleryItem } from "./objects/galleryItem";
 import { pullQuote } from "./objects/pullQuote";
 
 // Document types (top-level)
+import { category } from "./documents/category";
 import { project } from "./documents/project";
 import { blogPost } from "./documents/blogPost";
 import { siteSettings } from "./documents/siteSettings";
@@ -26,6 +27,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   galleryItem,
   pullQuote,
   // then documents
+  category,
   project,
   blogPost,
   siteSettings,

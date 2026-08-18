@@ -1,6 +1,6 @@
 /**
- * Project — a portfolio entry (the "work" cards on /, /fashion, /web, etc.
- * and the detail page at /work/[slug]).
+ * Project — a portfolio entry (the "work" cards on /, /mobile, /web, /all, and
+ * the detail page at /work/[slug]).
  *
  * MIGRATION TEMPLATE NOTE:
  *   This schema maps 1:1 to the legacy PORTFOLIO array shape from script.js,
@@ -46,20 +46,12 @@ export const project = defineType({
     defineField({
       name: "category",
       title: "Category",
-      type: "string",
+      type: "reference",
       group: "details",
-      options: {
-        list: [
-          { title: "Fashion", value: "fashion" },
-          { title: "Product", value: "product" },
-          { title: "Apps", value: "apps" },
-          { title: "Web", value: "web" },
-          { title: "Event", value: "event" },
-          { title: "Writing", value: "writing" },
-        ],
-        layout: "radio",
-        direction: "horizontal",
-      },
+      to: [{ type: "category" }],
+      description:
+        "Which section this project belongs to. Manage the list itself under " +
+        "Categories, including whether a category is shown publicly.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -219,7 +211,7 @@ export const project = defineType({
   preview: {
     select: {
       title: "title",
-      subtitle: "category",
+      subtitle: "category.title",
       media: "leadImage",
       year: "year",
       featured: "featured",

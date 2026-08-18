@@ -13,17 +13,20 @@
 
 import {
   getSiteSettings,
-  getAllProjects,
+  getListedProjects,
   getFeaturedProjects,
+  getListedCategories,
 } from "@/lib/sanity/fetch";
 import { HeroLogo } from "@/components/HeroLogo";
 import { HomeExperience } from "@/components/HomeExperience";
 
 export default async function HomePage() {
-  const [settings, projects, featured] = await Promise.all([
+  // Public surfaces show public categories only. The full set lives at /all.
+  const [settings, projects, featured, categories] = await Promise.all([
     getSiteSettings(),
-    getAllProjects(),
+    getListedProjects(),
     getFeaturedProjects(),
+    getListedCategories(),
   ]);
 
   return (
@@ -36,7 +39,11 @@ export default async function HomePage() {
         }
       />
 
-      <HomeExperience projects={projects} featured={featured} />
+      <HomeExperience
+        projects={projects}
+        featured={featured}
+        categories={categories}
+      />
     </>
   );
 }

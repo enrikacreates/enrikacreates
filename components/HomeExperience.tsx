@@ -1,50 +1,50 @@
 "use client";
 
 /**
- * Home experience — coordinates the collage hero + the work catalog on a
- * single page (vanilla single-page model).
+ * Home experience — the scrubbed hero followed by the work catalog.
  *
- * MIGRATION TEMPLATE NOTE:
- *   "View Work" reveals the catalog (display:none → block) and smooth-scrolls
- *   to it. Arriving with #work in the URL (e.g. "Back to work" from a detail
- *   page) auto-reveals + scrolls on mount. Scrolling back up returns to the
- *   collage animation — no separate route, no missing navigation.
+ * The catalog used to be hidden (display:none) until "View Work" was clicked.
+ * It now simply follows the hero in normal document flow, so continuing to
+ * scroll past the reveal carries you straight into the work. The cue is a
+ * scroll affordance rather than a switch: it points at where you are already
+ * heading instead of gating it.
+ *
+ * The hero is <HeroVideo> (scroll-scrubbed clip); the old GSAP layer timeline
+ * lives on in HeroCollage.tsx until the video is signed off.
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { HeroCollage } from "./HeroCollage";
+import { useCallback } from "react";
+import { HeroVideo } from "./HeroVideo";
 import { WorkSection } from "./WorkSection";
-import type { ProjectListItem } from "@/lib/types";
+import type { Category, ProjectListItem } from "@/lib/types";
 
 interface HomeExperienceProps {
   projects: ProjectListItem[];
   featured: ProjectListItem[];
+  categories: Category[];
 }
 
-export function HomeExperience({ projects, featured }: HomeExperienceProps) {
-  const [revealed, setRevealed] = useState(false);
-
-  const revealWork = useCallback((smooth = true) => {
-    setRevealed(true);
-    // Wait for the section to render (display:none → block) before scrolling.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        document
-          .getElementById("work")
-          ?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
-      });
-    });
+export function HomeExperience({
+  projects,
+  featured,
+  categories,
+}: HomeExperienceProps) {
+  // The catalog is always in the document, so this is purely a scroll jump.
+  // /#work still works on arrival without any JS, for the same reason.
+  const scrollToWork = useCallback(() => {
+    document
+      .getElementById("work")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
-
-  // Deep-link: /#work (e.g. "Back to work" from a detail page) reveals + jumps.
-  useEffect(() => {
-    if (window.location.hash === "#work") revealWork(false);
-  }, [revealWork]);
 
   return (
     <>
-      <HeroCollage onViewWork={() => revealWork(true)} />
-      <WorkSection projects={projects} featured={featured} revealed={revealed} />
+      <HeroVideo onViewWork={scrollToWork} />
+      <WorkSection
+        projects={projects}
+        featured={featured}
+        categories={categories}
+      />
     </>
   );
 }

@@ -54,20 +54,23 @@ Two ways — they coexist:
 app/
 ├── (site)/                  ← public pages: footer + floating actions chrome
 │   ├── page.tsx             ← home (single page: hero → collage → catalog)
+│   ├── [category]/          ← /mobile, /web, /fashion, ... and /all
 │   ├── work/[slug]/         ← project detail (SSR, deep-linkable)
 │   └── blog/ , blog/[slug]/ ← journal index + post
 ├── studio/[[...tool]]/      ← embedded Sanity Studio (outside the (site) group)
+├── sitemap.ts , robots.ts   ← public read only (see "Categories" below)
 └── layout.tsx               ← root html/body/fonts
 
-components/                  ← HeroLogo, HeroCollage, WorkSection, ProjectCard,
+components/                  ← HeroLogo, HeroCollage, WorkSection, CategoryNav, ProjectCard,
                                CardInner, Slideshow, Gallery, FloatingActions,
                                SiteFooter, PortableTextBody, HomeExperience
 lib/
 ├── sanity/                  ← client, env, image URL builder, queries, fetch
 ├── types.ts                 ← hand-written TS interfaces (matches schemas)
 └── colorUtils.ts            ← isDarkColor + filter labels
-sanity/schemas/              ← project, blogPost, siteSettings + objects
-scripts/                     ← migrate-portfolio.mjs, seed-settings.mjs
+sanity/schemas/              ← category, project, blogPost, siteSettings + objects
+scripts/                     ← seed-categories.mjs, seed-projects.mjs,
+                               migrate-portfolio.mjs, seed-settings.mjs
 ```
 
 **Single-page model:** the home page renders the hero animation AND the work
@@ -76,6 +79,60 @@ returns to the animation. Only individual project/blog pages are separate
 routes (for deep-linking + SEO).
 
 ---
+
+## Categories, routes, and what's public
+
+Categories are **documents**, not a hard-coded list, so adding, renaming,
+reordering, or hiding a section is a content change in the Studio rather than a
+deploy. Each one has a `slug` (its route) and a **Show publicly** toggle
+(`listed`).
+
+| | Listed category | Hidden category |
+|---|---|---|
+| Own route (`/mobile`, `/fashion`) | yes | **yes** |
+| Filter bar pill | yes | no |
+| Home catalog + featured row | yes | no |
+| Included in `/all` | yes | yes |
+| `sitemap.xml` | yes | no |
+| Search engines | indexed | `noindex` |
+
+Today **Mobile** and **Web** are listed and everything else is hidden, so the
+site reads as a focused product-design portfolio. Nothing is deleted: every
+hidden category stays live at its own URL, and **`/all`** shows the complete
+range across every discipline. `/all` is linked from nowhere and carries
+`noindex`, so it exists to be handed to a specific person.
+
+Two deliberate details:
+
+- **`robots.txt` does not list the hidden routes.** It's a public file, so
+  disallowing `/fashion` would advertise `/fashion`. It also blocks crawling,
+  and an uncrawled page never gets to show its `noindex`. The hidden routes stay
+  crawlable and carry `noindex` from `generateMetadata` instead.
+- **Reserved slugs.** The category schema refuses `all`, `work`, `blog`,
+  `studio`, `api`, and `assets`, so a Studio edit can't shadow a real route.
+
+### Managing it in the Studio
+
+`Projects` splits four ways: **All projects**, **By category** (drills through
+the category documents themselves, so a new category appears with no code
+change, and creating a project from inside one pre-fills its category),
+**Featured**, and **Needs a story** (anything still missing challenge, action,
+or result). `Categories` is where the routes and the public/hidden toggles live.
+
+### Seeding
+
+```bash
+node scripts/seed-categories.mjs        # creates categories + migrates projects onto them
+node scripts/seed-categories.mjs --force  # reset category docs to the defaults in the file
+node scripts/seed-projects.mjs --dry    # preview the case-study seed
+node scripts/seed-projects.mjs          # write it
+```
+
+Both are idempotent. `seed-categories` uses `createIfNotExists`, so Studio edits
+to a title, blurb, order, or toggle survive a re-run. `seed-projects` only ever
+sets the story fields, so uploaded lead images, slideshows, and galleries are
+never touched. Images are added through the Studio, where the hotspot can be set
+by eye.
 
 ## The migration playbook (vanilla → Next.js + Sanity)
 

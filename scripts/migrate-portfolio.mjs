@@ -95,8 +95,17 @@ const assetCache = new Map();
 async function uploadImage(localPath) {
   if (!localPath) return null;
   if (assetCache.has(localPath)) return assetCache.get(localPath);
-  const filePath = path.join(ROOT, "public", localPath.replace(/^\//, ""));
-  if (!existsSync(filePath)) {
+  // These source images were moved out of public/ once they lived in Sanity:
+  // shipping 50MB of already-uploaded originals on every deploy is pure waste.
+  // Look in public/ first (for anything still served directly), then in the
+  // out-of-tree source folder.
+  const rel = localPath.replace(/^\//, "");
+  const candidates = [
+    path.join(ROOT, "public", rel),
+    path.join(ROOT, "_source-images", "migration-assets", rel),
+  ];
+  const filePath = candidates.find((c) => existsSync(c));
+  if (!filePath) {
     console.warn(`  ⚠ missing: ${localPath}`);
     return null;
   }
@@ -106,6 +115,22 @@ async function uploadImage(localPath) {
   const ref = { _type: "image", asset: { _type: "reference", _ref: asset._id } };
   assetCache.set(localPath, ref);
   return ref;
+}
+
+/**
+ * `project.category` used to be a plain string. It's a reference to a
+ * `category` document now, so the legacy PORTFOLIO values are mapped onto the
+ * deterministic ids that scripts/seed-categories.mjs creates. Run that script
+ * first: this one only points at the categories, it doesn't create them.
+ */
+const LEGACY_CATEGORY_SLUGS = {
+  apps: "mobile",
+  event: "events",
+};
+
+function categoryRef(legacyValue) {
+  const slug = LEGACY_CATEGORY_SLUGS[legacyValue] ?? legacyValue;
+  return { _type: "reference", _ref: `category-${slug}` };
 }
 
 async function migrate() {
@@ -135,7 +160,7 @@ async function migrate() {
       _type: "project",
       title: p.title,
       slug: { _type: "slug", current: slug },
-      category: p.category,
+      category: categoryRef(p.category),
       color: p.color,
       year: p.year,
       tagline: p.tagline || "",

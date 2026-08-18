@@ -32,7 +32,7 @@ export default async function SiteLayout({
       {children}
       <SiteFooter settings={settings} />
       <FloatingActions
-        contactEmail={settings?.contactEmail ?? "enrika@smallgorillamarketing.com"}
+        contactEmail={settings?.contactEmail ?? "enrika@smallgorillacreative.com"}
         newsletterTitle={settings?.newsletterTitle ?? "Enrika Creates"}
         newsletterSub={settings?.newsletterSub ?? "One letter. Four threads woven together."}
         threads={

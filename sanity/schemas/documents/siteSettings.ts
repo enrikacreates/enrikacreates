@@ -144,7 +144,7 @@ initialValue: "Enrika Creates",
       type: "string",
       description: "Used by the floating email button + 'mailto:' links.",
       validation: (Rule) => Rule.required().email(),
-      initialValue: "enrika@smallgorillamarketing.com",
+      initialValue: "enrika@smallgorillacreative.com",
     }),
     defineField({
       name: "footerCopy",
