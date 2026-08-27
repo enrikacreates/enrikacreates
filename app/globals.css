@@ -143,40 +143,6 @@ body {
   pointer-events: none;
 }
 
-/* Carries the tagline into the collapsed nav, where the centre would otherwise
-   sit empty between the mark and the EMAIL / NEWSLETTER links. Retires as the
-   work section's own filter bar docks (--nav-centre), since that bar centres
-   its own pills and the two would collide.
-
-   Desktop only: below 900px there isn't room for a mark, a tagline and two
-   links on one row without it becoming a scrum. */
-.hero-nav-tagline {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  height: var(--hero-nav-height, 72px);
-  display: flex;
-  align-items: center;
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: 0.65rem;
-  font-weight: 400;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--gold-dim);
-  white-space: nowrap;
-  opacity: calc(var(--logo-shift, 0) * var(--nav-centre, 1));
-  z-index: 810;
-  pointer-events: none;
-}
-
-@media (max-width: 900px) {
-  .hero-nav-tagline {
-    display: none;
-  }
-}
-
 /* The corner mark. Fixed, so it holds its place once the hero has released. */
 .hero-nav-mark {
   position: fixed;
@@ -338,10 +304,17 @@ body {
   /* Reserve a clean strip at the bottom. The quote used to land at 630-689
      while the collage ran to 717 and the bottom wash started at 611, so it sat
      on the artwork inside the fade. Now the clip stops above it. */
-  inset: 0 0 var(--hero-video-reserve, 200px) 0;
+  /* Height is stated outright rather than via a bottom offset. `inset: 0 0 Xpx
+     0` plus `height: 100%` is over-constrained, so the browser drops the bottom
+     offset and the box becomes the full pin: the clip then overflowed upward
+     and the pin's top edge cut 119px against a 114px empty band, slicing the
+     hummingbird and lightbulb. Stating the height keeps the reserve real. */
+  top: 0;
+  left: 0;
+  right: 0;
   margin: auto;
   width: 100%;
-  height: auto;
+  height: calc(100% - var(--hero-video-reserve, 160px));
   max-width: var(--hero-video-max-w);
   max-height: calc(var(--hero-video-max-w) * 9 / 16);
   object-fit: contain;

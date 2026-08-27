@@ -24,8 +24,6 @@ interface HomeExperienceProps {
   categories: Category[];
   /** The logo hero, rendered on the server and slotted into the sticky stage. */
   heroLogo: React.ReactNode;
-  /** Repeated in the collapsed nav, where the centre would otherwise sit empty. */
-  tagline: string;
 }
 
 /**
@@ -55,7 +53,6 @@ export function HomeExperience({
   featured,
   categories,
   heroLogo,
-  tagline,
 }: HomeExperienceProps) {
   const stageRef = useRef<HTMLDivElement>(null);
 
@@ -165,9 +162,6 @@ export function HomeExperience({
             so they hold the corner once the hero stage has released.
             Decorative: the real heading lives in the lockup above. */}
         <div className="hero-nav-bar" aria-hidden="true" />
-        <p className="hero-nav-tagline" aria-hidden="true">
-          {tagline}
-        </p>
         <div className="hero-nav-mark" aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/enrikamark2.svg" alt="" draggable={false} />
