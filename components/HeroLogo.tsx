@@ -42,11 +42,6 @@ export function HeroLogo({ tagline, statement }: HeroLogoProps) {
         </p>
       </div>
 
-      {/* Scroll cue */}
-      <div className="scroll-cue">
-        <span />
-        <p className="scroll-cue-text">Scroll to reveal</p>
-      </div>
     </section>
   );
 }
