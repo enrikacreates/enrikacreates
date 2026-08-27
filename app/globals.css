@@ -112,7 +112,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  /* The lockup has to fit inside the sticky block, which is a fixed 34vh and
+     clips. At 458x800 the fixed 2rem gaps left the lockup 268px inside a 272px
+     box: 4px of slack, so a narrower viewport or a third line of statement text
+     would have cut the wordmark. Scaling the gap buys the room back where it is
+     tight and changes nothing on desktop. */
+  gap: clamp(0.85rem, 2.4vw, 2rem);
   opacity: 0;
   animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
 }
@@ -207,6 +212,20 @@ body {
   height: calc(100vh - var(--hero-logo-height));
 }
 
+/* Softens the seam under the wordmark. Even with the lift within its measured
+   ceiling, a razor edge here would read as a mask; a short fade never does. */
+.hero-pin--video::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8%;
+  background: linear-gradient(to bottom, var(--off-white), transparent);
+  z-index: 6;
+  pointer-events: none;
+}
+
 .hero-pin--video::after {
   height: 26%;
   background: linear-gradient(to bottom, transparent, var(--off-white) 55%);
@@ -241,10 +260,15 @@ body {
      gap under the wordmark. Lift it so the foliage starts right below the
      tagline; the pin clips the overflow.
 
-     Measured ceiling: the empty band is 174px on the closed frame but only
-     114px (15.8% of frame height) on the revealed frame, which is the binding
-     one. Past roughly -24% the hummingbird and lightbulb start getting cut. */
-  transform: translateY(var(--hero-video-shift, -16%));
+     Measured ceiling: the empty band is 24.2% of frame height on the closed
+     frame but only 15.8% on the revealed frame, which is the binding one.
+
+     This is a percentage of the *rendered* frame, so it has to stay under 15.8%
+     at every pin size. -16% was safe while the pin was a full 100vh, but once
+     the sticky wordmark took 34vh the pin dropped to 529px and -16% resolved to
+     85px against an 84px band, cutting the hummingbird and lightbulb off with a
+     hard horizontal edge. -11% leaves roughly 25px of margin. */
+  transform: translateY(var(--hero-video-shift, -11%));
 }
 
 /* The overlays are driven from JS (see HeroVideo), so they start hidden and

@@ -43,6 +43,10 @@ const LOGO_SHIFT_END_PX = 900;
 /** Must match the scale factor in .hero-logo .logomark. */
 const LOGO_COLLAPSE_SCALE = 0.34;
 
+/** Sticky block sizing: the larger of this share of the viewport, or the lockup. */
+const LOGO_BLOCK_BASE_VH = 0.34;
+const LOGO_BLOCK_PADDING_PX = 28;
+
 export function HomeExperience({
   projects,
   featured,
@@ -88,6 +92,24 @@ export function HomeExperience({
      * The left margin is read off the EMAIL / NEWSLETTER block so the two ends
      * of the masthead are inset by exactly the same amount.
      */
+    /**
+     * The sticky block has a fixed height (the collage pin is positioned off it)
+     * and clips, so it has to be tall enough for the lockup at the current
+     * width. Chasing that with breakpoints kept failing by a few pixels as the
+     * statement rewrapped, so it is derived from the content instead: 34vh
+     * unless the lockup genuinely needs more.
+     */
+    function measureLogoHeight() {
+      const inner = stage!.querySelector<HTMLElement>(".hero-logo-inner");
+      if (!inner) return;
+      const needed = inner.scrollHeight + LOGO_BLOCK_PADDING_PX;
+      const base = window.innerHeight * LOGO_BLOCK_BASE_VH;
+      stage!.style.setProperty(
+        "--hero-logo-height",
+        `${Math.round(Math.max(base, needed))}px`
+      );
+    }
+
     function measureShift() {
       const mark = stage!.querySelector<HTMLElement>(".logomark");
       if (!mark) return;
@@ -108,12 +130,13 @@ export function HomeExperience({
     }
 
     function onResize() {
+      // Height first: the shift measurement depends on the resulting layout.
+      measureLogoHeight();
       measureShift();
       apply();
     }
 
-    measureShift();
-    apply();
+    onResize();
     window.addEventListener("scroll", apply, { passive: true });
     window.addEventListener("resize", onResize);
     return () => {
