@@ -676,6 +676,23 @@ body {
   border-bottom: 1px solid rgba(44, 37, 32, 0.06);
 }
 
+/* A strip of the page colour hanging just below the hairline, masking the cards
+   a little before they reach it. Without it a card's top edge vanishes exactly
+   on the line, so the two read as touching; this leaves a consistent gap as
+   they scroll up and keeps the rule looking like a boundary rather than a
+   cutting edge. Lives on the bar so it inherits the sticky position and the
+   z-index that puts it over the grid. */
+.filter-bar::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 1.25rem;
+  background: var(--black);
+  pointer-events: none;
+}
+
 .filter-btn {
   font-family: var(--font-body);
   font-size: 0.8rem;
