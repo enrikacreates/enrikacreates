@@ -41,7 +41,10 @@ const LOGO_SHIFT_START_PX = 460;
 const LOGO_SHIFT_END_PX = 900;
 
 /** Must match the scale factor in .hero-logo .logomark. */
-const LOGO_COLLAPSE_SCALE = 0.34;
+const LOGO_COLLAPSE_SCALE = 0.7;
+
+/** Must match --hero-nav-height. The collapsed bar the wordmark settles into. */
+const NAV_HEIGHT_PX = 72;
 
 /** Sticky block sizing: the larger of this share of the viewport, or the lockup. */
 const LOGO_BLOCK_BASE_VH = 0.34;
@@ -127,6 +130,19 @@ export function HomeExperience({
       const collapsedWidth = mark.offsetWidth * (1 - LOGO_COLLAPSE_SCALE);
       const distance = viewport / 2 - collapsedWidth / 2 - pad;
       stage!.style.setProperty("--logo-shift-distance", `${-distance}px`);
+
+      /**
+       * How far up the lockup travels to centre the collapsed wordmark in the
+       * nav bar. Computed from layout offsets rather than getBoundingClientRect
+       * so the current transform doesn't feed back into its own input.
+       */
+      const inner = stage!.querySelector<HTMLElement>(".hero-logo-inner");
+      if (inner) {
+        const markCentreInBlock =
+          inner.offsetTop + mark.offsetTop + mark.offsetHeight / 2;
+        const rise = NAV_HEIGHT_PX / 2 - markCentreInBlock;
+        stage!.style.setProperty("--logo-rise-distance", `${rise}px`);
+      }
     }
 
     function onResize() {
