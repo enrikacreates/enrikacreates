@@ -322,10 +322,18 @@ body {
   z-index: 1;
   mix-blend-mode: multiply;
 
-  /* The collage sits in the lower two thirds of its own frame, so the clip
-     carries a band of empty white above it. Left centred, that band reads as a
-     gap under the wordmark. Lift it so the foliage starts right below the
-     tagline; the pin clips the overflow.
+  /* No lift, and it must stay that way.
+
+     The lift existed to pull the collage up under the wordmark, back when the
+     block above it was a fixed 34vh. Now that the bar shrinks as it collapses,
+     it already does that job, and the lift became actively harmful: the pin is
+     sticky, so before it reaches its offset it sits *higher* than the bar's
+     bottom edge, and the lift pushed the artwork up into that overlap. Measured
+     mid-collapse: pin top 42, bar bottom 149, artwork top 103, so 46px of the
+     collage was hidden behind the bar and read as a hard cut across the top.
+
+     At 0 the artwork always starts a full empty band below the pin's top, which
+     clears the bar at every point in the collapse.
 
      Measured ceiling: the empty band is 24.2% of frame height on the closed
      frame but only 15.8% on the revealed frame, which is the binding one.
@@ -335,7 +343,7 @@ body {
      the sticky wordmark took 34vh the pin dropped to 529px and -16% resolved to
      85px against an 84px band, cutting the hummingbird and lightbulb off with a
      hard horizontal edge. -11% leaves roughly 25px of margin. */
-  transform: translateY(var(--hero-video-shift, -11%));
+  transform: translateY(var(--hero-video-shift, 0%));
 
 }
 
