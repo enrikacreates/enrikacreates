@@ -25,7 +25,9 @@
 
 html {
   overflow-x: clip;
-  scroll-snap-type: y proximity;
+  /* No scroll snapping. The hero is scrubbed by scroll position, and snapping
+     swallowed any gesture shorter than the snap distance (measured: anything
+     under ~250px sprang back to 0), so the start of every scroll did nothing. */
 }
 
 body {
@@ -55,7 +57,6 @@ body {
   padding: 3rem 1.5rem 0;
   background: var(--off-white);
   overflow: hidden;
-  scroll-snap-align: start;
 }
 
 .hero-logo-inner {
@@ -386,7 +387,6 @@ body {
   z-index: 2;
   min-height: 100vh;
   background: var(--black);
-  scroll-snap-align: start;
   display: block;
 }
 

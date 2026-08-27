@@ -77,20 +77,33 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
     let raf = 0;
     let running = true;
 
-    /** Scroll position through the sticky zone, 0 to 1. */
+    /**
+     * Scroll position through the reveal, 0 to 1.
+     *
+     * Measured from the document top rather than from the moment the pin
+     * sticks. Anchoring to the pin meant the first stretch of scroll (the whole
+     * height of the logo section above this zone) moved nothing at all, which
+     * read as lag before the animation would start. Now the very first scroll
+     * pixel advances the reveal.
+     */
     function progress() {
       const rect = zone!.getBoundingClientRect();
       const travel = rect.height - window.innerHeight;
       if (travel <= 0) return 0;
-      return Math.min(1, Math.max(0, -rect.top / travel));
+      const zoneTopInDoc = rect.top + window.scrollY;
+      const total = zoneTopInDoc + travel;
+      if (total <= 0) return 0;
+      return Math.min(1, Math.max(0, window.scrollY / total));
     }
 
-    /** Fade the quote and the cue in over their own slices of the scroll. */
+    /** Fade the quote and the cue in over their own slices of the scroll.
+     *  Pulled earlier so the text lands while the collage is still opening,
+     *  instead of leaving a long stretch of empty cream below it. */
     function paintOverlays(p: number) {
       const band = (from: number, to: number) =>
         Math.min(1, Math.max(0, (p - from) / (to - from)));
 
-      const quoteAt = band(0.5, 0.68);
+      const quoteAt = band(0.44, 0.6);
       if (quoteRef.current) {
         quoteRef.current.style.opacity = String(quoteAt);
         // The quote is centred with translateX(-50%) in CSS, so the rise has to
@@ -99,7 +112,7 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
           `translate(-50%, ${(1 - quoteAt) * 20}px)`;
       }
 
-      const cueAt = band(0.84, 0.96);
+      const cueAt = band(0.72, 0.86);
       if (cueRef.current) {
         cueRef.current.style.opacity = String(cueAt);
         cueRef.current.style.transform = `translateY(${(1 - cueAt) * 10}px)`;
