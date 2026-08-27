@@ -30,18 +30,16 @@ interface HomeExperienceProps {
  * The wordmark settles in two moves, both driven by scroll distance.
  *
  *   1. Collapse: full hero lockup shrinks to a compact masthead, still centred.
- *   2. Shift: once collapsed, it slides left into the corner, clearing the
- *      centre for the collage and putting real distance between it and the
- *      EMAIL / NEWSLETTER links on the right.
+ *   2. Hand-off: the centred wordmark fades out while a fixed corner mark fades
+ *      in. This was a slide at first, but travelling the wordmark across the
+ *      screen read as a gimmick; a cross-fade is quieter and lands the same
+ *      place. The corner mark is fixed, so it stays put past the hero.
  *
  * It stays stuck at the top throughout either way; these only control pacing.
  */
 const LOGO_COLLAPSE_PX = 420;
 const LOGO_SHIFT_START_PX = 460;
 const LOGO_SHIFT_END_PX = 900;
-
-/** Must match the scale factor in .hero-logo .logomark. */
-const LOGO_COLLAPSE_SCALE = 0.7;
 
 /** Must match --hero-nav-height. The collapsed bar the wordmark settles into. */
 const NAV_HEIGHT_PX = 72;
@@ -62,7 +60,7 @@ export function HomeExperience({
    * The logo is sticky for the length of the hero stage, so it never scrolls
    * away mid-animation. Two scroll-driven customs do the rest, both consumed by
    * CSS as transforms and opacity only, so neither costs any layout:
-   * --logo-collapse (shrink) and --logo-shift (slide to the corner).
+   * --logo-collapse (shrink) and --logo-shift (hand off to the corner mark).
    */
   useEffect(() => {
     const stage = stageRef.current;
@@ -87,15 +85,6 @@ export function HomeExperience({
       );
     }
     /**
-     * How far left the lockup has to travel to sit against the margin.
-     *
-     * This cannot be a fixed vw value: the wordmark starts centred, so the
-     * distance depends on both viewport width and the collapsed mark width, and
-     * a constant that lands correctly at 894px overshoots off-screen at 1440px.
-     * The left margin is read off the EMAIL / NEWSLETTER block so the two ends
-     * of the masthead are inset by exactly the same amount.
-     */
-    /**
      * The sticky block has a fixed height (the collage pin is positioned off it)
      * and clips, so it has to be tall enough for the lockup at the current
      * width. Chasing that with breakpoints kept failing by a few pixels as the
@@ -113,42 +102,28 @@ export function HomeExperience({
       );
     }
 
-    function measureShift() {
+    /**
+     * How far up the lockup travels to centre the collapsed wordmark in the nav
+     * bar. Computed from layout offsets rather than getBoundingClientRect, so
+     * the transform already applied can't feed back into its own input.
+     */
+    function measureRise() {
       const mark = stage!.querySelector<HTMLElement>(".logomark");
-      if (!mark) return;
-
-      // clientWidth, not innerWidth: innerWidth includes the scrollbar, but the
-      // lockup is centred within the content box. Mixing the two left the
-      // wordmark short of the margin by exactly the scrollbar width.
-      const viewport = document.documentElement.clientWidth;
-
-      const actions = document.querySelector(".top-actions");
-      const pad = actions
-        ? viewport - actions.getBoundingClientRect().right
-        : 32;
-
-      const collapsedWidth = mark.offsetWidth * (1 - LOGO_COLLAPSE_SCALE);
-      const distance = viewport / 2 - collapsedWidth / 2 - pad;
-      stage!.style.setProperty("--logo-shift-distance", `${-distance}px`);
-
-      /**
-       * How far up the lockup travels to centre the collapsed wordmark in the
-       * nav bar. Computed from layout offsets rather than getBoundingClientRect
-       * so the current transform doesn't feed back into its own input.
-       */
       const inner = stage!.querySelector<HTMLElement>(".hero-logo-inner");
-      if (inner) {
-        const markCentreInBlock =
-          inner.offsetTop + mark.offsetTop + mark.offsetHeight / 2;
-        const rise = NAV_HEIGHT_PX / 2 - markCentreInBlock;
-        stage!.style.setProperty("--logo-rise-distance", `${rise}px`);
-      }
+      if (!mark || !inner) return;
+
+      const markCentreInBlock =
+        inner.offsetTop + mark.offsetTop + mark.offsetHeight / 2;
+      stage!.style.setProperty(
+        "--logo-rise-distance",
+        `${NAV_HEIGHT_PX / 2 - markCentreInBlock}px`
+      );
     }
 
     function onResize() {
-      // Height first: the shift measurement depends on the resulting layout.
+      // Height first: the rise measurement depends on the resulting layout.
       measureLogoHeight();
-      measureShift();
+      measureRise();
       apply();
     }
 
@@ -173,6 +148,15 @@ export function HomeExperience({
       {/* One stage so the wordmark stays stuck until the whole hero is done. */}
       <div className="hero-stage" ref={stageRef}>
         {heroLogo}
+
+        {/* Fades in as the centred wordmark fades out. Fixed, so it holds the
+            corner once the hero stage has released. Decorative: the real
+            heading lives in the lockup above. */}
+        <div className="hero-nav-mark" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/enrikamark2.svg" alt="" draggable={false} />
+        </div>
+
         <HeroVideo onViewWork={scrollToWork} />
       </div>
 

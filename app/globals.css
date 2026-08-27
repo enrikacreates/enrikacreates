@@ -110,18 +110,52 @@ body {
 }
 
 .hero-logo .logomark {
-  transform: scale(calc(1 - 0.7 * var(--logo-collapse)));
+  transform: scale(calc(1 - 0.78 * var(--logo-collapse)));
   transform-origin: center;
 }
 
-/* Two beats: rise into the nav bar as it collapses, then slide left into the
-   corner. Both distances are measured at runtime in HomeExperience. */
+/* The lockup only rises into the nav bar; it does not travel sideways. Sliding
+   the wordmark across the screen read as a gimmick, so the move to the corner
+   is a cross-fade instead: this one fades out while .hero-nav-mark fades in. */
 .hero-logo .hero-logo-inner {
-  transform: translate(
-    calc(var(--logo-shift) * var(--logo-shift-distance, 0px)),
-    calc(var(--logo-collapse) * var(--logo-rise-distance, 0px))
-  );
+  transform: translateY(calc(var(--logo-collapse) * var(--logo-rise-distance, 0px)));
   will-change: transform;
+}
+
+/* Opacity lives here rather than on .hero-logo-inner, which owns the entrance
+   animation and would override it, and rather than on .hero-logo, which paints
+   the nav bar and must not fade with it. */
+.hero-logo .logomark {
+  opacity: calc(1 - var(--logo-shift));
+}
+
+/* The corner mark. Fixed, so it holds its place once the hero has released. */
+.hero-nav-mark {
+  position: fixed;
+  top: 1.75rem;
+  left: 2rem;
+  z-index: 810;
+  opacity: var(--logo-shift, 0);
+  pointer-events: none;
+}
+
+/* 110px keeps it inside the 77px filter bar in the work section (at 150px it
+   overhung by 13px and floated onto the cards), and matches the collapsed
+   wordmark's width so the cross-fade reads as one mark, not two. */
+.hero-nav-mark img {
+  display: block;
+  width: 110px;
+  height: auto;
+}
+
+@media (max-width: 600px) {
+  .hero-nav-mark {
+    top: 1.1rem;
+    left: 1.1rem;
+  }
+  .hero-nav-mark img {
+    width: 92px;
+  }
 }
 
 
@@ -294,6 +328,27 @@ body {
      85px against an 84px band, cutting the hummingbird and lightbulb off with a
      hard horizontal edge. -11% leaves roughly 25px of margin. */
   transform: translateY(var(--hero-video-shift, -11%));
+
+}
+
+/* Mid-reveal the collage spans the full frame width with no side margin
+   (measured: 0px left and right bands on frame 60), so the clip's own rectangle
+   edge cuts straight through the leaves.
+
+   That only becomes visible once the viewport is wider than the clip's 1280px
+   cap: below that the video already reaches the viewport edge, where the same
+   boundary reads as "continues off-screen" rather than as a cut. So the feather
+   is scoped to exactly the case that needs it and stays off everywhere else,
+   where a clean edge is better. */
+@media (min-width: 1300px) {
+  .hero-video {
+    -webkit-mask-image: linear-gradient(
+      to right, transparent 0, #000 4%, #000 96%, transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right, transparent 0, #000 4%, #000 96%, transparent 100%
+    );
+  }
 }
 
 /* The overlays are driven from JS (see HeroVideo), so they start hidden and
