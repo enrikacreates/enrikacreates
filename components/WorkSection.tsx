@@ -67,6 +67,10 @@ export function WorkSection({
 
       <div className="work-inner">
         {featured.length > 0 && (
+          <h2 className="work-heading">Featured</h2>
+        )}
+
+        {featured.length > 0 && (
           <div className="sub-hero-inner">
             {featured.map((item, i) => (
               <Link
@@ -77,7 +81,6 @@ export function WorkSection({
                 data-delay={i * 150}
                 style={{ backgroundColor: item.color }}
               >
-                <span className="featured-label">Featured</span>
                 <h3>{item.title}</h3>
                 <p className="featured-cat">{item.tagline}</p>
               </Link>

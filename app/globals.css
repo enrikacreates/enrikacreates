@@ -605,7 +605,23 @@ body {
 }
 
 .work-inner {
-  padding: 2rem 2rem 8rem;
+  /* Generous top padding: the filter bar is sticky and masks a strip beneath
+     it, so content starting at 2rem felt tucked right under the rule. */
+  padding: 4.5rem 2rem 8rem;
+}
+
+/* Section label for a row of cards. Matches the voice of the filter pills and
+   the card eyebrows rather than the display serif of the titles, so it reads as
+   a divider rather than competing with the work underneath it. */
+.work-heading {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
 }
 
 .sub-hero-inner {
@@ -1818,7 +1834,21 @@ body.detail-open {
     height: 300vh;
   }
 
-  .sub-hero-inner {
+  /* Section label for a row of cards. Matches the voice of the filter pills and
+   the card eyebrows rather than the display serif of the titles, so it reads as
+   a divider rather than competing with the work underneath it. */
+.work-heading {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.sub-hero-inner {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
