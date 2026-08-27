@@ -685,7 +685,10 @@ body {
 .filter-bar::after {
   content: '';
   position: absolute;
-  top: 100%;
+  /* +1px for the border. An absolutely positioned child is placed against the
+     padding box, so a plain `top: 100%` starts exactly where border-bottom
+     begins and paints straight over the hairline. */
+  top: calc(100% + 1px);
   left: 0;
   right: 0;
   height: 1.25rem;
