@@ -30,10 +30,16 @@ export function WorkSection({
 }: WorkSectionProps) {
   const [filter, setFilter] = useState("all");
 
+  // The featured row sits directly above the grid, so leaving these in the
+  // catalog too showed each of them twice on one screen. Featured is a tier,
+  // not a copy.
+  const featuredIds = new Set(featured.map((f) => f._id));
+  const catalog = projects.filter((p) => !featuredIds.has(p._id));
+
   const items =
     filter === "all"
-      ? projects
-      : projects.filter((p) => p.category?.slug === filter);
+      ? catalog
+      : catalog.filter((p) => p.category?.slug === filter);
 
   // "All" first, then each public category. Hidden categories are absent by
   // design; they're reachable at their own URL and from /all.
@@ -77,6 +83,10 @@ export function WorkSection({
               </Link>
             ))}
           </div>
+        )}
+
+        {featured.length > 0 && items.length > 0 && (
+          <hr className="work-divider" />
         )}
 
         <div className="catalog-grid" id="catalog-grid">

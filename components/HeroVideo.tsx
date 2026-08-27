@@ -31,12 +31,15 @@ const POSTER = "/assets/hero/hero-poster.jpg";
  * Exponent applied to scroll progress before mapping to video time.
  *
  *   1.0  linear, the clip's own pacing
- *   1.8  current: early frames get more scroll, so the reveal lands late
+ *   1.1  current: a touch of hold at the start, then essentially native
+ *   1.8  previous, and too much: only 5% of the reveal had happened by the
+ *        time the wordmark scrolled away, which read as the animation waiting
+ *        for the logo to leave before starting
  *
  * Raise it to hold the leaves closed for longer, lower it toward 1 to let the
  * clip run at its native pace.
  */
-const TIME_CURVE = 1.8;
+const TIME_CURVE = 1.1;
 
 /** How hard the playhead chases its target each frame. Lower is smoother/laggier. */
 const LERP = 0.12;

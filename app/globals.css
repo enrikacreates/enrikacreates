@@ -120,7 +120,9 @@ body {
 
 .hero-collage-zone {
   position: relative;
-  height: 320vh;
+  /* Shorter than the original 320vh so the reveal resolves in less scroll,
+     which puts more of it on screen while the wordmark is still visible. */
+  height: 240vh;
 }
 
 .hero-pin {
@@ -934,6 +936,14 @@ body {
   opacity: 0;
   transform: scale(0.92) translateY(10px);
   transition: all 0.3s ease;
+}
+
+/* Hairline between the featured tier and the full catalog. */
+.work-divider {
+  max-width: 1200px;
+  margin: 0 auto 3.5rem;
+  border: 0;
+  border-top: 1px solid rgba(44, 37, 32, 0.12);
 }
 
 .catalog-empty {
