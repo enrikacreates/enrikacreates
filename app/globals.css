@@ -282,6 +282,17 @@ body {
    read as haze over the artwork rather than as a finish. Clean edges instead.
    The one exception is the side mask above, which only runs past 1300px where
    the clip's edge is genuinely inset from the viewport. */
+/* Sits below the collapsed wordmark bar and grows as that bar shrinks. Without
+   this the pin falls back to the base top:0 / height:100vh and the collage runs
+   to the very top of the viewport. */
+.hero-pin--video {
+  top: var(--hero-nav-current);
+  height: calc(100vh - var(--hero-nav-current));
+  /* The clip paints over the nav bar (805 against 800) on its way out, so the
+     pin must not clip it back to its own bounds on the way past. */
+  overflow: visible;
+}
+
 .hero-pin--video::after,
 .hero-pin--video::before {
   content: none;
