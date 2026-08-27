@@ -44,7 +44,7 @@ body {
    and the top of the collage. Shortened so the animation starts close under
    the wordmark; --hero-logo-height is the dial. */
 .hero-logo {
-  --hero-logo-height: 56vh;
+  --hero-logo-height: 48vh;
 
   position: relative;
   min-height: var(--hero-logo-height);
@@ -181,8 +181,12 @@ body {
   /* The collage sits in the lower two thirds of its own frame, so the clip
      carries a band of empty white above it. Left centred, that band reads as a
      gap under the wordmark. Lift it so the foliage starts right below the
-     tagline; the pin clips the overflow. */
-  transform: translateY(var(--hero-video-shift, -9%));
+     tagline; the pin clips the overflow.
+
+     Measured ceiling: the empty band is 174px on the closed frame but only
+     114px (15.8% of frame height) on the revealed frame, which is the binding
+     one. Past roughly -24% the hummingbird and lightbulb start getting cut. */
+  transform: translateY(var(--hero-video-shift, -16%));
 }
 
 /* The overlays are driven from JS (see HeroVideo), so they start hidden and
