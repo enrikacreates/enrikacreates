@@ -40,13 +40,19 @@ body {
    HERO 1 — Logo + tagline (static)
    ============================================ */
 
+/* Was a full 100vh, which left roughly 32vh of dead cream between the tagline
+   and the top of the collage. Shortened so the animation starts close under
+   the wordmark; --hero-logo-height is the dial. */
 .hero-logo {
+  --hero-logo-height: 56vh;
+
   position: relative;
-  height: 100vh;
+  min-height: var(--hero-logo-height);
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 3rem 1.5rem 0;
   background: var(--off-white);
   overflow: hidden;
   scroll-snap-align: start;
@@ -171,6 +177,12 @@ body {
   pointer-events: none;
   z-index: 1;
   mix-blend-mode: multiply;
+
+  /* The collage sits in the lower two thirds of its own frame, so the clip
+     carries a band of empty white above it. Left centred, that band reads as a
+     gap under the wordmark. Lift it so the foliage starts right below the
+     tagline; the pin clips the overflow. */
+  transform: translateY(var(--hero-video-shift, -9%));
 }
 
 /* The overlays are driven from JS (see HeroVideo), so they start hidden and
