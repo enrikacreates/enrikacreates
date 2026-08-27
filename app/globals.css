@@ -288,9 +288,16 @@ body {
 .hero-pin--video {
   top: var(--hero-nav-current);
   height: calc(100vh - var(--hero-nav-current));
-  /* The clip paints over the nav bar (805 against 800) on its way out, so the
-     pin must not clip it back to its own bounds on the way past. */
+  /* The clip must not be clipped back to the pin's bounds on the way past. */
   overflow: visible;
+
+  /* This is what actually gets the hero over the nav bar. `position: sticky`
+     always creates a stacking context, so the z-index on .hero-video only ever
+     ordered it *within* this pin; the pin itself stayed at z-index auto and the
+     whole thing painted under the bar's 800 regardless. Raising the pin is the
+     only way out of its own stacking context.
+     Above the bar (800), below the corner mark and the top links (810). */
+  z-index: 805;
 }
 
 .hero-pin--video::after,
@@ -344,13 +351,9 @@ body {
   max-height: calc(var(--hero-video-max-w) * 9 / 16);
   object-fit: contain;
   pointer-events: none;
-  /* Above the nav bar (800), below the corner mark (810).
-     The clip used to sit at z-index 1 and pass *behind* the bar on its way out,
-     which is what read as the collage being clipped on scroll. Painting over it
-     instead costs nothing, because mix-blend-mode: multiply leaves the clip's
-     near-white matte effectively transparent: the bar's cream, and the wordmark
-     sitting on it, still read straight through the empty parts of the frame. */
-  z-index: 805;
+  /* Local ordering inside the pin only. Escaping the pin's stacking context is
+     done by the z-index on .hero-pin--video, not here. */
+  z-index: 1;
   mix-blend-mode: multiply;
 
   /* No lift, and it must stay that way.
