@@ -691,7 +691,7 @@ body {
   top: calc(100% + 1px);
   left: 0;
   right: 0;
-  height: 1.25rem;
+  height: 0.75rem;
   background: var(--black);
   pointer-events: none;
 }
