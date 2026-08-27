@@ -31,18 +31,19 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroLogo
-        tagline={settings?.tagline ?? "Designer. Builder. Storyteller."}
-        statement={
-          settings?.heroStatement ??
-          "I design storytelling experiences that inspire hope and ignite purpose."
-        }
-      />
-
       <HomeExperience
         projects={projects}
         featured={featured}
         categories={categories}
+        heroLogo={
+          <HeroLogo
+            tagline={settings?.tagline ?? "Designer. Builder. Storyteller."}
+            statement={
+              settings?.heroStatement ??
+              "I design storytelling experiences that inspire hope and ignite purpose."
+            }
+          />
+        }
       />
     </>
   );

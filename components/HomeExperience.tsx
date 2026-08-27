@@ -13,7 +13,7 @@
  * lives on in HeroCollage.tsx until the video is signed off.
  */
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { HeroVideo } from "./HeroVideo";
 import { WorkSection } from "./WorkSection";
 import type { Category, ProjectListItem } from "@/lib/types";
@@ -22,13 +22,105 @@ interface HomeExperienceProps {
   projects: ProjectListItem[];
   featured: ProjectListItem[];
   categories: Category[];
+  /** The logo hero, rendered on the server and slotted into the sticky stage. */
+  heroLogo: React.ReactNode;
 }
+
+/**
+ * The wordmark settles in two moves, both driven by scroll distance.
+ *
+ *   1. Collapse: full hero lockup shrinks to a compact masthead, still centred.
+ *   2. Shift: once collapsed, it slides left into the corner, clearing the
+ *      centre for the collage and putting real distance between it and the
+ *      EMAIL / NEWSLETTER links on the right.
+ *
+ * It stays stuck at the top throughout either way; these only control pacing.
+ */
+const LOGO_COLLAPSE_PX = 420;
+const LOGO_SHIFT_START_PX = 460;
+const LOGO_SHIFT_END_PX = 900;
+
+/** Must match the scale factor in .hero-logo .logomark. */
+const LOGO_COLLAPSE_SCALE = 0.34;
 
 export function HomeExperience({
   projects,
   featured,
   categories,
+  heroLogo,
 }: HomeExperienceProps) {
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * The logo is sticky for the length of the hero stage, so it never scrolls
+   * away mid-animation. Two scroll-driven customs do the rest, both consumed by
+   * CSS as transforms and opacity only, so neither costs any layout:
+   * --logo-collapse (shrink) and --logo-shift (slide to the corner).
+   */
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    // Written straight from the scroll handler rather than deferred to rAF:
+    // this only sets two custom properties, and going through rAF meant the
+    // masthead silently stopped updating wherever rAF is throttled.
+    const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
+
+    function apply() {
+      const y = window.scrollY;
+      stage!.style.setProperty(
+        "--logo-collapse",
+        clamp01(y / LOGO_COLLAPSE_PX).toFixed(4)
+      );
+      stage!.style.setProperty(
+        "--logo-shift",
+        clamp01(
+          (y - LOGO_SHIFT_START_PX) / (LOGO_SHIFT_END_PX - LOGO_SHIFT_START_PX)
+        ).toFixed(4)
+      );
+    }
+    /**
+     * How far left the lockup has to travel to sit against the margin.
+     *
+     * This cannot be a fixed vw value: the wordmark starts centred, so the
+     * distance depends on both viewport width and the collapsed mark width, and
+     * a constant that lands correctly at 894px overshoots off-screen at 1440px.
+     * The left margin is read off the EMAIL / NEWSLETTER block so the two ends
+     * of the masthead are inset by exactly the same amount.
+     */
+    function measureShift() {
+      const mark = stage!.querySelector<HTMLElement>(".logomark");
+      if (!mark) return;
+
+      // clientWidth, not innerWidth: innerWidth includes the scrollbar, but the
+      // lockup is centred within the content box. Mixing the two left the
+      // wordmark short of the margin by exactly the scrollbar width.
+      const viewport = document.documentElement.clientWidth;
+
+      const actions = document.querySelector(".top-actions");
+      const pad = actions
+        ? viewport - actions.getBoundingClientRect().right
+        : 32;
+
+      const collapsedWidth = mark.offsetWidth * (1 - LOGO_COLLAPSE_SCALE);
+      const distance = viewport / 2 - collapsedWidth / 2 - pad;
+      stage!.style.setProperty("--logo-shift-distance", `${-distance}px`);
+    }
+
+    function onResize() {
+      measureShift();
+      apply();
+    }
+
+    measureShift();
+    apply();
+    window.addEventListener("scroll", apply, { passive: true });
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("scroll", apply);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
   // The catalog is always in the document, so this is purely a scroll jump.
   // /#work still works on arrival without any JS, for the same reason.
   const scrollToWork = useCallback(() => {
@@ -39,7 +131,12 @@ export function HomeExperience({
 
   return (
     <>
-      <HeroVideo onViewWork={scrollToWork} />
+      {/* One stage so the wordmark stays stuck until the whole hero is done. */}
+      <div className="hero-stage" ref={stageRef}>
+        {heroLogo}
+        <HeroVideo onViewWork={scrollToWork} />
+      </div>
+
       <WorkSection
         projects={projects}
         featured={featured}

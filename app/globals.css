@@ -42,22 +42,70 @@ body {
    HERO 1 — Logo + tagline (static)
    ============================================ */
 
-/* Was a full 100vh, which left roughly 32vh of dead cream between the tagline
-   and the top of the collage. Shortened so the animation starts close under
-   the wordmark; --hero-logo-height is the dial. */
-.hero-logo {
-  --hero-logo-height: 48vh;
+/* The wordmark and the collage share one sticky stage. The logo pins to the
+   top and stays there for the whole hero rather than scrolling away before the
+   animation gets going, and the collage pin sits directly beneath it.
+
+   --logo-collapse (0 to 1, set from HomeExperience on scroll) shrinks the logo
+   from hero size to a compact masthead over the first stretch of scroll, so it
+   stays present without holding half the viewport hostage. */
+.hero-stage {
+  /* Constant. An earlier version interpolated the logo's box height on scroll,
+     which shifted every following element upward as it shrank: the document got
+     shorter mid-gesture, so scroll positions drifted (asking for 200px landed
+     at 122px) and the page felt like it was accelerating. The collapse is now
+     transform and opacity only, which cost no layout. */
+  --hero-logo-height: 34vh;
+  --logo-collapse: 0;
+  --logo-shift: 0;
+  /* Measured at runtime in HomeExperience: depends on viewport width and the
+     collapsed wordmark width, so no fixed value works across breakpoints. */
+  --logo-shift-distance: 0px;
 
   position: relative;
-  min-height: var(--hero-logo-height);
+}
+
+/* Pins to the top and stays for the whole hero, so the animation never has to
+   wait for the wordmark to scroll away. It releases when the stage ends. */
+.hero-logo {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--hero-logo-height);
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem 1.5rem 0;
+  padding: 0 1.5rem;
   background: var(--off-white);
   overflow: hidden;
 }
+
+/* The supporting lines go first, the wordmark just gets smaller: it reads as a
+   masthead once you are into the collage. Both are compositor-only. */
+.hero-logo .logo-subtitle,
+.hero-logo .hero-statement {
+  opacity: calc(1 - var(--logo-collapse) * 1.7);
+  transition: none;
+}
+
+.hero-logo .logomark {
+  transform: scale(calc(1 - 0.34 * var(--logo-collapse)));
+  transform-origin: center;
+}
+
+/* Second move: slide the lockup into the left corner once it has collapsed. */
+.hero-logo .hero-logo-inner {
+  transform: translateX(calc(var(--logo-shift) * var(--logo-shift-distance)));
+  will-change: transform;
+}
+
+.logomark {
+  transform: scale(calc(1 - 0.42 * var(--logo-collapse)));
+  transform-origin: center;
+}
+
+
 
 .hero-logo-inner {
   text-align: center;
@@ -152,6 +200,13 @@ body {
 /* The video hero doesn't need the masking band: the rendered clip already has
    a finished bottom edge, so a solid block just crops the sewing machine and
    typewriter off. A short gradient keeps the footing without eating content. */
+/* Sits directly below the sticky wordmark rather than under it, so both are on
+   screen at once and the collage is never occluded. */
+.hero-pin--video {
+  top: var(--hero-logo-height);
+  height: calc(100vh - var(--hero-logo-height));
+}
+
 .hero-pin--video::after {
   height: 26%;
   background: linear-gradient(to bottom, transparent, var(--off-white) 55%);
