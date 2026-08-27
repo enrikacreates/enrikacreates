@@ -92,6 +92,24 @@ export function HomeExperience({
           (y - LOGO_SHIFT_START_PX) / (LOGO_SHIFT_END_PX - LOGO_SHIFT_START_PX)
         ).toFixed(4)
       );
+
+      /**
+       * Whether the clip's own left/right edge is visible inside the page.
+       *
+       * This can't be a media query. The clip is capped at 1280px for
+       * sharpness, but `contain` also fits it by height, so once the quote
+       * reserve shrinks the box it paints narrower than the viewport at widths
+       * well under any breakpoint: measured 944px wide inside a 1221px
+       * viewport. The edge only needs softening when it is genuinely inset, so
+       * that is what gets measured.
+       */
+      const video = stage!.querySelector<HTMLElement>(".hero-video");
+      if (video) {
+        const box = video.getBoundingClientRect();
+        const painted = Math.min(box.width, (box.height * 16) / 9);
+        const inset = document.documentElement.clientWidth - painted;
+        stage!.style.setProperty("--video-edges", inset > 4 ? "1" : "0");
+      }
     }
     /**
      * The sticky block has a fixed height (the collage pin is positioned off it)

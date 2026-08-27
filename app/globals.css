@@ -60,9 +60,20 @@ body {
      to this, so the seam under the wordmark rises as it shrinks. The block's
      *flow* height never changes, so none of this reflows the document. */
   --hero-nav-height: 72px;
+  /* Scales in with the collapse. The strip exists to keep the quote clear of
+     the collage, but the quote doesn't appear until well into the scroll, so
+     reserving it at rest just shrank the clip for no reason: 310px tall at
+     scroll 0 where it could be 470px. */
+  --hero-video-reserve: calc(160px * var(--logo-collapse));
+  /* Starts at a share of the block rather than its full height. At the full
+     331px the pin only got the leftover 470px, so the clip painted 800px wide
+     in an 840px viewport: too small, and inset enough to need an edge fade. At
+     0.8 it fills the width from the start and the fade stays off. The lockup is
+     still clear of the artwork, which begins a full empty band below the pin. */
+  --hero-nav-start: calc(var(--hero-logo-height) * 0.8);
   --hero-nav-current: calc(
-    var(--hero-logo-height) -
-      (var(--hero-logo-height) - var(--hero-nav-height)) * var(--logo-collapse)
+    var(--hero-nav-start) -
+      (var(--hero-nav-start) - var(--hero-nav-height)) * var(--logo-collapse)
   );
   --logo-collapse: 0;
   --logo-shift: 0;
@@ -79,8 +90,14 @@ body {
    way it would if it had never been stuck. */
 .hero-logo {
   position: sticky;
+  /* Above the clip's pin (805). The pin now starts higher than the lockup's
+     lower edge, so one of the two had to give: making the *pin* transparent
+     broke mix-blend-mode outright, because multiply needs a backdrop inside its
+     own stacking context and the clip's white matte started showing as a plain
+     white box. Raising the lockup instead keeps the pin's cream, which is what
+     the blend multiplies against. */
+  z-index: 806;
   top: calc(-1 * var(--logo-shift) * var(--hero-logo-height));
-  z-index: 20;
   height: var(--hero-logo-height);
   width: 100%;
   display: flex;
@@ -387,31 +404,25 @@ body {
 
 }
 
-/* Mid-reveal the collage spans the full frame width with no side margin
-   (measured: 0px left and right bands on frame 60), so the clip's own rectangle
-   edge cuts straight through the leaves.
-
-   That only becomes visible once the viewport is wider than the clip's 1280px
-   cap: below that the video already reaches the viewport edge, where the same
-   boundary reads as "continues off-screen" rather than as a cut. So the feather
-   is scoped to exactly the case that needs it and stays off everywhere else,
-   where a clean edge is better. */
-@media (min-width: 1300px) {
-  .hero-video {
-    -webkit-mask-image: linear-gradient(
-      to right, transparent 0, #000 4%, #000 96%, transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right, transparent 0, #000 4%, #000 96%, transparent 100%
-    );
-  }
-}
-
-/* The overlays are driven from JS (see HeroVideo), so they start hidden and
-   get their opacity/transform set per frame. Transition would fight the scrub. */
-.hero-quote,
-.view-work-cue {
-  opacity: 0;
+/* The fade is driven by --video-edges (0 or 1), measured in HomeExperience:
+   it is 1 only when the clip's own edge is inset from the viewport and would
+   otherwise show as a hard vertical cut through the leaves. At 0 the end stops
+   are fully opaque, so the mask is a no-op and the edges stay clean. */
+.hero-video {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, calc(1 - var(--video-edges, 0))) 0,
+    #000 4%,
+    #000 96%,
+    rgba(0, 0, 0, calc(1 - var(--video-edges, 0))) 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, calc(1 - var(--video-edges, 0))) 0,
+    #000 4%,
+    #000 96%,
+    rgba(0, 0, 0, calc(1 - var(--video-edges, 0))) 100%
+  );
 }
 
 /* Collage layers */
