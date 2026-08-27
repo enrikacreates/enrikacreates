@@ -144,10 +144,17 @@ body {
 }
 
 /* The corner mark. Fixed, so it holds its place once the hero has released. */
+/* Centred in the nav band rather than top-anchored. Sharing `top: 1.75rem` with
+   the EMAIL / NEWSLETTER links looked aligned in the CSS but wasn't: those are
+   ~14px of text and the mark is ~45px tall, so anchoring both by their top edge
+   left the mark's centre sitting about 12px below theirs. */
 .hero-nav-mark {
   position: fixed;
-  top: 1.75rem;
+  top: 0;
   left: 2rem;
+  height: var(--hero-nav-height, 72px);
+  display: flex;
+  align-items: center;
   z-index: 810;
   opacity: var(--logo-shift, 0);
   pointer-events: none;
@@ -164,7 +171,6 @@ body {
 
 @media (max-width: 600px) {
   .hero-nav-mark {
-    top: 1.1rem;
     left: 1.1rem;
   }
   .hero-nav-mark img {
