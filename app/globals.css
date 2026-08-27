@@ -287,6 +287,20 @@ body {
   content: none;
 }
 
+/* Sit in the clear strip reserved below the clip, and ride above the nav bar
+   with it. At the base z-index of 10 they passed underneath the bar and showed
+   through it as it faded, which is what made the quote look washed out on the
+   way past. */
+.hero-pin--video .hero-quote {
+  bottom: 4.5rem;
+  z-index: 806;
+}
+
+.hero-pin--video .view-work-cue {
+  bottom: 1.25rem;
+  z-index: 806;
+}
+
 
 /* Scroll-scrubbed hero video (replaces the collage layer stack).
    multiply drops the clip's near-white (#FEFEFE) matte into the cream page
@@ -319,7 +333,13 @@ body {
   max-height: calc(var(--hero-video-max-w) * 9 / 16);
   object-fit: contain;
   pointer-events: none;
-  z-index: 1;
+  /* Above the nav bar (800), below the corner mark (810).
+     The clip used to sit at z-index 1 and pass *behind* the bar on its way out,
+     which is what read as the collage being clipped on scroll. Painting over it
+     instead costs nothing, because mix-blend-mode: multiply leaves the clip's
+     near-white matte effectively transparent: the bar's cream, and the wordmark
+     sitting on it, still read straight through the empty parts of the frame. */
+  z-index: 805;
   mix-blend-mode: multiply;
 
   /* No lift, and it must stay that way.
