@@ -52,7 +52,6 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const quoteRef = useRef<HTMLQuoteElement>(null);
   const cueRef = useRef<HTMLAnchorElement>(null);
-  const fillRef = useRef<HTMLDivElement>(null);
 
   /** Where the playhead should be, and where it currently is. */
   const target = useRef(0);
@@ -122,7 +121,6 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
         cueRef.current.style.pointerEvents = cueAt > 0.5 ? "auto" : "none";
       }
 
-      if (fillRef.current) fillRef.current.style.width = `${p * 100}%`;
     }
 
     function onScroll() {
@@ -238,9 +236,6 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
           </svg>
         </a>
 
-        <div className="hero-progress">
-          <div className="hero-progress-fill" id="hero-progress-fill" ref={fillRef} />
-        </div>
       </div>
     </section>
   );

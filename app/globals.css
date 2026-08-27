@@ -588,23 +588,9 @@ body {
 }
 
 /* Scroll cue */
-/* Progress bar */
-.hero-progress {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: rgba(44,37,32,0.08);
-  z-index: 10;
-}
 
-.hero-progress-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--gold);
-  transition: width 0.05s linear;
-}
+
+
 
 /* ============================================
    WORK — filter (sticky) + featured + catalog
