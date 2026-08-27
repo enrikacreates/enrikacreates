@@ -73,11 +73,13 @@ body {
   position: relative;
 }
 
-/* Pins to the top and stays for the whole hero, so the animation never has to
-   wait for the wordmark to scroll away. It releases when the stage ends. */
+/* Pins to the top through the collapse, then leaves. Rather than dissolving in
+   place (which cross-dissolved against the corner mark and read as mush), the
+   sticky offset is driven negative so the block simply travels up and out, the
+   way it would if it had never been stuck. */
 .hero-logo {
   position: sticky;
-  top: 0;
+  top: calc(-1 * var(--logo-shift) * var(--hero-logo-height));
   z-index: 20;
   height: var(--hero-logo-height);
   width: 100%;
@@ -122,11 +124,57 @@ body {
   will-change: transform;
 }
 
-/* Opacity lives here rather than on .hero-logo-inner, which owns the entrance
-   animation and would override it, and rather than on .hero-logo, which paints
-   the nav bar and must not fade with it. */
-.hero-logo .logomark {
-  opacity: calc(1 - var(--logo-shift));
+/* The bar the corner mark sits on. The hero block paints its own while it is on
+   screen; this takes over as that one travels away, so the mark never ends up
+   floating on the artwork. */
+.hero-nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--hero-nav-height, 72px);
+  background: var(--off-white);
+  /* Retires as the work section docks, exactly like the tagline. It is opaque
+     and sits above the filter bar, so leaving it up painted straight over the
+     ALL / MOBILE / WEB pills and they vanished. The filter bar is the same
+     cream and takes over as the top chrome; only the mark carries across. */
+  opacity: calc(var(--logo-shift, 0) * var(--nav-centre, 1));
+  z-index: 800;
+  pointer-events: none;
+}
+
+/* Carries the tagline into the collapsed nav, where the centre would otherwise
+   sit empty between the mark and the EMAIL / NEWSLETTER links. Retires as the
+   work section's own filter bar docks (--nav-centre), since that bar centres
+   its own pills and the two would collide.
+
+   Desktop only: below 900px there isn't room for a mark, a tagline and two
+   links on one row without it becoming a scrum. */
+.hero-nav-tagline {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: var(--hero-nav-height, 72px);
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  white-space: nowrap;
+  opacity: calc(var(--logo-shift, 0) * var(--nav-centre, 1));
+  z-index: 810;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .hero-nav-tagline {
+    display: none;
+  }
 }
 
 /* The corner mark. Fixed, so it holds its place once the hero has released. */
@@ -261,34 +309,18 @@ body {
   pointer-events: none;
 }
 
-/* The video hero doesn't need the masking band: the rendered clip already has
-   a finished bottom edge, so a solid block just crops the sewing machine and
-   typewriter off. A short gradient keeps the footing without eating content. */
-/* Sits directly below the sticky wordmark rather than under it, so both are on
-   screen at once and the collage is never occluded. */
-.hero-pin--video {
-  top: var(--hero-nav-current);
-  height: calc(100vh - var(--hero-nav-current));
-}
-
-/* Softens the seam under the wordmark. Even with the lift within its measured
-   ceiling, a razor edge here would read as a mask; a short fade never does. */
+/* No masking band, and no fades, on the video hero.
+   The band exists for the old layer collage, whose bottom edge was blunt. The
+   rendered clip doesn't need it, and every softening treatment tried here (a
+   26% wash, a short gradient on the clip's edge, a fade under the wordmark)
+   read as haze over the artwork rather than as a finish. Clean edges instead.
+   The one exception is the side mask above, which only runs past 1300px where
+   the clip's edge is genuinely inset from the viewport. */
+.hero-pin--video::after,
 .hero-pin--video::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 8%;
-  background: linear-gradient(to bottom, var(--off-white), transparent);
-  z-index: 6;
-  pointer-events: none;
+  content: none;
 }
 
-.hero-pin--video::after {
-  height: 26%;
-  background: linear-gradient(to bottom, transparent, var(--off-white) 55%);
-}
 
 /* Scroll-scrubbed hero video (replaces the collage layer stack).
    multiply drops the clip's near-white (#FEFEFE) matte into the cream page
@@ -303,10 +335,13 @@ body {
   --hero-video-max-w: 1280px;
 
   position: absolute;
-  inset: 0;
+  /* Reserve a clean strip at the bottom. The quote used to land at 630-689
+     while the collage ran to 717 and the bottom wash started at 611, so it sat
+     on the artwork inside the fade. Now the clip stops above it. */
+  inset: 0 0 var(--hero-video-reserve, 200px) 0;
   margin: auto;
   width: 100%;
-  height: 100%;
+  height: auto;
   max-width: var(--hero-video-max-w);
   max-height: calc(var(--hero-video-max-w) * 9 / 16);
   object-fit: contain;

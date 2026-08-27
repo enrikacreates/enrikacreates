@@ -24,6 +24,8 @@ interface HomeExperienceProps {
   categories: Category[];
   /** The logo hero, rendered on the server and slotted into the sticky stage. */
   heroLogo: React.ReactNode;
+  /** Repeated in the collapsed nav, where the centre would otherwise sit empty. */
+  tagline: string;
 }
 
 /**
@@ -53,6 +55,7 @@ export function HomeExperience({
   featured,
   categories,
   heroLogo,
+  tagline,
 }: HomeExperienceProps) {
   const stageRef = useRef<HTMLDivElement>(null);
 
@@ -73,6 +76,15 @@ export function HomeExperience({
 
     function apply() {
       const y = window.scrollY;
+
+      // The work section has its own centred filter bar. Retire the nav tagline
+      // just before it docks, so the centre never holds both.
+      const work = document.getElementById("work");
+      if (work) {
+        const gap = work.getBoundingClientRect().top - NAV_HEIGHT_PX;
+        stage!.style.setProperty("--nav-centre", clamp01(gap / 220).toFixed(4));
+      }
+
       stage!.style.setProperty(
         "--logo-collapse",
         clamp01(y / LOGO_COLLAPSE_PX).toFixed(4)
@@ -149,9 +161,13 @@ export function HomeExperience({
       <div className="hero-stage" ref={stageRef}>
         {heroLogo}
 
-        {/* Fades in as the centred wordmark fades out. Fixed, so it holds the
-            corner once the hero stage has released. Decorative: the real
-            heading lives in the lockup above. */}
+        {/* Takes over as the centred lockup travels up and out. Both are fixed,
+            so they hold the corner once the hero stage has released.
+            Decorative: the real heading lives in the lockup above. */}
+        <div className="hero-nav-bar" aria-hidden="true" />
+        <p className="hero-nav-tagline" aria-hidden="true">
+          {tagline}
+        </p>
         <div className="hero-nav-mark" aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/enrikamark2.svg" alt="" draggable={false} />

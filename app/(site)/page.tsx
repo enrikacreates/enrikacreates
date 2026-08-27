@@ -35,6 +35,7 @@ export default async function HomePage() {
         projects={projects}
         featured={featured}
         categories={categories}
+        tagline={settings?.tagline ?? "Designer. Builder. Storyteller."}
         heroLogo={
           <HeroLogo
             tagline={settings?.tagline ?? "Designer. Builder. Storyteller."}
