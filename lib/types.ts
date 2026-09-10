@@ -65,6 +65,26 @@ export interface GalleryItem {
   image: SanityImage;
 }
 
+/** One beat of the research-and-design story. See schemas/objects/processStep. */
+export type ProcessKind =
+  | "research"
+  | "insight"
+  | "decision"
+  | "iteration"
+  | "validation";
+
+export interface ProcessStep {
+  kind: ProcessKind;
+  title: string;
+  /** All three are optional; a step with only a title still renders. */
+  researched?: string;
+  learned?: string;
+  changed?: string;
+  image?: SanityImage;
+  caption?: string;
+  alt?: string;
+}
+
 /** Light shape — used in grids/cards where we don't need story content. */
 export interface ProjectListItem {
   _id: string;
@@ -75,6 +95,8 @@ export interface ProjectListItem {
   year: string;
   tagline: string;
   featured?: boolean;
+  /** Short "what is this" markers shown under a card. See project.signals. */
+  signals?: string[];
   displayOrder?: number;
   publishedAt?: string;
   leadImage?: SanityImage;
@@ -88,8 +110,10 @@ export interface Project extends ProjectListItem {
   result?: string;
   galleryIntro?: string;
   skills?: string[];
+  keyScreens?: GalleryItem[];
   slides?: ProjectSlide[];
   gallery?: GalleryItem[];
+  process?: ProcessStep[];
 }
 
 /* ---------- Blog ---------- */

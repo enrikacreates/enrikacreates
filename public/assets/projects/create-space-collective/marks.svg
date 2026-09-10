@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260" viewBox="0 0 400 260" fill="none"
+     stroke="#1A1A1A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+  <!--
+    Hand-drawn accent marks for the Create Space poster.
+
+    Kept as vector rather than baked into the artwork so they can be moved,
+    recoloured or dropped without a re-export.
+
+    Closed shapes close properly: every loop ends on its own start point, and
+    the triangle uses `Z` rather than separate strokes that only nearly meet.
+    An almost-joined corner reads as a mistake, not as a hand. The wobble comes
+    from uneven lengths and angles instead.
+
+    The viewBox is 400x260 and maps to roughly the card's art band, so
+    coordinates here are effectively "percent across the artwork".
+  -->
+
+  <!-- Peaks, upper left. Open on purpose; uneven heights and spacing. -->
+  <path d="M10 62 L29 31 L47 57 L68 27 L92 54" />
+
+  <!-- A loose closed loop, left of centre. The final curve returns to the
+       start point, so `Z` has nothing to bridge. -->
+  <path d="M62 196
+           C 48 176, 58 152, 82 152
+           C 96 138, 124 143, 130 160
+           C 146 168, 143 194, 126 200
+           C 110 214, 74 212, 62 196 Z" />
+
+  <!-- Closed triangle, right. Uneven sides keep it from looking stamped. -->
+  <path d="M352 133 L380 190 L328 193 Z" />
+
+  <!-- Three short strokes, lower right. -->
+  <path d="M283 246 L306 214" />
+  <path d="M300 249 L322 219" />
+  <path d="M318 250 L337 224" />
+</svg>

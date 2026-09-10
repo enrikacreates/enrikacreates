@@ -82,6 +82,17 @@ export const project = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "signals",
+      title: "Type signals",
+      type: "array",
+      group: "details",
+      of: [{ type: "string" }],
+      options: { layout: "tags" },
+      description:
+        "Two to four short markers of WHAT this is, shown under the card: 'Web app', 'iOS', 'Chrome extension', 'Client site'. These answer the question a card can't otherwise answer at a glance, which is what kind of thing you're looking at. Not the same as Skills: skills are what you did, signals are what it is.",
+      validation: (Rule) => Rule.max(4),
+    }),
+    defineField({
       name: "leadImage",
       title: "Lead image",
       type: "image",
@@ -123,8 +134,27 @@ export const project = defineType({
       group: "story",
       rows: 4,
     }),
+    defineField({
+      name: "process",
+      title: "Research & process",
+      type: "array",
+      group: "story",
+      of: [{ type: "processStep" }],
+      description:
+        "The middle of the story: what you looked at, what it told you, and what changed because of it. Challenge and Result say where the work started and landed; this says how you got between them, which is the part a hiring manager is actually reading for. Order is the order it renders.",
+    }),
 
     /* ---------- Media ---------- */
+    defineField({
+      name: "keyScreens",
+      title: "Key screens",
+      type: "array",
+      group: "media",
+      of: [{ type: "galleryItem" }],
+      description:
+        "The two or three screens that carry the whole product. These render as a strip at the very TOP of the project page, above the written story, so someone scanning the page sees what the thing looks like before they read a word. Keep it short: this is the hook, not the tour. Everything else belongs in the slideshow below.",
+      validation: (Rule) => Rule.max(4),
+    }),
     defineField({
       name: "slides",
       title: "Designs slideshow",

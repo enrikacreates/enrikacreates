@@ -17,6 +17,8 @@ import { urlFor } from "@/lib/sanity/image";
 import { isDarkColor } from "@/lib/colorUtils";
 import { CardInner } from "@/components/CardInner";
 import { Slideshow } from "@/components/Slideshow";
+import { KeyScreens } from "@/components/KeyScreens";
+import { ProcessTimeline } from "@/components/ProcessTimeline";
 import { Gallery } from "@/components/Gallery";
 
 export const dynamicParams = true;
@@ -88,6 +90,12 @@ export default async function ProjectDetailPage({
           <p className="card-tagline">{item.tagline}</p>
         </header>
 
+        {/* Key screens — before the prose, so the product is the first thing
+            seen rather than the fourth paragraph. */}
+        {item.keyScreens && item.keyScreens.length > 0 && (
+          <KeyScreens items={item.keyScreens} />
+        )}
+
         {/* Story */}
         <div className="project-story">
           {item.oneline && <p className="project-oneline">{item.oneline}</p>}
@@ -122,9 +130,17 @@ export default async function ProjectDetailPage({
           )}
         </div>
 
-        {/* Designs slideshow */}
+        {/* Designs slideshow — the further screens, directly under the skills
+            chips that close the story block. Moved above the process timeline:
+            someone who wants more of the product shouldn't have to scroll past
+            the research narrative to reach it. */}
         {item.slides && item.slides.length > 0 && (
           <Slideshow slides={item.slides} title={item.title} />
+        )}
+
+        {/* Research & process — the depth under the summary above */}
+        {item.process && item.process.length > 0 && (
+          <ProcessTimeline steps={item.process} />
         )}
 
         {/* Process gallery */}

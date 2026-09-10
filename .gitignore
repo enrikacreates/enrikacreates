@@ -39,3 +39,7 @@ yarn-error.log*
 tsconfig.tsbuildinfo
 _source-images/
 public/_review/
+
+# Screenshot capture output (npm run shots). Working material: the keepers get
+# uploaded into Sanity, so the local copies don't need to ship.
+public/assets/projects/*/shots/

@@ -60,6 +60,7 @@ const PROJECT_FIELDS = /* groq */ `
   year,
   tagline,
   featured,
+  signals,
   displayOrder,
   publishedAt,
   leadImage{
@@ -75,12 +76,26 @@ const PROJECT_FULL_FIELDS = /* groq */ `
   result,
   galleryIntro,
   skills,
+  keyScreens[]{
+    caption,
+    image{..., asset->{_id, url, metadata}, hotspot, crop}
+  },
   slides[]{
     alt,
     image{..., asset->{_id, url, metadata}, hotspot, crop}
   },
   gallery[]{
     caption,
+    image{..., asset->{_id, url, metadata}, hotspot, crop}
+  },
+  process[]{
+    kind,
+    title,
+    researched,
+    learned,
+    changed,
+    caption,
+    alt,
     image{..., asset->{_id, url, metadata}, hotspot, crop}
   }
 `;

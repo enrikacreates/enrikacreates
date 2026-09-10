@@ -58,6 +58,7 @@ const STORY_FIELDS = [
   "action",
   "result",
   "skills",
+  "signals",
   "featured",
   "displayOrder",
 ];
@@ -67,6 +68,7 @@ const ref = (slug) => ({ _type: "reference", _ref: `category-${slug}` });
 const PROJECTS = [
   {
     _id: "project-hummingbird",
+    signals: ["Native app", "iOS", "Audio capture"],
     slug: "hummingbird",
     title: "Hummingbird",
     category: "mobile",
@@ -74,7 +76,7 @@ const PROJECTS = [
     color: "#FC7F5A",
     featured: true,
     displayOrder: 1,
-    tagline: "A scrap-keeper for half-finished songs",
+    tagline: "A vibe catcher for new song ideas",
     oneline:
       "A songwriting app built for the fragments: the line that arrives at a bus stop, kept until it grows into a song.",
     challenge:
@@ -95,6 +97,7 @@ const PROJECTS = [
 
   {
     _id: "project-betterstories",
+    signals: ["Web app", "Screen + camera recording", "No signup"],
     slug: "betterstories",
     title: "betterstories.tech",
     category: "web",
@@ -123,6 +126,7 @@ const PROJECTS = [
 
   {
     _id: "project-50-states-of-freedom",
+    signals: ["Client site", "Sanity CMS", "Client-run"],
     slug: "50-states-of-freedom",
     title: "50 States of Freedom",
     category: "web",
@@ -130,7 +134,7 @@ const PROJECTS = [
     color: "#7FA481",
     featured: true,
     displayOrder: 3,
-    tagline: "A heritage travel guide the client can run",
+    tagline: "A heritage travel guide that powers a vision",
     oneline:
       "A fifty-state guide to Black heritage travel, structured so the client keeps publishing without ever needing a developer.",
     challenge:
@@ -150,11 +154,14 @@ const PROJECTS = [
 
   {
     _id: "project-create-space-collective",
+    signals: ["Web app", "Membership", "Community"],
     slug: "create-space-collective",
     title: "Create Space Collective",
     category: "web",
     year: "2026",
-    color: "#E8B84A",
+    // Pink, matching Create Space's own --color-accent #F5C7C7. Gold moved to
+    // DeeplyReader, whose mustard #e1bd32 owns that end of the palette.
+    color: "#F7B5B1",
     featured: false,
     displayOrder: 4,
     tagline: "A membership space for people who make things",
@@ -177,6 +184,7 @@ const PROJECTS = [
 
   {
     _id: "project-signaturestyle",
+    signals: ["Web app", "Installable", "Personal library"],
     slug: "signaturestyle",
     title: "SignatureStyle",
     category: "mobile",
@@ -200,6 +208,111 @@ const PROJECTS = [
       "Supabase",
       "Design Systems",
     ],
+  },
+
+  /* ------------------------------------------------------------------
+   * The four below were added to give the remaining posters somewhere to
+   * live. Their story prose is drafted from what each repository actually
+   * contains (stack, routes, features), so it is accurate about the build.
+   * Anything that needs Enrika's own account, the motivation behind a
+   * project and what it went on to prove, is left blank rather than
+   * invented. Fill those in the Studio.
+   * ------------------------------------------------------------------ */
+
+  {
+    _id: "project-deeplyreader",
+    signals: ["Chrome extension", "Web reader", "On-device"],
+    slug: "deeplyreader",
+    title: "DeeplyReader",
+    // Sits awkwardly in the taxonomy: it's an app product, not a site, but it
+    // is browser-first rather than phone-first. Move it to mobile if the
+    // Mobile blurb widens.
+    category: "web",
+    year: "2026",
+    // Gold, matching the app's own --mustard #e1bd32, which with teal is the
+    // pair the product is actually built on. It was ink, but a near-black card
+    // sat apart from the cream-and-colour treatment every other card uses.
+    color: "#E8B84A",
+    featured: false,
+    displayOrder: 6,
+    tagline: "Read anything aloud, on the web or off it",
+    oneline:
+      "A text-to-speech reader in two halves: a browser extension for whatever is on screen, and a longform reader for the books you already own.",
+    action:
+      "I built it as two front ends over one backend. A Chrome MV3 extension (WXT) reads web pages, selected text, images, and screenshots, including Kindle in the browser. A separate Vite and React reader handles longform PDF and EPUB, keeping books on-device in IndexedDB so a personal library never leaves the machine. Both call the same Supabase Edge Functions for OpenAI text-to-speech, which keeps the API key server-side and means one voice pipeline serves both surfaces instead of two implementations drifting apart.",
+    skills: [
+      "Product Design",
+      "Chrome Extensions",
+      "React",
+      "Supabase Edge Functions",
+      "IndexedDB",
+      "Text to Speech",
+    ],
+  },
+
+  {
+    _id: "project-workshopblocks",
+    slug: "workshopblocks",
+    title: "Workshop Blocks",
+    category: "mobile",
+    year: "2026",
+    color: "#E8B84A",
+    featured: false,
+    displayOrder: 7,
+    tagline: "Build a workshop out of pieces you already trust",
+    oneline:
+      "A workshop builder for facilitators: assemble a session from reusable blocks, then run it from a live run sheet.",
+    action:
+      "I designed and built it in React and TypeScript on Vite with Supabase behind it. The model separates a block library, the reusable exercises and segments, from the workshops assembled out of them, so improving a block improves every session that uses it. Building a session is drag and drop (dnd-kit), and the same session has a second face: a run sheet for the day itself, timed and ordered, rather than the builder view a facilitator would have to reinterpret while standing in front of a room. Locations and a resources library sit alongside, so the material a session needs travels with it.",
+    skills: [
+      "Product Design",
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Drag and Drop UX",
+    ],
+  },
+
+  {
+    _id: "project-visionmap",
+    slug: "visionmap",
+    title: "Visionmap.coach",
+    category: "web",
+    year: "2026",
+    color: "#7FA481",
+    featured: false,
+    displayOrder: 8,
+    tagline: "A coaching practice with an AI-assisted spine",
+    oneline:
+      "A coaching site and product built on a self-hosted CMS, with Claude wired in rather than bolted on.",
+    action:
+      "Built in Next.js on Payload CMS with Postgres, Lexical rich text, and S3-backed media, so the content model and the application are one codebase rather than a site plus a separate headless service. Page composition is block-based, which keeps new page types an editorial act instead of a deploy. The Anthropic SDK is integrated server-side, and Framer Motion carries the interaction detail.",
+    skills: [
+      "Product Design",
+      "Next.js",
+      "Payload CMS",
+      "PostgreSQL",
+      "Anthropic API",
+    ],
+  },
+
+  {
+    _id: "project-bernadettejiwa",
+    slug: "bernadettejiwa",
+    title: "BernadetteJiwa.com",
+    category: "web",
+    year: "2026",
+    color: "#F7B5B1",
+    featured: false,
+    displayOrder: 9,
+    tagline: "An author site her books can actually run",
+    oneline:
+      "A bestselling author's site moved off a page builder and onto a content model shaped around her books.",
+    challenge:
+      "The site was on Carrd, which is fine until the content has structure. An author's site is really a catalogue: books, each with editions, links, endorsements, and a place in a body of work. On a page builder every one of those is hand-placed, so adding a book means rebuilding a page, and nothing about one book knows anything about another.",
+    action:
+      "I rebuilt it in Next.js with Sanity, and modelled books as first-class documents rather than as page sections. Adding a title creates the entry once and it appears everywhere it belongs. Deployment runs on Vercel straight from the repository.",
+    skills: ["Content Modelling", "Next.js", "Sanity CMS", "Vercel", "Client Delivery"],
   },
 ];
 
@@ -240,12 +353,25 @@ for (const p of PROJECTS) {
     action: p.action,
     result: p.result,
     skills: p.skills,
+    signals: p.signals,
     featured: p.featured,
     displayOrder: p.displayOrder,
   };
 
+  // Drop keys the entry didn't define. Some projects are seeded with metadata
+  // and a one-liner only, because the case-study prose needs Enrika's own
+  // account rather than an inferred one; `set` with undefined would fail, and
+  // writing a placeholder would put invented claims on a hiring portfolio.
+  for (const k of Object.keys(fields)) {
+    if (fields[k] === undefined) delete fields[k];
+  }
+
   if (DRY) {
-    console.log(`  · ${p.title.padEnd(24)} ${p.category.padEnd(7)} would set ${STORY_FIELDS.length} fields`);
+    const missing = STORY_FIELDS.filter((f) => fields[f] === undefined);
+    console.log(
+      `  · ${p.title.padEnd(24)} ${p.category.padEnd(7)} would set ${Object.keys(fields).length} fields` +
+        (missing.length ? `  (blank: ${missing.join(", ")})` : "")
+    );
     continue;
   }
 

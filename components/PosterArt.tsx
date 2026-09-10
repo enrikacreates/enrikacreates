@@ -1,0 +1,61 @@
+/**
+ * The layered poster artwork on a card.
+ *
+ * Shared by the featured row and the catalog grid so the two can't drift. The
+ * layer positions themselves live in CSS keyed by `.poster-layer--<name>`,
+ * which is what lets one composition be re-tuned without touching a component.
+ *
+ * The blob still needs clipping to the card; artwork that breaks the frame does
+ * not. One `overflow` on the card can't do both, so the blob gets its own
+ * clipping wrapper and the clipped layers ride along inside it.
+ */
+
+import { getPoster } from "@/lib/posters";
+
+export function PosterArt({ slug }: { slug: string }) {
+  const poster = getPoster(slug);
+  if (!poster) return null;
+
+  const clipped = poster.layers.filter((l) => !l.breaksFrame);
+  const overhanging = poster.layers.filter((l) => l.breaksFrame);
+
+  return (
+    <>
+      <span className="featured-blob-clip" aria-hidden="true">
+        {poster.blob && <span className="featured-blob" />}
+        {/* Layers sit inside a stage so a card type can rescale the whole
+            composition at once. Scaling each layer on its own would move them
+            relative to each other, because each would shrink toward its own top
+            edge and the gaps between them would close at a different rate. The
+            blob stays outside the stage: it's the ground, not part of the art. */}
+        <span className="poster-stage">
+          {clipped.map((l) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={l.name}
+              className={`poster-layer poster-layer--${l.name}`}
+              src={l.src}
+              alt=""
+              draggable={false}
+            />
+          ))}
+        </span>
+      </span>
+
+      {overhanging.length > 0 && (
+        <span className="poster-stage" aria-hidden="true">
+          {overhanging.map((l) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={l.name}
+              className={`poster-layer poster-layer--${l.name}`}
+              src={l.src}
+              alt=""
+              draggable={false}
+            />
+          ))}
+        </span>
+      )}
+    </>
+  );
+}

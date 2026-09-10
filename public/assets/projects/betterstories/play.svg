@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1122" height="1402" viewBox="0 0 1122 1402" fill="none">
+  <!--
+    Play badge over the participant's portrait bubble on the betterstories card.
+
+    Drawn on the SAME 1122x1402 canvas as window.png, so giving this layer the
+    window's geometry in CSS lands it on the bubble with no separate positioning
+    to keep in sync. If the window layer ever moves, this follows it.
+
+    Bubble centre and radius were measured off window.png's alpha rather than
+    eyeballed: centre (0.247, 0.676) of the canvas, radius 0.18 of its width,
+    which is 277, 948 with r 202 in these units. The badge is deliberately about
+    a third of that, so it reads as a control sitting on the portrait rather
+    than as a disc replacing it.
+
+    Translucent orange rather than a solid navy disc. Solid read as a hard badge
+    stamped over the participant's face; the point is to say "this is video"
+    without hiding the person the card is about. This is the one soft element
+    across all the posters, and it earns it: a play overlay is the one place
+    the video idiom beats the flat house style.
+
+    The orange is sampled from the poster's own sun disc (disc.png's dominant
+    colour), so the badge picks up a colour already on the card instead of
+    introducing a new one.
+
+    The triangle stays near-opaque while the disc is half transparent, so the
+    control still reads at card size, where the disc alone would disappear.
+  -->
+
+  <circle cx="277" cy="948" r="62" fill="#F2981E" fill-opacity="0.55"/>
+  <path d="M260 917 L311 948 L260 979 Z" fill="#F2981E" fill-opacity="0.95"/>
+</svg>

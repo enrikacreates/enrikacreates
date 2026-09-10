@@ -14,6 +14,8 @@ import Link from "next/link";
 import { urlFor } from "@/lib/sanity/image";
 import { isDarkColor } from "@/lib/colorUtils";
 import { CardInner } from "./CardInner";
+import { PosterArt } from "./PosterArt";
+import { getPoster } from "@/lib/posters";
 import type { ProjectListItem } from "@/lib/types";
 
 interface ProjectCardProps {
@@ -25,6 +27,7 @@ interface ProjectCardProps {
 export function ProjectCard({ item, index }: ProjectCardProps) {
   const layout = (index % 5) + 1;
   const isDark = isDarkColor(item.color);
+  const poster = getPoster(item.slug);
   const collageUrl = item.leadImage?.asset
     ? urlFor(item.leadImage).width(900).height(900).fit("crop").auto("format").url()
     : undefined;
@@ -33,9 +36,13 @@ export function ProjectCard({ item, index }: ProjectCardProps) {
   const className = [
     "catalog-item",
     "style-graphic",
-    `layout-${layout}`,
+    // A poster replaces the rotating shape layouts rather than joining them.
+    // The decorative circles and triangles were the card's whole visual idea
+    // when there was nothing else on it; against artwork they just compete,
+    // which is exactly what the white triangle was doing on the bird's beak.
+    poster ? "has-poster" : `layout-${layout}`,
     isDark ? "dark-card" : "",
-    hasImage ? "has-collage" : "",
+    hasImage && !poster ? "has-collage" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -44,10 +51,24 @@ export function ProjectCard({ item, index }: ProjectCardProps) {
     <Link
       href={`/work/${item.slug}`}
       className={className}
+      // Same per-project CSS hook the featured cards use, so a poster tuned on
+      // one card type carries to the other.
+      data-poster={poster ? item.slug : undefined}
       style={{ "--card-color": item.color, animationDelay: `${index * 0.05}s` } as React.CSSProperties}
       aria-label={`${item.title} — ${item.tagline}`}
     >
-      <CardInner layout={layout} item={item} collageUrl={collageUrl} />
+      {poster ? (
+        <>
+          <PosterArt slug={item.slug} />
+          <div className="card-content bottom">
+            <span className="card-year">{item.year}</span>
+            <h3 className="card-title">{item.title}</h3>
+            <p className="card-tagline">{item.tagline}</p>
+          </div>
+        </>
+      ) : (
+        <CardInner layout={layout} item={item} collageUrl={collageUrl} />
+      )}
     </Link>
   );
 }

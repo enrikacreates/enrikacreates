@@ -15,6 +15,10 @@
   --black: #F3EDE4;
   --charcoal: #EAE3D9;
   --off-white: #F3EDE4;
+  /* Warmer and a touch darker than --off-white. Matches the ground the posters
+     are generated on, so artwork sits on its own colour rather than on the page
+     colour, which read slightly cold behind it. */
+  --cream-warm: #F2E9D7;
   --warm-gray: #6B6158;
   --text: #2C2520;
   --text-dim: #8A7E72;
@@ -632,6 +636,19 @@ body {
   gap: 1.5rem;
 }
 
+/* Two columns through the tablet range. Three columns held the grid but not the
+   content: at an 820px viewport each card came out 231px wide, narrow enough
+   that both the tagline AND the title wrapped to extra lines. Because the text
+   block is bottom-aligned, those extra lines push the title up into the poster,
+   which is the collision that showed up on iPad and nowhere else. Two columns
+   put the cards back around 360px, where the text lays out the same as it does
+   on desktop and one set of poster positions holds everywhere. */
+@media (max-width: 1024px) {
+  .sub-hero-inner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .featured-item {
   aspect-ratio: 3 / 4;
   border-radius: 4px;
@@ -640,8 +657,49 @@ body {
   flex-direction: column;
   justify-content: flex-end;
   position: relative;
-  overflow: hidden;
+  /* Visible, so artwork can break the frame. The blob is clipped by its own
+     wrapper instead, since it still needs to stop at the card's edge. */
+  overflow: visible;
   cursor: pointer;
+}
+
+/* Grid cell: the card plus its signals line. The grid now lays out cells
+   rather than cards, so the aspect-ratio on .featured-item still governs the
+   card and the signals sit beneath it without stretching anything. */
+.featured-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+/* "What is this" markers under a card. Comma-separated rather than pills: the
+   filter bar already owns pill shapes, and a second row of them here would read
+   as another control rather than as a label. */
+.featured-signals {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.35rem;
+  margin: 0.7rem 0 0;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(44, 37, 32, 0.55);
+}
+
+.featured-signals li:not(:last-child)::after {
+  content: ",";
+}
+
+/* Holds the card's bounds for anything that must still be clipped by them. */
+.featured-blob-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 4px;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .featured-item:hover {
@@ -655,6 +713,333 @@ body {
   letter-spacing: 0.2em;
   color: rgba(44,37,32,0.6);
   margin-bottom: 0.75rem;
+}
+
+/* A soft cream field behind the artwork, bleeding past the card on one side.
+   Asymmetric radii rather than a circle so it reads as a blob; it gives the
+   cut-out art something to sit on without flattening the card's colour, which
+   still shows around the edges. */
+.featured-blob {
+  position: absolute;
+  /* Inset, so a rim of the card's colour stays visible around it. At 124% wide
+     the card's overflow:hidden clipped it flush to the edges and it just read
+     as a second background. */
+  /* Portrait, to match the artwork it sits behind. At 1/0.82 it was 273px tall
+     against 343px of art, so the art overhung it and it stopped reading as a
+     field at all.
+
+     Deliberately wider than the card and pushed left, so the card's
+     overflow:hidden cuts it on that side. A blob fully inside the card floats
+     like a sticker; letting the project colour slice it makes the two read as
+     one composition. The right and bottom stay inset so the colour still frames
+     it rather than only cutting it. */
+  width: 108%;
+  aspect-ratio: 1 / 1.02;
+  left: -9%;
+  bottom: -7%;
+  background: var(--cream-warm);
+  /* Lopsided on purpose: the four corner radii differ on both axes, so it never
+     reads as a machine-made oval.
+
+     One corner's radius is deliberately tight while the other three stay loose.
+     That squares off that corner so the blob fills it completely instead of
+     leaving a crescent of colour in it, and the contrast between one blunt
+     corner and three soft ones is what makes the shape look drawn rather than
+     generated. Rotation is kept small for the same reason: more than a few
+     degrees lifts the square corner away and the colour creeps back in.
+
+     Radii are in TL TR BR BL order, so the tight pair sits fourth here: the
+     blob anchors bottom-left. */
+  /* Pushed further off-balance so more of the card colour survives around it.
+     Each side's pair sums to exactly 100, so the browser applies no corrective
+     scaling and the corners land where they're written. */
+  border-radius: 72% 28% 66% 34% / 40% 68% 32% 60%;
+  transform: rotate(-5deg);
+  pointer-events: none;
+}
+
+/* ---- Layered poster ----------------------------------------------------
+   One image per element rather than a single flattened poster, so each piece
+   can be sized and placed on its own. Every layer is exported on the same
+   1400x1600 canvas with the element already in position, so giving a layer a
+   box of that exact ratio and letting it fill means the artwork lands where the
+   export put it: no per-element cropping, and nothing to re-measure when a
+   layer is re-exported.
+
+   Positions are deliberately per-layer rather than shared. Locking every layer
+   to one stage would preserve the export's relative spacing, which is exactly
+   what we don't want: the point of separating the elements is to be able to
+   scale them against each other and build a hierarchy the flat poster couldn't
+   have. Widths here are the hierarchy, so keep the gap between them wide.
+
+   Height is left to the image. Setting only `width` lets each layer take its
+   own intrinsic ratio, so a layer set exported at 1400x1600 and a torn hero at
+   1100x732 both land correctly without per-file bookkeeping here. */
+.poster-layer {
+  position: absolute;
+  height: auto;
+  pointer-events: none;
+  /* Rotation only. The card-type scale lives on .poster-stage, which wraps
+     every layer, so the composition shrinks as one piece. */
+  transform: rotate(var(--rot, 0deg));
+}
+
+/* Holds the layers so a card type can rescale the whole composition at once.
+   Anchored at the top: shrinking toward the middle would lift the artwork away
+   from the card's top edge and open a gap the design doesn't have. */
+.poster-stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform: scale(var(--poster-scale, 1));
+  transform-origin: 50% 0;
+}
+
+/* The street: supporting element, so noticeably smaller than the bird and
+   pulled in from both edges. Held clear of the title band too, which is the
+   collision the flattened poster had, dark buildings sitting directly behind
+   dark type and swallowing it. */
+.poster-layer--city {
+  left: 14%;
+  width: 72%;
+  top: 8.5%;
+  z-index: 1;
+}
+
+/* The two squiggles that flank the bird. Their own layer because in the
+   original export they sat at the far left and right of the canvas, on the
+   horizontal centre line, which made THEM the widest thing in the file: the
+   bird spans 0.663 of the canvas, the squiggles pushed that to 0.794. Every
+   size cap we kept hitting was set by two small marks rather than by the
+   subject. Left at the bird's previous geometry so they stay put while it
+   grows past them. */
+.poster-layer--waves {
+  left: 16%;
+  width: 88%;
+  top: -1%;
+  z-index: 1;
+}
+
+/* The bird: the centre piece. Rotated counter-clockwise so the beak lifts,
+   which also swings the tail to the right and drops it onto the bridge, so the
+   tilt buys the placement rather than fighting it. Wider than the card at 110%
+   because the box is mostly transparent padding; the painted bird spans about
+   76% of the card and stays clear of both edges. */
+.poster-layer--bird {
+  left: 10%;
+  width: 110%;
+  top: -15.5%;
+  --rot: -10deg;
+  z-index: 2;
+}
+
+/* 50 States of Freedom: a torn-paper hero laid on the card.
+
+   Wider than the card, so the left and right deckle edges are cut off by the
+   frame. That's a deliberate trade: the source is landscape (1.5:1) inside a
+   portrait card, so keeping all four torn edges capped the subject at roughly
+   half the card's height. Cropping the two sides buys about a quarter more
+   scale on her, and the two edges that still read (top and bottom) are enough
+   to carry the treatment. It bleeds off the top as well, because a thin strip
+   of card colour above it read as a mistake rather than as a margin: better to
+   commit and let the art run to the edge. What survives is the bottom deckle,
+   landing exactly where the art meets the title, which makes it look chosen.
+   Vertical size is held so that edge clears the title. The slight rotation
+   stops it reading as a pasted-in rectangle. */
+/* betterstories: four elements exported from one composition, so they share a
+   single geometry here and land in exactly the arrangement they were drawn in.
+   That's the payoff of asking for elements in place on a common canvas: the
+   relationships come for free, and only the layers that need to break out of
+   the arrangement get their own rule.
+
+   Sized so the desk, the lowest element, clears the title. The disc runs off
+   the top edge on purpose and is cut by the card, the same trick the sun disc
+   plays behind the hummingbird. */
+.poster-layer--disc,
+.poster-layer--desk,
+.poster-layer--window,
+.poster-layer--bsplay,
+.poster-layer--accents {
+  left: 10.1%;
+  width: 80%;
+  top: -1.4%;
+}
+
+/* The window drops behind the desk. Read as a scene rather than a stack, the
+   desk is the near object and the browser is the thing being looked at, so
+   putting the screen behind the furniture is what gives the card depth instead
+   of three flat cut-outs in a row.
+
+   The disc stays furthest back; DOM order settles it against the window since
+   they share a z-index. */
+/* The disc sets into the cream shape rather than floating over it, so it has to
+   paint BEHIND the blob. A z-index of 0 or auto wouldn't do it: the blob and the
+   layers are siblings, so at the same level DOM order wins and the disc (later)
+   would still cover it. Negative is what pushes it behind, and it stays visible
+   because .featured-blob-clip owns the stacking context and has no background of
+   its own. Dropped 5% below the shared geometry so a real slice of it is hidden,
+   which is what sells a horizon rather than a near miss. */
+.poster-layer--disc {
+  z-index: -1;
+  /* Sunk 3% further than the first pass. The cream shape's top-right corner
+     curves away faster than the disc does, so at the shallower setting a sliver
+     of card colour showed between the two on the disc's right side. Deeper is
+     the safe direction: extra overlap just hides more of a shape that is
+     already meant to be half-buried. */
+  top: 6.6%;
+}
+.poster-layer--desk { z-index: 2; }
+
+/* The window and its portrait bubble drop below the shared arrangement so the
+   coloured mass sits lower on the card and the desk overlaps more of it. Only
+   `top` changes: keeping left and width on the shared values means it stays in
+   register with the disc horizontally. The disc deliberately does NOT follow,
+   so it stays clipped by the card's top edge. */
+.poster-layer--window {
+  z-index: 1;
+  top: 6.6%;
+}
+
+/* The play badge rides the window exactly: same left, width and top, so the
+   two stay locked together and the badge can't drift off the portrait. Above
+   the desk, since the badge belongs to the bubble, not behind the furniture. */
+.poster-layer--bsplay {
+  z-index: 3;
+  top: 6.6%;
+}
+/* Ink marks read as drawn on top of everything. */
+.poster-layer--accents { z-index: 3; }
+
+/* The desk breaks out of the shared geometry to come up in scale, about a third
+   larger. Left and top are solved backwards from where its content sat in the
+   shared arrangement, so it grows in place instead of drifting to a corner. */
+.poster-layer--desk {
+  left: -4.6%;
+  width: 104%;
+  top: -21.4%;
+}
+
+/* Raised so the cream line sits higher across the card. The disc pokes out in
+   the notch between the browser window's right edge and the top of the cream,
+   which reads as orange leaking into the screen rather than as a sun behind it.
+   Lifting the whole shape closes that notch without moving the disc, which is
+   already sitting where it should relative to the horizon. */
+[data-poster="betterstories"] .featured-blob {
+  bottom: -2%;
+}
+
+/* Create Space, split locally into the coloured art and the ink worktable, so
+   the box can be sized against the table. The box is the subject and now runs
+   nearly the full width of the card; the table sits under it, smaller, the way
+   the street sits under the hummingbird. */
+/* SignatureStyle: one flattened cut-out collage. Sized to fill the band above
+   the title, same as the others. The white sticker outlines are part of the
+   artwork, so this one must never be re-keyed at a loose tolerance: white and
+   the export's cream ground are only 21 apart and a wide flood fill eats the
+   outlines. */
+/* DeeplyReader's reclining reader. Content fills its canvas almost edge to
+   edge (the cushion touches the left, the legs run off the right), so unlike
+   the other posters there's very little transparent padding to absorb: the
+   layer width is close to the painted width. */
+.poster-layer--drreader {
+  left: 7%;
+  width: 86%;
+  top: 1%;
+  z-index: 2;
+}
+
+.poster-layer--ssgarments {
+  left: 0.3%;
+  width: 99.2%;
+  top: -3%;
+  z-index: 2;
+}
+
+.poster-layer--csmain {
+  left: 0.5%;
+  width: 95.2%;
+  top: -3%;
+  z-index: 2;
+}
+
+/* Hand-drawn accent marks, scattered around the box. Its own geometry rather
+   than csmain's: the marks belong at the edges of the card, well outside the
+   artwork's own canvas, so sharing that coordinate space would have pinned them
+   inside the box.
+
+   Behind the artwork (z-index 1 against csmain's 2), so the box occludes any
+   mark that strays under it and the marks read as a layer the art sits on
+   rather than as scribbles over the top of it. */
+.poster-layer--csmarks {
+  left: -3.3%;
+  width: 106.5%;
+  top: 17.3%;
+  z-index: 1;
+}
+
+
+/* The blob under the torn hero is stepped a shade darker than the standard
+   cream. At --cream-warm it matched the paper's own ground almost exactly and
+   the bottom deckle edge vanished into it, which is the one edge that has to
+   read: it's where the artwork meets the title. Darker keeps the family
+   resemblance to the other cards while still letting the tear show. */
+/* Grown and raised past the default so the orb sits wholly on it. At the shared
+   geometry the blob topped out around 24% while the orb starts at 14%, so the
+   orb's upper curve fell on bare card colour and the two shapes fought instead
+   of nesting. Scoped to this card: Hummingbird's cut-outs want the smaller,
+   bottom-anchored field. */
+[data-poster="50-states-of-freedom"] .featured-blob {
+  background: #E3D7BE;
+  width: 124%;
+  left: -12%;
+  bottom: -4%;
+}
+
+/* Masked into an orb rather than left as the source rectangle, so it echoes the
+   cream blob behind it instead of sitting on it as a foreign shape.
+
+   Two consequences worth knowing. The torn deckle edge is gone: the mask cuts
+   inside it, so the treatment is now the orb, not the tear. And because the
+   source is landscape and the orb is nearly square, `cover` crops hard to the
+   sides, which is what brings the portrait up to size. `object-position` is
+   what decides how much of the collage survives that crop, so tune it rather
+   than the width.
+
+   Radii are deliberately rounder and less lopsided than .featured-blob's, so
+   the two shapes read as related rather than stamped from the same die. */
+.poster-layer--torn {
+  left: 12%;
+  width: 76%;
+  top: 11%;
+  aspect-ratio: 1 / 1.02;
+  object-fit: cover;
+  object-position: 34% center;
+  border-radius: 63% 37% 52% 48% / 43% 58% 42% 57%;
+  --rot: -2deg;
+  z-index: 2;
+}
+
+/* Project art on a featured card. `contain` rather than `cover` so a poster
+   keeps its own composition instead of being cropped. */
+.featured-art {
+  position: absolute;
+  /* Sized to sit *on* the blob rather than fill the card, so the blob reads as
+     a field behind it and the lower band stays clear for the title. */
+  top: 1%;
+  left: 5%;
+  width: 90%;
+  height: 78%;
+  object-fit: contain;
+  object-position: center center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Text sits above both. */
+.featured-item h3,
+.featured-item .featured-cat {
+  position: relative;
+  z-index: 3;
 }
 
 .featured-item h3 {
@@ -671,6 +1056,17 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: rgba(44,37,32,0.5);
+  /* Reserve three lines whether or not they're used.
+     The text block is bottom-aligned, so without this the title's position is a
+     function of how the tagline happens to wrap, which is a function of card
+     width. Art tuned to clear the title at one width then collided at another:
+     at 384px cards these taglines take two lines, at 245px they take three and
+     push the title up ~12%. Reserving the worst case makes the title's position
+     a constant, so a poster only has to be positioned once.
+     Costs a little empty space under two-line taglines. Worth it: the
+     alternative is truncating copy or re-tuning every poster per breakpoint. */
+  line-height: 1.4;
+  min-height: calc(3 * 1.4 * 0.75rem);
 }
 
 /* ============================================
@@ -895,6 +1291,21 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
+/* Square, like every other catalog card. The posters are composed against the
+   featured card's 3/4, and a layer's rendered size follows card WIDTH while its
+   `top` follows card HEIGHT, so on a shorter card the same numbers push the art
+   down past the title. Rather than a second set of positions per poster, the
+   whole composition scales from its top edge by one factor. Override it per
+   project with [data-poster] if a particular poster needs more or less. */
+.catalog-item.has-poster {
+  --poster-scale: 0.65;
+}
+
+/* Poster cards inherit the featured blob wholesale: same 108% width, same
+   lopsided radii, same -3deg. Those are what leave the card colour showing as
+   a wedge in the lower-right corner, and swapping them for a plain circle
+   traded that wedge for an even margin all the way round. */
+
 .catalog-item {
   position: relative;
   aspect-ratio: 1 / 1;
@@ -962,6 +1373,20 @@ body {
   color: #2C2520;
   margin: 0 0 0.4rem;
   letter-spacing: -0.01em;
+  /* Reserve two lines, for the same reason .card-tagline does: the text block
+     is bottom-aligned, so a title that wraps lifts itself and its card's
+     artwork ceiling with it. "Create Space Collective" goes to two lines at
+     282px cards and sat 27px above every other title in the row.
+
+     The flex bottom-alignment matters as much as the min-height. Without it a
+     one-line title sits at the TOP of its reserved box and the slack lands
+     between the title and its tagline, so the title reads as floating away
+     from the line it belongs to. Bottom-aligned, the slack goes above instead,
+     where it just widens the gap after the year. */
+  min-height: calc(2 * 1.1 * 1.25rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .card-tagline {
@@ -971,6 +1396,11 @@ body {
   font-weight: 300;
   color: rgba(44, 37, 32, 0.75);
   margin: 0 0 0.85rem;
+  /* Reserve two lines whether or not both are used. The text block is
+     bottom-aligned, so a one-line tagline pulls its card's title down and a
+     two-line one pushes it up: titles across a row stopped sharing a baseline
+     purely on how the copy happened to wrap. Same fix as .featured-cat. */
+  min-height: calc(2 * 1.4 * 0.78rem);
 }
 
 .card-cat {
@@ -1591,6 +2021,195 @@ body.detail-open {
   background: #2C2520;
 }
 
+/* ============================================
+   KEY SCREENS — the strip above the written story
+   ============================================ */
+
+.key-screens {
+  display: grid;
+  gap: 1rem;
+  max-width: 1000px;
+  margin: 0 auto 2.5rem;
+  padding: 0 2rem;
+  align-items: start;
+}
+
+/* Column count follows the number of screens rather than a fixed grid: two
+   phone shots deserve to be twice the width of four, and a fixed three-column
+   rule would leave a pair stranded at a third of the space. */
+.key-screens[data-count="1"] { grid-template-columns: minmax(0, 520px); justify-content: center; }
+.key-screens[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.key-screens[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.key-screens[data-count="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.key-screen {
+  margin: 0;
+}
+
+.key-screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  /* App screenshots are usually captured against their own background, so a
+     hairline keeps a light screen from bleeding into the page. */
+  box-shadow: 0 2px 14px rgba(44, 37, 32, 0.10);
+}
+
+.key-screen figcaption {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  color: rgba(44, 37, 32, 0.6);
+  margin-top: 0.55rem;
+}
+
+/* Phone-first: a row of four at 375px gives four unreadable slivers, so the
+   strip stacks and each screen gets the full width. */
+@media (max-width: 768px) {
+  .key-screens {
+    padding: 0 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .key-screens[data-count="2"],
+  .key-screens[data-count="3"],
+  .key-screens[data-count="4"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ============================================
+   RESEARCH & PROCESS — the timeline under the story summary
+   ============================================ */
+
+/* Same cream panel as the story block above and the process gallery below.
+   Without it this section sat straight on the card colour, where body copy at
+   300 weight has nowhere near enough contrast to be read. Colour is set
+   explicitly rather than inherited, because on a dark-coloured project the
+   inherited text colour is light and would vanish against the cream. */
+.project-process {
+  margin: 0 2rem 4rem;
+  padding: 3rem 2rem;
+  background: #FBF7EF;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(44, 37, 32, 0.06);
+  color: #2C2520;
+}
+
+.process-list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 720px;
+  /* A rule down the left edge ties the steps into one sequence. Drawn on the
+     list rather than per step so it runs unbroken through the gaps. */
+  border-left: 1px solid rgba(44, 37, 32, 0.15);
+}
+
+.process-step {
+  position: relative;
+  padding: 0 0 3rem 2rem;
+}
+
+.process-step:last-child {
+  padding-bottom: 0;
+}
+
+/* The node on the rule. Sits on the border, not beside it. */
+.process-step::before {
+  content: "";
+  position: absolute;
+  left: -4.5px;
+  top: 0.45rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+.process-kind {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  opacity: 0.55;
+  margin-bottom: 0.4rem;
+}
+
+.process-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  line-height: 1.25;
+  margin: 0 0 1.1rem;
+  color: inherit;
+}
+
+.process-block {
+  margin-bottom: 1.1rem;
+}
+
+.process-block:last-child {
+  margin-bottom: 0;
+}
+
+/* Fixed labels, so a reader can scan straight to "What changed" once they've
+   met it on the first step. */
+.process-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.5;
+  margin: 0 0 0.3rem;
+}
+
+.process-block p:not(.process-label) {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.95rem, 1.4vw, 1.02rem);
+  font-weight: 300;
+  line-height: 1.65;
+  margin: 0;
+  opacity: 0.85;
+}
+
+.process-figure {
+  margin: 1.5rem 0 0;
+}
+
+.process-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.process-figure figcaption {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  opacity: 0.6;
+  margin-top: 0.6rem;
+}
+
+@media (max-width: 768px) {
+  .project-process {
+    margin: 0 1.25rem 3rem;
+    padding: 2rem 1.25rem;
+  }
+
+  .process-step {
+    padding: 0 0 2.25rem 1.25rem;
+  }
+}
+
 /* Process gallery — grid of real photos */
 .project-gallery {
   margin: 0 2rem;
@@ -1854,7 +2473,13 @@ body.detail-open {
   }
 
   .featured-item {
-    aspect-ratio: 16 / 9;
+    /* Portrait, same as desktop, rather than the 16/9 this used to be. The
+       layered poster is composed on a portrait canvas and positioned in
+       percentages, so a landscape card here didn't just crop it, it clipped the
+       street out entirely and pushed the bird's overhang off the bottom edge
+       into the next card. Matching the ratio means one set of layer positions
+       works at every width. */
+    aspect-ratio: 3 / 4;
   }
 
   .catalog-grid {
@@ -1965,6 +2590,163 @@ body.detail-open {
   .top-action {
     font-size: 0.62rem;
     letter-spacing: 0.16em;
+  }
+}
+
+/* ============================================
+   MOBILE MENU — desktop keeps the pills in the bar
+   ============================================ */
+
+.nav-toggle,
+.nav-menu,
+.nav-scrim {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* The contact links move into the sheet. Their actions are also permanently
+     available as the two floating buttons bottom-right, so nothing is lost by
+     taking them out of a strip that has no room for them. */
+  .top-actions {
+    display: none;
+  }
+
+  /* The bar stays: it is the cream chrome the corner mark sits on once the hero
+     has scrolled away. Only its pills move into the sheet, so it collapses to
+     the height of the mark's band. */
+  .filter-bar {
+    height: var(--hero-nav-height, 72px);
+    padding: 0;
+  }
+
+  .filter-btn {
+    display: none;
+  }
+
+  .nav-toggle {
+    position: fixed;
+    top: 0;
+    right: 1.1rem;
+    height: var(--hero-nav-height, 72px);
+    width: 44px; /* full touch target, not just the 18px of bars */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 900; /* over the bar (20), the mark (810) and the scrim */
+  }
+
+  .nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: #2C2520;
+    border-radius: 1px;
+    transition: transform 0.25s ease, opacity 0.2s ease, width 0.25s ease;
+    transform-origin: center;
+  }
+
+  /* Bars cross into an X. The middle one fades rather than moving, so the two
+     that remain read as one continuous gesture. */
+  .nav-toggle.is-open span:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .nav-toggle.is-open span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-toggle.is-open span:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  .nav-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(44, 37, 32, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 880;
+  }
+  .nav-scrim.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-menu {
+    display: block;
+    position: fixed;
+    top: var(--hero-nav-height, 72px);
+    left: 0;
+    right: 0;
+    background: var(--black);
+    border-bottom: 1px solid rgba(44, 37, 32, 0.08);
+    padding: 1rem 1.1rem 1.75rem;
+    z-index: 890;
+    /* Slides out from under the bar. Translate + opacity only, so opening the
+       sheet never reflows the page behind it. */
+    transform: translateY(-8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.25s ease, opacity 0.2s ease, visibility 0s linear 0.25s;
+  }
+
+  .nav-menu.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.25s ease, opacity 0.2s ease, visibility 0s;
+  }
+
+  .nav-menu-label {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(44, 37, 32, 0.45);
+    margin: 0 0 0.5rem;
+  }
+
+  .nav-menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-menu-item {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0.7rem 0;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    color: #2C2520;
+    cursor: pointer;
+  }
+
+  .nav-menu-item.active {
+    font-weight: 600;
+  }
+
+  /* A dot rather than a colour swap, so the active row still reads at a glance
+     without introducing a second accent into a cream sheet. */
+  .nav-menu-item.active::before {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #2C2520;
+    margin-right: 0.6rem;
+    vertical-align: middle;
   }
 }
 

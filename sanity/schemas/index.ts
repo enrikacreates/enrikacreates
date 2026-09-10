@@ -13,6 +13,7 @@ import { brandColorOptions } from "./objects/brandColor"; // exports only — no
 import { slide } from "./objects/slide";
 import { galleryItem } from "./objects/galleryItem";
 import { pullQuote } from "./objects/pullQuote";
+import { processStep } from "./objects/processStep";
 
 // Document types (top-level)
 import { category } from "./documents/category";
@@ -26,6 +27,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   slide,
   galleryItem,
   pullQuote,
+  processStep,
   // then documents
   category,
   project,
