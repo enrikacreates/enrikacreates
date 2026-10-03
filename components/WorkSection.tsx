@@ -177,7 +177,10 @@ export function WorkSection({
                   // Hook for per-project poster tweaks that shouldn't leak to
                   // every card, e.g. tinting the blob under the torn hero.
                   data-poster={poster ? item.slug : undefined}
-                  style={{ backgroundColor: item.color }}
+                  // --card-color rather than a literal background, so the
+                  // card can derive tints from it (see --card-wash). This is
+                  // what every other card already does.
+                  style={{ "--card-color": item.color } as React.CSSProperties}
                 >
                   {poster ? (
                     <PosterArt slug={item.slug} />
