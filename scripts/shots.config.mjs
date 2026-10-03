@@ -41,7 +41,96 @@ export const PROJECTS = [
     ],
   },
 
-  /* ---- Local only. Start each app's dev server first. ---- */
+  /* ---- Local only. Start each app's dev server first. ----
+     Ports match .claude/launch.json in ~/dev, so `preview_start <name>` and
+     this config can't drift apart. Routes marked `auth` redirect to the login
+     screen when nobody is signed in: the script captures what it is served,
+     so an unauthenticated run of those produces a folder of login pages. */
+
+  {
+    slug: "create-space-collective",
+    baseUrl: "http://localhost:3210",
+    routes: [
+      { name: "landing", path: "/" },
+      { name: "our-story", path: "/our-story" },
+      { name: "values", path: "/values" },
+      { name: "studio", path: "/studio" },
+      { name: "celebrate", path: "/celebrate" },
+
+      /* --- Onboarding flow: login, welcome, dashboard, profile nudge --- */
+      { name: "flow1-login", path: "/login" },
+      // Admin-only preview that forces the welcome open without consuming the
+      // member's real first-run flag. Built into the app for exactly this.
+      { name: "flow2-welcome", path: "/home?welcome=preview", auth: "admin", wait: 900 },
+      /* Both /home routes go in through ?welcome=preview first. Loading /home
+         cold in a fresh capture profile opens the first-run welcome, and that
+         modal pings the welcome committee on OPEN — it put 8 real "say hi"
+         notifications in front of a member before this was understood. Preview
+         mode skips the ping; setting the seen-flag then keeps the modal shut
+         so what's behind it can be photographed. */
+      {
+        name: "flow3-dashboard",
+        path: "/home",
+        visitFirst: "/home?welcome=preview",
+        set: { cs_welcomed_v1: "1" },
+        auth: "member",
+        wait: 600,
+      },
+      // The nudge hides itself for the rest of the session once dismissed, and
+      // is hidden entirely at 100% profile completion.
+      {
+        name: "flow4-profile-nudge",
+        path: "/home",
+        visitFirst: "/home?welcome=preview",
+        set: { cs_welcomed_v1: "1" },
+        clear: ["cs-profile-nudge"],
+        auth: "member",
+        wait: 900,
+      },
+
+      /* --- Day to day: join a challenge, then the weekly loop --- */
+      { name: "flow5-challenges", path: "/challenges", auth: "member" },
+      { name: "flow6-check-in", path: "/living-room", auth: "member" },
+      { name: "flow7-ship", path: "/made-it-wall", auth: "member" },
+      { name: "flow8-support", path: "/show-and-tell", auth: "member" },
+    ],
+  },
+
+  {
+    slug: "crushit",
+    baseUrl: "http://localhost:5175",
+    routes: [{ name: "home", path: "/" }],
+  },
+
+  {
+    slug: "deeplyreader",
+    baseUrl: "http://localhost:5188",
+    routes: [{ name: "home", path: "/" }],
+  },
+
+  {
+    slug: "thedailystory",
+    baseUrl: "http://localhost:5190",
+    routes: [{ name: "home", path: "/" }],
+  },
+
+  {
+    slug: "storeit",
+    baseUrl: "http://localhost:3230",
+    routes: [{ name: "home", path: "/" }],
+  },
+
+  {
+    slug: "caashflow",
+    baseUrl: "http://localhost:3220",
+    routes: [{ name: "home", path: "/" }],
+  },
+
+  {
+    slug: "hummingbird",
+    baseUrl: "http://localhost:8082",
+    routes: [{ name: "home", path: "/" }],
+  },
 
   {
     slug: "workshopblocks",

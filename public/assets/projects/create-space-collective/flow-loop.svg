@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="790" viewBox="0 0 900 790"
+     font-family="Inter, -apple-system, sans-serif">
+  <!--
+    Create Space, the core recurring loop.
+
+    Four steps on the ring, and peer to peer support in the middle as a
+    flywheel rather than a fourth stop.
+
+    That placement is the whole argument of the drawing. Support is not
+    something you reach at the end of a turn, it is what every step runs on:
+    edit notes while making, cheering while shipping, a hot seat when stuck.
+    Drawn as a node it said "support arrives once the work is done", which is
+    the opposite of what the place is for. Drawn as the hub it says what is
+    true, that the community is the engine and the four steps are what it
+    drives.
+
+    Celebrating closes the turn, and closing matters: a loop needs a reason to
+    come round again, and recognition is it. It also gives the ring an honest
+    end state, which the earlier draft lacked once support moved inward.
+
+    Celebrate is a STATE, not a place, which is why it is labelled the same way
+    Do the work is. It takes a different form in every experience: a shoutout
+    in one, the weekly celebration post in another, a milestone moment on the
+    dashboard. The design instruction that falls out of this is to build the
+    marking into the end of each experience rather than to build a celebrations
+    page, which is what a naive reading of the node would produce.
+
+    The entry is any experience, not only a challenge, and what "do the work"
+    looks like changes with the experience you joined.
+
+    The experience types are NOT one model with a type column, and should not
+    become one. A challenge is a time boxed daily feed with scoring, a pod is a
+    standing group with its own pages and meetups, a live event is a call or a
+    room, a path is a curriculum. What they share is a contract, not a
+    structure: each can be joined, knows who is in it, emits work into Ship and
+    emits a completion signal into Celebrate. Four implementations, one set of
+    seams. That is precisely why one flow diagram can be true across all of
+    them, and why flattening them into one table would produce a row of
+    nullable columns and four special cases wearing a trench coat. Reflecting lives inside
+    Do the work rather than beside it: it is one way of doing the work, next to
+    practising and making, and giving it its own node quietly claimed the
+    weekly check-in IS the work.
+
+    Shipping has two ranges and the order is the point: out to peers first,
+    then out in public.
+  -->
+  <defs>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#8A7E72" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- The thesis the loop exists to serve. Kept at the top because every
+       decision below it follows from it: the ring is four states of making,
+       not four places to talk. -->
+  <text x="435" y="36" text-anchor="middle" font-family="Playfair Display, Georgia, serif"
+        font-size="15" font-style="italic" fill="#1A1A1A">A tool to do the work, not just a place to connect.</text>
+
+  <!-- the ring: four arcs, deliberately not a perfect circle -->
+  <g stroke="#1A1A1A" stroke-width="1.7" fill="none" stroke-linecap="round">
+    <path d="M543 178 C 626 196, 692 268, 700 346" marker-end="url(#b)"/>
+    <path d="M700 444 C 690 530, 622 596, 543 612" marker-end="url(#b)"/>
+    <path d="M327 612 C 246 596, 182 530, 172 444" marker-end="url(#b)"/>
+    <path d="M172 346 C 182 268, 246 196, 327 178" marker-end="url(#b)"/>
+  </g>
+
+  <!-- the hub: peer to peer support, always turning -->
+  <circle cx="435" cy="378" r="54" fill="#FBF7EF" stroke="#8A7E72" stroke-width="1.3" stroke-dasharray="4 4"/>
+  <g stroke="#8A7E72" stroke-width="1.5" fill="none" stroke-linecap="round">
+    <path d="M503 348 C 520 366, 520 390, 503 408" marker-end="url(#c)"/>
+    <path d="M367 408 C 350 390, 350 366, 367 348" marker-end="url(#c)"/>
+  </g>
+  <text x="435" y="374" text-anchor="middle" font-size="12.5" fill="#1A1A1A">peer to peer</text>
+  <text x="435" y="392" text-anchor="middle" font-size="12.5" fill="#1A1A1A">support</text>
+  <text x="435" y="462" text-anchor="middle" font-size="11.5" fill="#8A7E72" font-style="italic">the flywheel, not a stop:</text>
+  <text x="435" y="479" text-anchor="middle" font-size="11.5" fill="#8A7E72" font-style="italic">every step runs on it</text>
+
+  <!-- nodes -->
+  <g stroke="#1A1A1A" stroke-width="1.7" fill="#FBF7EF" stroke-linejoin="round">
+    <path d="M326 140 L542 138 Q548 138 548 144 L546 200 Q546 206 540 206 L328 204 Q322 204 322 198 L320 146 Q320 140 326 140 Z"/>
+    <path d="M644 348 L838 346 Q844 346 844 352 L842 436 Q842 442 836 442 L646 440 Q640 440 640 434 L638 354 Q638 348 644 348 Z"/>
+    <path d="M328 584 L544 582 Q550 582 550 588 L548 644 Q548 650 542 650 L330 648 Q324 648 324 642 L322 590 Q322 584 328 584 Z"/>
+    <path d="M20 346 L238 348 Q244 348 244 354 L242 436 Q242 442 236 442 L22 440 Q16 440 16 434 L14 352 Q14 346 20 346 Z"/>
+  </g>
+
+  <g font-family="Playfair Display, Georgia, serif" font-size="22" fill="#1A1A1A" text-anchor="middle">
+    <text x="435" y="179">Join an experience</text>
+    <text x="741" y="387">Do the work</text>
+    <text x="436" y="623">Ship the work</text>
+    <text x="129" y="387">Celebrate your wins</text>
+  </g>
+  <g font-size="12.5" fill="#6B6158" text-anchor="middle">
+    <text x="741" y="412">however that experience works</text>
+    <text x="129" y="412">however that experience marks it</text>
+  </g>
+
+  <!-- Supporting features, each above or below its own node. The two side sets
+       are pulled outward and kept short: at full width they ran straight
+       through the ring arcs, which pass within about 10px of the node edge at
+       this height. -->
+  <g stroke="#8A7E72" stroke-width="1.1" fill="none" stroke-dasharray="3 4" stroke-linecap="round">
+    <path d="M435 138 L435 112"/>
+    <path d="M776 442 L776 468"/>
+    <path d="M435 650 L435 676"/>
+    <path d="M90 442 L90 468"/>
+  </g>
+  <g font-size="12" fill="#6B6158" text-anchor="middle">
+    <text x="435" y="100">Challenges, Maker Rooms, Live Studio</text>
+    <text x="776" y="488">reflect, practise, make</text>
+    <text x="776" y="510">check-ins, Daily Do</text>
+    <text x="90" y="488">shoutouts, cheers</text>
+    <text x="90" y="510">the weekly celebration post</text>
+    <text x="90" y="532">milestone moments</text>
+    <text x="435" y="696">first to peers: the I Made It! Wall</text>
+    <text x="435" y="718">then out in public</text>
+  </g>
+
+  <text x="435" y="74" text-anchor="middle" font-size="10.5" fill="#FC815B" font-style="italic">Pods and Paths still to come</text>
+
+  <text x="435" y="754" text-anchor="middle" font-size="11.5" fill="#8A7E72">
+    Shipping has two ranges, and the order is the point: seen by a few who care, then by everyone.
+  </text>
+  <text x="435" y="772" text-anchor="middle" font-size="11.5" fill="#8A7E72">
+    Drawn closed because it closes: being celebrated is what makes the next turn worth starting.
+  </text>
+</svg>

@@ -43,3 +43,7 @@ public/_review/
 # Screenshot capture output (npm run shots). Working material: the keepers get
 # uploaded into Sanity, so the local copies don't need to ship.
 public/assets/projects/*/shots/
+
+# Chrome profile holding signed-in sessions for `npm run shots`. Never commit:
+# it contains live auth cookies for the apps being captured.
+.shots-profile/

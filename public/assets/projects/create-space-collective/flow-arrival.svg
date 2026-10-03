@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="470" viewBox="0 0 1280 470"
+     font-family="Inter, -apple-system, sans-serif">
+  <!--
+    Create Space, arrival flow: stranger to first win.
+
+    Five stages of the product flow framework (docs/product-flow-framework.md).
+    Drawn rather than charted so it sits with the poster artwork: one stroke
+    weight, open counters, nothing filled except the one highlight.
+
+    The heavy spine is the path a person actually walks. The light dashed
+    branches are supporting features, hung off the step they serve, so the
+    feature set reads as derived from the flow rather than parked beside it.
+
+    Stage 5 keeps the dashed outline because it is not realised as a stage, but
+    every door into it already works: a first post of any kind lands in the
+    Living Room today. What is missing is placement, not capability. The
+    drawing says that exactly, because "not built" and "built but nowhere near
+    the front door" call for completely different work.
+  -->
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <g stroke="#1A1A1A" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- spine -->
+    <path d="M196 150 C 218 144, 232 156, 252 150" marker-end="url(#a)"/>
+    <path d="M444 150 C 466 157, 480 144, 500 150" marker-end="url(#a)"/>
+    <path d="M692 150 C 714 144, 728 156, 748 150" marker-end="url(#a)"/>
+    <path d="M940 150 C 962 156, 976 144, 996 150" marker-end="url(#a)"/>
+
+    <!-- stage boxes, each a touch off-square so the row reads drawn, not generated -->
+    <path d="M24 108 L193 106 Q199 106 199 112 L197 190 Q197 196 191 196 L26 194 Q20 194 20 188 L22 114 Q22 108 24 108 Z"/>
+    <path d="M272 106 L441 108 Q447 108 447 114 L445 192 Q445 198 439 198 L274 196 Q268 196 268 190 L266 112 Q266 106 272 106 Z"/>
+    <path d="M520 108 L689 106 Q695 106 695 112 L693 190 Q693 196 687 196 L522 194 Q516 194 516 188 L518 114 Q518 108 520 108 Z"/>
+    <path d="M768 106 L937 108 Q943 108 943 114 L941 192 Q941 198 935 198 L770 196 Q764 196 764 190 L762 112 Q762 106 768 106 Z"/>
+  </g>
+
+  <!-- Stage 5: highlight behind, dashed border. Not built yet. -->
+  <rect x="1020" y="124" width="196" height="26" rx="4" fill="#ECF682"/>
+  <path d="M1016 108 L1185 106 Q1191 106 1191 112 L1189 190 Q1189 196 1183 196 L1018 194 Q1012 194 1012 188 L1014 114 Q1014 108 1016 108 Z"
+        fill="none" stroke="#1A1A1A" stroke-width="1.7" stroke-dasharray="7 5" stroke-linejoin="round"/>
+
+  <!-- stage numbers -->
+  <g font-size="12" fill="#8A7E72" letter-spacing="1.6">
+    <text x="22" y="92">01</text>
+    <text x="268" y="92">02</text>
+    <text x="518" y="92">03</text>
+    <text x="764" y="92">04</text>
+    <text x="1014" y="92">05</text>
+  </g>
+
+  <!-- stage names -->
+  <g font-family="Playfair Display, Georgia, serif" font-size="25" fill="#1A1A1A">
+    <text x="38" y="150">Reach</text>
+    <text x="286" y="150">Enroll</text>
+    <text x="534" y="150">First Run</text>
+    <text x="782" y="150">Setup</text>
+    <text x="1030" y="147">First Win</text>
+  </g>
+
+  <!-- what it actually is -->
+  <g font-size="12.5" fill="#6B6158">
+    <text x="38" y="176">the public pitch</text>
+    <text x="286" y="176">soft now, full later</text>
+    <text x="534" y="176">login, welcome video</text>
+    <text x="782" y="176">profile completion</text>
+    <text x="1030" y="176">your first post</text>
+  </g>
+
+  <!-- supporting features, hung off the step they serve -->
+  <g stroke="#8A7E72" stroke-width="1.1" fill="none" stroke-dasharray="3 4" stroke-linecap="round">
+    <path d="M60 196 L60 236"/><path d="M60 236 L60 309"/><path d="M60 309 L60 352"/>
+    <path d="M308 196 L308 236"/><path d="M308 236 L308 338"/>
+    <path d="M556 196 L556 236"/><path d="M556 236 L556 276"/>
+    <path d="M804 196 L804 236"/><path d="M804 236 L804 276"/>
+    <path d="M1052 196 L1052 236"/><path d="M1052 236 L1052 276"/>
+  </g>
+  <g font-size="12" fill="#6B6158">
+    <text x="72" y="240">The Letters, lived out</text>
+    <text x="72" y="313">Live micro events</text>
+    <text x="320" y="240">Soft: an active email</text>
+    <text x="320" y="309">Full: request an invite</text>
+    <text x="568" y="240">Welcome video</text>
+    <text x="568" y="280">Where to next</text>
+    <text x="816" y="240">Avatar, bio, location</text>
+    <text x="816" y="280">Interests</text>
+    <text x="1064" y="240">Weekly check-in, Daily Do,</text>
+    <text x="1064" y="280">work log, ask for help</text>
+  </g>
+
+  <!-- Reach sub-detail, set smaller so the two outreach motions read as the
+       branches and their mechanics as the footnote. The Letters ship today as
+       a plain subscribe page, and Delivery, the multi-brand publisher the
+       letters are authored and sent from, is itself still being built. The
+       video, the doing element and the response are the intended edition, so
+       both carry the same planned marker the First Win stage does. Outreach is a claim about what you do, and a
+       diagram that draws the plan as the product is worth nothing. -->
+  <g font-size="11" fill="#8A7E72">
+    <text x="72" y="257">watch, make something, write back</text>
+    <text x="72" y="273">published from Delivery, via Postmark</text>
+    <text x="72" y="330">online and in person</text>
+    <text x="72" y="362">lands on Our Story, Values</text>
+    <text x="1064" y="309">any one of them lands in the Living Room</text>
+    <text x="320" y="257">newsletter, event RSVP, free account</text>
+    <text x="320" y="273">all three promote to free member</text>
+    <text x="320" y="347">free member, then full</text>
+    <text x="320" y="326">fit form, billing, thank-you</text>
+  </g>
+  <text x="72" y="289" font-size="10.5" fill="#FC815B" font-style="italic">letters app and interactive layer both in build</text>
+  <!-- The paid tier is real but shut. Drawing it as an open door would make the
+       whole funnel a lie: today every soft door leads to a free member who
+       waits, which is the actual GTM and a deliberate one. -->
+  <text x="320" y="363" font-size="10.5" fill="#FC815B" font-style="italic">converts when the gates open</text>
+
+  <!-- what each stage is FOR, the question the framework asks -->
+  <g font-size="11.5" fill="#8A7E72" font-style="italic">
+    <text x="38" y="400">what do they believe</text>
+    <text x="38" y="418">before committing?</text>
+    <text x="286" y="400">smallest commitment that still</text>
+    <text x="286" y="418">means something? an email.</text>
+    <text x="534" y="400">can they tell what this</text>
+    <text x="534" y="418">is for in one screen?</text>
+    <text x="782" y="400">what does the product</text>
+    <text x="782" y="418">genuinely need?</text>
+    <text x="1030" y="400">how many steps to the</text>
+    <text x="1030" y="418">first real win?</text>
+  </g>
+
+  <!-- The gap, stated. Set beside the stage number rather than on a leader
+       line into the box: the arrow crossed the branch text underneath, and a
+       label this short does not need pointing at when the box it belongs to is
+       the only dashed one on the page. -->
+  <text x="1046" y="92" font-size="11.5" fill="#FC815B" font-style="italic">built, not surfaced at arrival</text>
+
+  <text x="20" y="452" font-size="11.5" fill="#8A7E72">
+    Heavy line: the path walked. Dashed branches: features in service of that step. Stage 05 exists but is not placed at arrival.
+  </text>
+</svg>
