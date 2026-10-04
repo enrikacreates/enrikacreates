@@ -157,6 +157,16 @@ const FLAT_POSTERS = new Set([
   "create-space-collective",
   "signaturestyle",
   "50-states-of-freedom",
+  "deeplyreader",
+  "hummingbird",
+  "betterstories",
+  // Artwork is in, but these three have no project document in Sanity yet, so
+  // nothing renders for them: the home grid lists projects and asks each one
+  // for a poster, not the other way round. They light up the moment the
+  // documents exist.
+  "bti-production-hub",
+  "the-daily-story",
+  "thestoryoftelling",
 ]);
 
 export function getPoster(slug: string): Poster | undefined {

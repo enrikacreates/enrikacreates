@@ -832,17 +832,22 @@ body {
 }
 
 /* The plate that holds a finished poster.
-   The posters are generated at 4:5, but their last fifth is empty cream, which
+   The posters are generated at 4:5, but their last stretch is empty cream, which
    met the page's own cream and left the card with no bottom edge: the artwork
-   dissolved instead of ending. The plate is square, so that dead band is cropped
-   away and every composition sits on its own ground right to the edge.
-   Generating at 4:5 is still correct, it just means the bottom ~20% is a margin
-   rather than a place to put anything. */
+   dissolved instead of ending. The plate is wider than the source, so that dead
+   band is cropped off the bottom and each composition sits on its own ground to
+   the edge.
+
+   8/9 shows the top ~90%. A square showed only the top 80%, which cut into the
+   compositions themselves once the later posters arrived: Hummingbird's row of
+   buildings, DeeplyReader's gramophone and the Daily Story's pen all sit
+   between 80% and 90% of the height. Generating at 4:5 stays correct; it just
+   means the bottom tenth is margin. */
 .poster-plate {
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 8 / 9;
   border-radius: 4px;
   overflow: hidden;
   background: var(--card-bg);
@@ -864,6 +869,14 @@ body {
   justify-content: flex-start;
   gap: 0.9rem;
   overflow: visible;
+}
+
+/* A catalog card positions its text absolutely over the artwork, which is the
+   whole thing a plate-plus-caption is meant to stop doing. Put it back in flow
+   so it sits under the plate like the featured one. */
+.catalog-item.has-flat .card-content {
+  position: static;
+  padding: 0;
 }
 
 /* The caption now sits on the page rather than on the card's colour, so a dark
