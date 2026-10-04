@@ -204,6 +204,14 @@ export const project = defineType({
       initialValue: false,
     }),
     defineField({
+      name: "caseUrl",
+      title: "Case study link",
+      type: "string",
+      group: "meta",
+      description:
+        "Optional. Where the 'read / download the case' chip points. Leave blank and it uses the deck at /case/<slug> if one exists. A .pdf link becomes a download; anything else opens in a new tab.",
+    }),
+    defineField({
       name: "bannerAlign",
       title: "Banner crop",
       type: "string",

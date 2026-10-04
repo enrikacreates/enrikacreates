@@ -35,6 +35,9 @@
  *   it automatically.
  */
 
+import { existsSync } from "node:fs";
+import path from "node:path";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -97,6 +100,22 @@ export default async function ProjectDetailPage({
     ...featured,
     ...listed.filter((p) => !featuredIds.has(p._id)),
   ].filter((p) => getPoster(p.slug));
+
+  // Where the case-study chip points, if anywhere.
+  //
+  // A field in the Studio wins; otherwise a hand-built deck at /case/<slug>
+  // counts, checked on disk so writing one is all it takes to make the chip
+  // appear. Two of the nine have a deck today, so this is deliberately absent
+  // rather than a dead link on the other seven.
+  const caseHref =
+    item.caseUrl ||
+    (existsSync(path.join(process.cwd(), "public", "case", `${slug}.html`))
+      ? `/case/${slug}`
+      : undefined);
+  // Say what the click actually does. A deck is a page you read; only a PDF is
+  // a download, and labelling an HTML page "download" is a small lie that the
+  // click immediately exposes.
+  const caseIsFile = Boolean(caseHref && /\.pdf($|\?)/i.test(caseHref));
 
   const at = sequence.findIndex((p) => p.slug === slug);
   // Wraps, so the last case leads back to the first instead of dead-ending.
@@ -207,6 +226,25 @@ export default async function ProjectDetailPage({
                 <li key={sig}>{sig}</li>
               ))}
             </ul>
+          )}
+
+          {caseHref && (
+            <a
+              className="case-download"
+              href={caseHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              {...(caseIsFile ? { download: "" } : {})}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                {caseIsFile ? (
+                  <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                ) : (
+                  <path d="M4 5h16v14H4zM4 9h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                )}
+              </svg>
+              <span>{caseIsFile ? "Download the case" : "Read the full case"}</span>
+            </a>
           )}
         </header>
 

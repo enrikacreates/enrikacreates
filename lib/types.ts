@@ -114,6 +114,8 @@ export interface Project extends ProjectListItem {
   bannerAlign?: "top" | "center" | "bottom";
   /** Exact band, 0-100. Overrides bannerAlign when set. */
   bannerFocus?: number;
+  /** Where the case-study chip points. Falls back to a local deck. */
+  caseUrl?: string;
   keyScreens?: GalleryItem[];
   slides?: ProjectSlide[];
   gallery?: GalleryItem[];
