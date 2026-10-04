@@ -10,11 +10,35 @@
  * clipping wrapper and the clipped layers ride along inside it.
  */
 
+import Image from "next/image";
+
 import { getPoster } from "@/lib/posters";
 
 export function PosterArt({ slug }: { slug: string }) {
   const poster = getPoster(slug);
   if (!poster) return null;
+
+  // A finished poster is the whole card. It arrives at the card's own 4:5, so
+  // `cover` crops nothing, and it already contains the ground, the colour field
+  // and the browser window that the layered path below has to draw.
+  //
+  // next/image rather than a plain <img> purely for weight: the sources are
+  // ~2MB PNGs, and this is a portfolio that gets sent out with a resume. The
+  // optimiser serves AVIF/WebP at the size actually requested.
+  if (poster.flat) {
+    return (
+      <Image
+        className="poster-flat"
+        src={poster.flat}
+        alt=""
+        aria-hidden="true"
+        fill
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        draggable={false}
+        priority={false}
+      />
+    );
+  }
 
   const clipped = poster.layers.filter((l) => !l.breaksFrame);
   const overhanging = poster.layers.filter((l) => l.breaksFrame);

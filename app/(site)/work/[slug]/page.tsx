@@ -104,7 +104,7 @@ export default async function ProjectDetailPage({
         {/* Card-as-hero: the poster artwork, or the original shapes. Title
             drops below either way. */}
         <div
-          className={`${heroClass}${poster ? " has-poster" : ""}`}
+          className={`${heroClass}${poster ? " has-poster" : ""}${poster?.flat ? " has-flat" : ""}`}
           data-poster={poster ? item.slug : undefined}
           style={{ "--card-color": item.color } as React.CSSProperties}
         >

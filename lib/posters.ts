@@ -28,6 +28,13 @@ export interface PosterLayer {
 }
 
 export interface Poster {
+  /**
+   * A single finished poster, already 4:5 and already carrying its own ground,
+   * colour field and browser window. When set it is the whole artwork: the
+   * blob, the drawn frame and the layer stage are all skipped, because the
+   * generated image contains all three.
+   */
+  flat?: string;
   blob: boolean;
   /**
    * A faint browser window drawn behind the artwork, to say at a glance that
@@ -132,6 +139,29 @@ const POSTERS: Record<string, Poster> = {
   },
 };
 
+/**
+ * Projects whose artwork is a single finished 4:5 poster rather than a stack of
+ * transparent layers.
+ *
+ * The layered system exists because a flattened rectangle can't give one
+ * element prominence over another: the hierarchy had to be built in CSS. These
+ * posters are generated with that hierarchy already in them, and they carry
+ * their own ground, their own colour field and their own browser window. So
+ * everything the layered path adds (the blob, the drawn frame, the per-tier
+ * scale) would be drawn a second time on top of art that already has it.
+ *
+ * To add one: generate at 4:5, save it as `public/assets/posters/<slug>.png`,
+ * and add the slug here. Nothing else. The file name is the wiring.
+ */
+const FLAT_POSTERS = new Set([
+  "create-space-collective",
+  "signaturestyle",
+  "50-states-of-freedom",
+]);
+
 export function getPoster(slug: string): Poster | undefined {
+  if (FLAT_POSTERS.has(slug)) {
+    return { blob: false, frame: false, flat: `/assets/posters/${slug}.png`, layers: [] };
+  }
   return POSTERS[slug];
 }

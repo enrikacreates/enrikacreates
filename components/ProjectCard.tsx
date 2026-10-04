@@ -41,6 +41,9 @@ export function ProjectCard({ item, index }: ProjectCardProps) {
     // when there was nothing else on it; against artwork they just compete,
     // which is exactly what the white triangle was doing on the bird's beak.
     poster ? "has-poster" : `layout-${layout}`,
+    // A finished poster brings its own ground and its own 4:5, so the card
+    // takes the ratio from the artwork and drops what the artwork already has.
+    poster?.flat ? "has-flat" : "",
     isDark ? "dark-card" : "",
     hasImage && !poster ? "has-collage" : "",
   ]

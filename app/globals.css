@@ -676,7 +676,11 @@ body {
      of card WIDTH). Their widths already follow card width; making `top` do the
      same is what makes a composition survive a change of aspect ratio. */
   container-type: inline-size;
-  aspect-ratio: 3 / 4;
+  /* 4:5 because that is what the posters are generated at. Matching the card to
+     the artwork is what makes a poster portable between the featured row and
+     the catalog grid: the per-tier scale factors only ever existed to undo a
+     difference in aspect ratio. */
+  aspect-ratio: 4 / 5;
   background: var(--card-bg);
   border-radius: 4px;
   padding: 2rem;
@@ -814,6 +818,39 @@ body {
 /* Holds the layers so a card type can rescale the whole composition at once.
    Anchored at the top: shrinking toward the middle would lift the artwork away
    from the card's top edge and open a gap the design doesn't have. */
+/* ── A finished poster ───────────────────────────────────────────────────────
+   One image, generated at the card's own 4:5, already carrying its ground, its
+   colour field and its browser window. It is the whole card: it sits under the
+   title and tagline and bleeds to every edge, so nothing from the layered
+   system below should also be drawn. */
+.poster-flat {
+  object-fit: cover;
+  border-radius: inherit;
+  /* Under the text, above the card's background wash. */
+  z-index: 0;
+}
+
+/* A card showing a finished poster takes its ratio from the artwork and drops
+   the parts the artwork already contains. */
+.catalog-item.has-flat {
+  aspect-ratio: 4 / 5;
+}
+
+/* The detail hero is a 16/11 landscape band, and a 4:5 poster forced into it
+   loses its top and bottom: on Create Space the crop cut the browser window off
+   at both ends and zoomed the box to fill. A finished poster is a composition,
+   not a texture to crop, so here the hero takes the poster's shape and centres
+   it instead of the poster taking the hero's. */
+.project-hero.catalog-item.has-flat {
+  aspect-ratio: 4 / 5;
+  max-width: 380px;
+  margin-inline: auto;
+}
+.has-flat .poster-frame,
+.has-flat .featured-blob {
+  display: none;
+}
+
 /* ── The browser frame ───────────────────────────────────────────────────────
    A faint window drawn behind the artwork so a card says "software" without
    anyone reading a word. Deliberately quiet: at full strength it competed with
