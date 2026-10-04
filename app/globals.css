@@ -2509,11 +2509,14 @@ body.detail-open {
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  /* The mount a contained screen sits on. Shots arrive at different shapes, so
-     something has to fill the margin either side of a tall one; against the
-     mount that reads as deliberate, where a shrunken screenshot read as small. */
-  background: var(--bone, #FFFDF7);
-  box-shadow: 0 2px 14px rgba(44, 37, 32, 0.10);
+  /* No mount. The viewport holds one height so stepping between shapes doesn't
+     resize the page, which means a narrow phone shot leaves a lot of margin
+     either side; on a bone panel that margin read as a big white block around a
+     small picture. The page is the project's own colour now, so letting it show
+     through costs nothing and needs no second colour decision: the surround is
+     simply the page. Each shot keeps its own radius and shadow, which is what
+     actually separates it from the background. */
+  background: transparent;
 }
 
 .key-screens-track {
