@@ -177,8 +177,11 @@ try {
       for (const vp of VIEWPORTS) {
         const page = await browser.newPage();
         try {
+          /* A wide overlay with few columns photographs as mostly empty
+           * ground. `vw` narrows the viewport for one route so its content
+           * fills the frame, rather than cropping emptiness out afterwards. */
           await page.setViewport({
-            width: vp.width,
+            width: route.vw && !vp.mobile ? route.vw : vp.width,
             height: vp.height,
             deviceScaleFactor: 2, // retina, so it holds up scaled down
             isMobile: vp.mobile,

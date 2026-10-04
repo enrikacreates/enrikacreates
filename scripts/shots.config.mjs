@@ -183,6 +183,41 @@ export const PROJECTS = [
       // day that actually shows the mechanic carrying a full load.
       { name: "flow3b-busy-day", path: "/day/2026-07-14", auth: "member", wait: 1800 },
       { name: "flow3c-week", path: "/week/2026-07-14", auth: "member", wait: 1800 },
+
+      /* --- Tight crops: the full-screen overlays sit in a lot of empty
+         ground at viewport size, which shows the page rather than the work. */
+      {
+        name: "crop-board",
+        path: "/today",
+        auth: "member",
+        click: ['[aria-label="Switch view"]', "text:Board"],
+        clipTo: "text:BUCKET LIST",
+        clipMin: 900,
+        pad: 24,
+        // The board centres its columns, so a wide frame is mostly the dimmed
+        // page behind the overlay. Narrow until the columns fill it.
+        vw: 900,
+        wait: 1800,
+      },
+      {
+        name: "crop-write",
+        path: "/today",
+        auth: "member",
+        click: ['[aria-label="Switch view"]', "text:Write"],
+        clipTo: "text:COACHING",
+        clipMin: 700,
+        pad: 28,
+        wait: 1800,
+      },
+      {
+        name: "crop-flowup",
+        path: "/today",
+        auth: "member",
+        clipTo: "text:ACTIONS",
+        clipMin: 700,
+        pad: 20,
+        wait: 1500,
+      },
       // The feedback step of the daily loop. NOT the Stats mode: the score
       // breakdown opens in place on the day you are already looking at, which
       // is why it is the one that actually gets used.

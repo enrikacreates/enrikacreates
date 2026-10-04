@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Daily Story, a case study · Enrika Greathouse</title>
+<meta name="description" content="Designing and building a digital diary and planner where tasks are promoted, never rewritten. Nested loops, a promotion funnel, and coaching that never sends you anywhere.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;800&family=Inter:wght@400;500;700&family=Caveat:wght@400;600&display=swap">
+<style>
+/* ── Tokens ────────────────────────────────────────────────────────────────
+   Create Space's own palette, so the case study and the product it is about
+   read as one thing. */
+:root{
+  --cream:#F8F4EC; --cream-warm:#F0EBE3; --ink:#1A1A1A; --ink-soft:#4A5568;
+  --ink-mute:#6B6B6B; --line:#E4DED3; --yellow:#E8C547; --pink:#F28B82;
+  --coral:#F4A261; --teal:#A8DADC; --primary:#21AC9C; --primary-light:#8AE4E1;
+  --display:'Plus Jakarta Sans',-apple-system,sans-serif; --body:'Inter',-apple-system,sans-serif;
+  --hand:'Caveat',cursive;
+  --pad:clamp(20px,5vw,88px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--body); color:var(--ink); background:var(--cream);
+  overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+
+/* ── Slides ────────────────────────────────────────────────────────────────
+   One slide visible at a time, like a deck rather than a scrolling page. Each
+   slide may scroll INTERNALLY on a short screen, which is what keeps this
+   usable on a phone without redesigning every slide. */
+.slide{
+  position:fixed; inset:0; padding:var(--pad);
+  padding-bottom:calc(var(--pad) + 64px);
+  display:none; flex-direction:column;
+  overflow-y:auto; overscroll-behavior:contain;
+  animation:rise .45s cubic-bezier(.16,1,.3,1) both;
+}
+.slide.active{display:flex}
+
+/* The content sits on a white card over the slide's ground. On cream it is
+   what stops the page reading as one flat field; on the accent and rose
+   slides it is what keeps a saturated colour as a frame rather than a
+   backdrop to read against. Dark slides keep their ink full bleed. */
+.panel{
+  flex:1; display:flex; flex-direction:column; gap:clamp(14px,2.2vh,28px);
+  background:#fff; border-radius:clamp(14px,1.6vw,26px);
+  /* Horizontal padding runs wider than vertical: the card needs visible
+     margin at its sides or the type reads as pressed against the edge. */
+  padding:clamp(18px,3vw,54px) clamp(22px,5vw,96px);
+  box-shadow:0 1px 2px rgba(26,26,26,.04), 0 18px 48px rgba(26,26,26,.06);
+}
+.slide.dark .panel{background:transparent;box-shadow:none;padding:0}
+.slide.center .panel{justify-content:center}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide{animation:none}}
+
+.slide.dark{background:var(--ink);color:var(--cream)}
+.slide.accent{background:var(--yellow)}
+.slide.rose{background:var(--pink)}
+
+
+/* ── Type ─────────────────────────────────────────────────────────────────── */
+.eyebrow{font-size:clamp(11px,1.5vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute)}
+.dark .eyebrow{color:var(--teal)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,7.4vw,104px);line-height:1.04;letter-spacing:-.01em}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(26px,4.4vw,58px);line-height:1.1}
+h3{font-size:clamp(16px,1.9vw,26px);font-weight:700;line-height:1.25}
+p{font-size:clamp(14px,1.55vw,23px);line-height:1.5;color:var(--ink-soft)}
+.dark p{color:#C9C2B4}
+.lede{font-size:clamp(16px,2.1vw,32px);line-height:1.38;color:var(--ink)}
+.dark .lede{color:var(--cream)}
+.hand{font-family:var(--hand);font-size:clamp(20px,2.8vw,40px);color:var(--ink-mute)}
+.note{font-size:clamp(12px,1.25vw,18px);color:var(--ink-mute)}
+.dark .note{color:#9E968A}
+b{font-weight:700}
+mark{background:var(--yellow);color:var(--ink);padding:0 .18em}
+
+/* ── Layout helpers ───────────────────────────────────────────────────────── */
+.row{display:flex;gap:clamp(16px,2.4vw,40px);align-items:center}
+.row.top{align-items:flex-start}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(12px,1.6vw,26px)}
+.cols.three{grid-template-columns:repeat(3,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(14px,1.8vw,30px);display:flex;flex-direction:column;gap:8px}
+.dark .card{background:#242424;border-color:#3A3A3A}
+.grow{flex:1;min-width:0}
+.stack{display:flex;flex-direction:column;gap:clamp(8px,1.3vh,18px)}
+
+/* ── Figures ──────────────────────────────────────────────────────────────── */
+/* Screenshots get a window frame, the detail everything else is judged
+   against. Click any of them: see the lightbox below. */
+.shot{
+  width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;
+  overflow:hidden;cursor:zoom-in;transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease;
+  box-shadow:0 1px 2px rgba(26,26,26,.05);
+}
+.shot:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(26,26,26,.14)}
+/* Cap image height against the viewport so a slide stays a slide. Without
+   this a 2880x1800 screenshot in a half-width column is 440px tall before any
+   text, and eight of these overflowed. */
+.shot img{display:block;width:100%;height:auto;max-height:36vh;object-fit:contain;background:var(--cream)}
+/* The three-up uses a FIXED height, not a max: equal heights are what let the
+   captions underneath sit on one line. */
+.cols.three .shot img{height:34vh;max-height:none}
+.cols.three figure{display:flex;flex-direction:column}
+.chrome{display:flex;gap:6px;padding:9px 12px;background:#F4F1EA;border-bottom:1px solid var(--line)}
+.chrome i{width:9px;height:9px;border-radius:50%;background:#D9D2C5}
+.chrome i:nth-child(1){background:#F0A7A0}
+.chrome i:nth-child(2){background:#F2D08A}
+.chrome i:nth-child(3){background:#A9CDA4}
+figcaption{margin-top:8px;font-size:clamp(12px,1.2vw,17px);color:var(--ink-mute)}
+.dark figcaption{color:#9E968A}
+.diagram{width:100%;background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:clamp(8px,1.4vw,22px);cursor:zoom-in}
+.diagram img{display:block;width:100%;height:auto;max-height:44vh;object-fit:contain}
+
+/* ── Swatches ─────────────────────────────────────────────────────────────── */
+.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:clamp(10px,1.2vw,20px)}
+.sw{display:flex;flex-direction:column;gap:8px}
+.sw .chip{height:clamp(68px,11vh,132px);border-radius:12px;border:1px solid var(--line)}
+.sw b{font-size:clamp(13px,1.3vw,19px)}
+.sw span{font-size:clamp(11px,1.1vw,15px);color:var(--ink-mute);font-variant-numeric:tabular-nums}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+table{border-collapse:collapse;width:100%;font-size:clamp(12px,1.35vw,20px)}
+th,td{text-align:left;padding:clamp(5px,.72vw,11px) clamp(8px,1vw,16px);border-bottom:1px solid var(--line)}
+th{font-weight:700}
+td{color:var(--ink-soft)}
+
+/* ── Chrome: dots, arrows, progress ───────────────────────────────────────── */
+.bar{
+  position:fixed;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;
+  gap:14px;padding:0 var(--pad);background:linear-gradient(to top,rgba(251,247,239,.96),rgba(251,247,239,0));
+  pointer-events:none;z-index:40;
+}
+.dark-bar .bar{background:linear-gradient(to top,rgba(26,26,26,.96),rgba(26,26,26,0))}
+.bar>*{pointer-events:auto}
+.mark{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);white-space:nowrap}
+.dark-bar .mark{color:#9E968A}
+.dots{display:flex;gap:7px;flex:1;flex-wrap:wrap}
+.dots button{
+  width:9px;height:9px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  background:rgba(26,26,26,.2);transition:background .2s,transform .2s;
+}
+.dark-bar .dots button{background:rgba(251,247,239,.26)}
+.dots button:hover{transform:scale(1.35)}
+.dots button[aria-current="true"]{background:var(--primary);transform:scale(1.35)}
+.nav{display:flex;gap:8px}
+.nav button{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;
+  cursor:pointer;font-size:15px;color:var(--ink);display:grid;place-items:center;
+}
+.dark-bar .nav button{background:#242424;border-color:#3A3A3A;color:var(--cream)}
+.nav button:disabled{opacity:.35;cursor:default}
+.count{font-size:12px;color:var(--ink-mute);min-width:52px;text-align:right}
+.dark-bar .count{color:#9E968A}
+
+/* ── Lightbox ─────────────────────────────────────────────────────────────── */
+/* The thing a slide deck cannot do: see the screenshot at full size. */
+.lb{
+  position:fixed;inset:0;z-index:100;display:none;
+  background:rgba(20,18,16,.93);padding:clamp(12px,3vw,48px);
+}
+.lb[open],.lb.on{display:grid;place-items:center}
+.lb img{max-width:100%;max-height:calc(100vh - 120px);object-fit:contain;border-radius:8px;background:#fff}
+.lb figcaption{position:fixed;left:0;right:0;bottom:22px;text-align:center;color:#D9D2C5;padding:0 24px}
+.lb-close{
+  position:fixed;top:18px;right:18px;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(251,247,239,.3);background:rgba(0,0,0,.4);color:#fff;
+  font-size:20px;cursor:pointer;display:grid;place-items:center;
+}
+
+/* ── Phone ────────────────────────────────────────────────────────────────── */
+@media (max-width:760px){
+  .shot img,.cols.three .shot img,.diagram img{max-height:none;height:auto}
+  .row{flex-direction:column;align-items:stretch}
+  .cols.three{grid-template-columns:1fr}
+  .bar{height:56px;gap:10px}
+  .mark{display:none}
+  .dots button{width:7px;height:7px}
+}
+
+/* ── Print ────────────────────────────────────────────────────────────────── */
+/* The download path. Every slide is revealed and given its own page, which is
+   the part a hand-rolled HTML deck usually forgets. */
+@media print{
+  body{overflow:visible;background:#fff}
+  .slide{
+    position:static!important;display:flex!important;break-after:page;page-break-after:always;
+    min-height:auto;overflow:visible;animation:none;padding:14mm;border-bottom:1px solid #ddd;
+  }
+  .slide:last-of-type{break-after:auto;page-break-after:auto}
+  .slide.dark{background:#fff!important;color:#000!important}
+  .dark p,.dark .note,.dark figcaption{color:#444!important}
+  .dark .card{background:#fff!important;border-color:#ccc!important}
+  .dark .eyebrow{color:#666!important}
+  .bar,.lb,.lb-close{display:none!important}
+  .panel{box-shadow:none;background:transparent!important;padding:0;border-radius:0}
+  .shot{cursor:default;box-shadow:none}
+  .shot img,.cols.three .shot img,.diagram img{max-height:none;height:auto}
+  .shot:hover{transform:none;box-shadow:none}
+  @page{size:landscape;margin:0}
+}
+</style>
+</head>
+<body>
+
+<main id="deck">
+
+<section class="slide center">
+  <div class="panel">
+  <p class="hand">your story, lived out</p>
+  <h1>The Daily<br>Story</h1>
+  <p class="lede" style="max-width:44ch">A digital diary and planner where a task is never rewritten, only promoted. One day at a time, scored for play and reflection as well as output.</p>
+  <p class="note">Enrika Greathouse &middot; product design and build &middot; used daily since 2026</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The problem</p>
+  <h2>Every planner makes you copy the list again</h2>
+  <p class="lede" style="max-width:52ch">A task you did not finish today gets rewritten tomorrow, and the week after, until you stop trusting the list and start keeping it in your head.</p>
+  <div class="cols three">
+    <div class="card"><h3>Rewriting is the tax</h3><p>The same line, re-entered, loses its history and its age every time.</p></div>
+    <div class="card"><h3>Someday and today are one list</h3><p>With no stages, a three-month ambition sits beside buy milk and both get ignored.</p></div>
+    <div class="card"><h3>Only output counts</h3><p>Rest, play and reflection are invisible, so a good day can score as a failure.</p></div>
+  </div>
+  </div>
+</section>
+
+<section class="slide accent center">
+  <div class="panel">
+  <p class="eyebrow">The belief it is built on</p>
+  <h1 style="max-width:17ch">You never rewrite the task. You promote it.</h1>
+  <p class="lede" style="max-width:54ch">One line, written once, keeps its identity all the way from someday to the twenty-five minutes you are spending on it right now.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The palette</p>
+  <h2>Warm paper, one teal, five soft signals</h2>
+  <p class="lede" style="max-width:54ch">A planner is looked at all day, so the ground is paper rather than screen. Colour is reserved for state: what is live, what is done, what kind of effort a thing was.</p>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#F8F4EC"></div><b>Paper</b><span>#F8F4EC &middot; the ground</span></div>
+    <div class="sw"><div class="chip" style="background:#1A1A1A"></div><b>Ink</b><span>#1A1A1A</span></div>
+    <div class="sw"><div class="chip" style="background:#21AC9C"></div><b>Primary</b><span>#21AC9C &middot; live and now</span></div>
+    <div class="sw"><div class="chip" style="background:#8AE4E1"></div><b>Primary light</b><span>#8AE4E1 &middot; the score</span></div>
+    <div class="sw"><div class="chip" style="background:#E8C547"></div><b>Yellow</b><span>#E8C547</span></div>
+    <div class="sw"><div class="chip" style="background:#F4A261"></div><b>Orange</b><span>#F4A261</span></div>
+    <div class="sw"><div class="chip" style="background:#F28B82"></div><b>Coral</b><span>#F28B82</span></div>
+    <div class="sw"><div class="chip" style="background:#C77DFF"></div><b>Purple</b><span>#C77DFF</span></div>
+  </div>
+  <p class="note">Type is Plus Jakarta Sans over Inter, with a hand face for the asides. The accents double as the category colours, so a day's pie chart is already readable.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">Design throughline</p>
+  <h2>Nothing asks you to go and look</h2>
+  <p class="lede" style="max-width:54ch">Most planners collect good data and then bury it behind a tab nobody opens. Everything here speaks up where you already are.</p>
+  <div class="cols">
+    <div class="card"><h3>Coaching on the page</h3><p>The momentum bar sits at the top of today and changes its line as the day fills.</p></div>
+    <div class="card"><h3>The score opens in place</h3><p>Tap the points and the breakdown appears over the day you are looking at.</p></div>
+    <div class="card"><h3>One mechanic, four views</h3><p>Today, Schedule, Week and Board are the same work at different ranges.</p></div>
+    <div class="card"><h3>Rest counts</h3><p>Play, nourish and reflect score alongside work, so a Sabbath is not a zero.</p></div>
+  </div>
+  <p class="note">The one surface you travel to is Stats, and it is for quarters and years. That split is deliberate, not an accident of navigation.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The framework I design against</p>
+  <h2>Nine stages, and the three this one skips</h2>
+  <p class="lede" style="max-width:56ch">A personal tool should not have a referral loop. Saying which stages are deliberately absent is more useful than padding them.</p>
+  <div class="cols">
+    <div class="card"><h3>Get them in</h3><p><span style="opacity:.45">Reach<br>Enroll</span><br><b>Skipped, on purpose</b></p></div>
+    <div class="card"><h3>Get them going</h3><p>First Run<br>Setup<br>First Win</p></div>
+    <div class="card"><h3>Keep them</h3><p>Home Base<br>The Loop<br>Return</p></div>
+    <div class="card"><h3>Grow through them</h3><p><span style="opacity:.45">Champion</span><br><b>Skipped, on purpose</b></p></div>
+  </div>
+  <p class="note">Six of nine. It is a tool one person uses every morning, and it is better for not pretending to be a community.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The day</p>
+  <h2>One turn, with vision at the centre</h2>
+  <div class="row top">
+    <div class="grow stack" style="max-width:38ch">
+      <p>Vision sits in the hub because the app says so itself: <b>the north star that everything else flows from</b>. It decides what earns promotion.</p>
+      <p>Two tracks run through the middle of the day and are kept apart on purpose. Actions <b>complete</b> and travel the funnel. Daily Do's <b>recur</b> and reset.</p>
+      <p>Both score into the same seven categories, which is what lets one number mean something across a whole day.</p>
+    </div>
+    <div class="grow" style="flex:1.3">
+      <figure>
+      <div class="diagram" data-full="/assets/case/daily-story/flow-day.png" data-cap="Stats sits outside the ring: quarters and years, read by season">
+        <img src="/assets/case/daily-story/flow-day.png" alt="Closed daily loop: envision the day, get it out, promote and do, story and score, with vision as the hub" loading="lazy">
+      </div>
+      <figcaption>Stats sits outside the ring: quarters and years, read by season</figcaption>
+    </figure>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The funnel</p>
+  <h2>Two homes, one row of commitment</h2>
+  <figure>
+      <div class="diagram" data-full="/assets/case/daily-story/flow-funnel.png" data-cap="Ongoing is a home, not a stage: work goes out for a session and comes back, because it is still ongoing">
+        <img src="/assets/case/daily-story/flow-funnel.png" alt="Promotion funnel: Bucket List and Ongoing as two sources feeding This Week, Today and Now, with a zap shortcut straight to Now" loading="lazy">
+      </div>
+      <figcaption>Ongoing is a home, not a stage: work goes out for a session and comes back, because it is still ongoing</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">Setup</p>
+  <h2>The data the system genuinely needs</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/daily-story/flow2-setup.png" data-cap="Five steps: Identity, Narrative, Vision, Vibes, VIPs">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/flow2-setup.png" alt="The five step onboarding: identity, narrative, vision, vibes, VIPs" loading="lazy">
+      </div>
+      <figcaption>Five steps: Identity, Narrative, Vision, Vibes, VIPs</figcaption>
+    </figure>
+    <div class="grow stack" style="max-width:30ch">
+      <p>A lot to ask before anyone has done anything, and here it is earned: <b>you cannot promote toward a vision you have not stated</b>.</p>
+      <p>This is the clearest case I have built of setup being load-bearing rather than a chore screen wearing a welcome hat.</p>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">Home Base</p>
+  <h2>Today, and the one thing you are on</h2>
+  <div class="row top">
+    <div class="grow stack" style="max-width:30ch">
+      <p>The <b>NOW</b> slot holds a single task with a running timer. Everything else on the day is queued behind it.</p>
+      <p>VIPs are ranked one to three. The Dailies sit above as a tabbed card: story, vision, and the recurring do's.</p>
+    </div>
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/daily-story/flow3b-busy-day.png" data-cap="A real day, not a seeded one: this one scored 67 against a next best of 16">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/flow3b-busy-day.png" alt="The Today view on a busy day, with the NOW slot, a timer, VIPs and the Dailies card" loading="lazy">
+      </div>
+      <figcaption>A real day, not a seeded one: this one scored 67 against a next best of 16</figcaption>
+    </figure>
+  </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">Coaching, in place</p>
+  <h2>Six tiers, sized against the day you planned</h2>
+  <div class="row top" style="align-items:stretch">
+    <figure class="grow" style="max-width:48%">
+      <div class="shot fit" data-full="/assets/case/daily-story/flow3-focus.png" data-cap="Ready, at 0 of 5: one micro-action is all it takes">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/flow3-focus.png" alt="The Flow Up bar reading Ready, with zero of five actions done" loading="lazy">
+      </div>
+      <figcaption>Ready, at 0 of 5: one micro-action is all it takes</figcaption>
+    </figure>
+    <figure class="grow" style="max-width:48%">
+      <div class="shot fit" data-full="/assets/case/daily-story/flow3e-momentum.png" data-cap="Momentum, at 2 of 5: a steady rhythm beats intensity">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/flow3e-momentum.png" alt="The Flow Up bar reading Momentum, with two of five actions done" loading="lazy">
+      </div>
+      <figcaption>Momentum, at 2 of 5: a steady rhythm beats intensity</figcaption>
+    </figure>
+  </div>
+  <p class="note">Ready, Spark, Momentum, In the flow, Almost peak, Peak flow. Nineteen lines in the pool, picked by tier and by whether a focus session is running.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The funnel, in the product</p>
+  <h2>Every action and project, across each stage</h2>
+  <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/daily-story/crop-board.png" data-cap="271 items. Drag to restage. The columns are the promotion stages.">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/crop-board.png" alt="The Board: Bucket List, This Week, Today, Now and Ongoing as columns, 271 items, drag to restage" loading="lazy">
+      </div>
+      <figcaption>271 items. Drag to restage. The columns are the promotion stages.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The recurring track</p>
+  <h2>Routines and rituals, never on the board</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/daily-story/daily3-dos.png" data-cap="By time of day: morning, day, evening, night">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/daily3-dos.png" alt="Daily Do's organised by time of day: morning, day, evening, night" loading="lazy">
+      </div>
+      <figcaption>By time of day: morning, day, evening, night</figcaption>
+    </figure>
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/daily-story/daily4-dos-details.png" data-cap="By category: move, play, nourish, clean, be, create">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/daily4-dos-details.png" alt="Daily Do details grouped by category: move, play, nourish, clean, be, create" loading="lazy">
+      </div>
+      <figcaption>By category: move, play, nourish, clean, be, create</figcaption>
+    </figure>
+  </div>
+  <p class="note">Things that complete travel the funnel. Things that recur reset. Most planners conflate the two, which is why a list holding both finish the tax return and drink water serves neither.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">Write</p>
+  <h2>Free write, then make a line into an action</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/daily-story/crop-write.png" data-cap="Timed sprints at 3, 5, 10, 15 and 25 minutes, with a rotating prompt">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/crop-write.png" alt="Write mode with a timed sprint, a coaching prompt, and speak to write" loading="lazy">
+      </div>
+      <figcaption>Timed sprints at 3, 5, 10, 15 and 25 minutes, with a rotating prompt</figcaption>
+    </figure>
+    <div class="grow stack" style="max-width:28ch">
+      <p>A coaching toggle, prompts you can shuffle or write yourself, speak-to-write, and video, recording, embed and image attachments.</p>
+      <p>The AI coaches you on <b>your own words</b> rather than generating for you. Select a line from the freewrite and promote it into a real action for the day.</p>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The feedback step</p>
+  <h2>The score opens on the day you are already on</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/daily-story/flow3d-score.png" data-cap="Tap the points: a breakdown by category, in place">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/flow3d-score.png" alt="The score breakdown opening in place over the day, split by category" loading="lazy">
+      </div>
+      <figcaption>Tap the points: a breakdown by category, in place</figcaption>
+    </figure>
+    <div class="grow stack" style="max-width:30ch">
+      <p>Seven categories: move, play, nourish, clean, be, create and work. Rest and reflection score, so a deliberate day off is not a zero.</p>
+      <p>This is the step that gets used. It never asks you to navigate anywhere, which is exactly why.</p>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The seasonal layer</p>
+  <h2>Stats is for quarters, not for Tuesday</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/daily-story/mode5b-stats-july.png" data-cap="A month at a time, with output split by category">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/mode5b-stats-july.png" alt="The Stats view for a month, with points, days, streak and focus counts and a category breakdown" loading="lazy">
+      </div>
+      <figcaption>A month at a time, with output split by category</figcaption>
+    </figure>
+    <div class="grow stack" style="max-width:30ch">
+      <p>Read at the end of a quarter or a year, against the season of life you were in, rather than as a daily scoreboard.</p>
+      <p class="note">I built this and I hardly open it. That is the design working: everything with a daily cadence was deliberately put in the path instead.</p>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">Vision</p>
+  <h2>The north star everything else flows from</h2>
+  <div class="row top">
+    <div class="grow stack" style="max-width:32ch">
+      <p>Who I am, a one-line direction, and a three-year picture. The app's own words for this page are the hub of the loop diagram.</p>
+      <p>It is the reference frame that decides what deserves promoting, which is why it is a mode rather than a settings screen.</p>
+    </div>
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/daily-story/flow4-northstar.png" data-cap="Identity, one-liner, three-year picture">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/daily-story/flow4-northstar.png" alt="The Vision page: identity statement, vision one-liner and three year vision" loading="lazy">
+      </div>
+      <figcaption>Identity, one-liner, three-year picture</figcaption>
+    </figure>
+  </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">Built with</p>
+  <h2>A fast client, a shared backend</h2>
+  <table>
+    <tr><th style="width:24%">Layer</th><th style="width:32%">Choice</th><th>Why</th></tr>
+    <tr><td>Client</td><td>React, Vite, TypeScript</td><td>Opened dozens of times a day; cold start matters</td></tr>
+    <tr><td>State</td><td>Zustand</td><td>Transient UI modes stay out of the URL on purpose</td></tr>
+    <tr><td>Data and auth</td><td>Supabase, Postgres</td><td>Shared project, prefixed tables, Google and password sign-in</td></tr>
+    <tr><td>Editor</td><td>TipTap</td><td>Free writing with selection, so a line can become an action</td></tr>
+    <tr><td>Audio</td><td>Text to speech</td><td>Reading by ear, the thread that runs to DeeplyReader</td></tr>
+    <tr><td>Hosting</td><td>Vercel</td><td>Preview per branch</td></tr>
+  </table>
+  <p class="note">Built solo, and used every morning. The data in these screenshots is real: 266 actions, 225 logs, 197 time periods.</p>
+  </div>
+</section>
+
+<section class="slide rose">
+  <div class="panel">
+  <p class="eyebrow">Where it stands</p>
+  <h2>In daily use, still being shaped</h2>
+  <div class="cols three">
+    <div class="card"><h3>Shipped</h3><p>The funnel and the zap, NOW timer and focus sessions, the Dailies, scoring across seven categories, Flow Up, Write with coaching, Board, Stats, the five-step setup</p></div>
+    <div class="card"><h3>In build</h3><p>Ongoing, the newest column: work with no end date, which recurs until it completes. Still deciding whether it scores per session or on completion</p></div>
+    <div class="card"><h3>Next</h3><p>Surfacing Daily Do's in the action list, and a celebration for finishing something that took three months</p></div>
+  </div>
+  <p class="lede" style="max-width:58ch">A sleeper project: no launch, no users to acquire, built for one person who opens it every morning. That is the honest shape of it.</p>
+  <p class="note">Enrika Greathouse &middot; enrika@smallgorillacreative.com</p>
+  </div>
+</section>
+
+</main>
+
+<!-- lightbox -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Full size image">
+  <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
+  <img id="lbImg" alt="">
+  <figcaption id="lbCap"></figcaption>
+</div>
+
+<!-- chrome -->
+<div class="bar">
+  <span class="mark">The Daily Story · case study</span>
+  <div class="dots" id="dots" role="tablist" aria-label="Slides"></div>
+  <div class="nav">
+    <button id="prev" aria-label="Previous slide">←</button>
+    <button id="next" aria-label="Next slide">→</button>
+  </div>
+  <span class="count" id="count"></span>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var dots = document.getElementById('dots');
+  var count = document.getElementById('count');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var i = 0;
+
+  slides.forEach(function(s, n){
+    var b = document.createElement('button');
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-label','Slide ' + (n+1));
+    b.addEventListener('click', function(){ go(n); });
+    dots.appendChild(b);
+  });
+
+  function go(n){
+    if (n < 0 || n >= slides.length) return;
+    slides[i].classList.remove('active');
+    i = n;
+    slides[i].classList.add('active');
+    slides[i].scrollTop = 0;
+    // The bar sits over the slide, so it has to know when the slide is dark.
+    document.body.classList.toggle('dark-bar', slides[i].classList.contains('dark'));
+    [].forEach.call(dots.children, function(d, k){
+      d.setAttribute('aria-current', k === i ? 'true' : 'false');
+    });
+    count.textContent = (i+1) + ' / ' + slides.length;
+    prev.disabled = i === 0;
+    next.disabled = i === slides.length - 1;
+    if (history.replaceState) history.replaceState(null, '', '#' + (i+1));
+  }
+
+  prev.addEventListener('click', function(){ go(i-1); });
+  next.addEventListener('click', function(){ go(i+1); });
+
+  document.addEventListener('keydown', function(e){
+    if (lb.classList.contains('on')) { if (e.key === 'Escape') closeLb(); return; }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') go(i+1);
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   go(i-1);
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(slides.length-1);
+  });
+
+  /* Lightbox: the whole reason this is a web page and not a deck export.
+     Click any screenshot to see it at full size. */
+  var lb = document.getElementById('lb');
+  var lbImg = document.getElementById('lbImg');
+  var lbCap = document.getElementById('lbCap');
+  var lastFocus = null;
+
+  function openLb(src, alt, cap){
+    lastFocus = document.activeElement;
+    lbImg.src = src; lbImg.alt = alt || '';
+    lbCap.textContent = cap || '';
+    lb.classList.add('on');
+    document.getElementById('lbClose').focus();
+  }
+  function closeLb(){
+    lb.classList.remove('on');
+    lbImg.removeAttribute('src');
+    if (lastFocus) lastFocus.focus();
+  }
+  document.getElementById('lbClose').addEventListener('click', closeLb);
+  lb.addEventListener('click', function(e){ if (e.target === lb || e.target === lbImg) closeLb(); });
+
+  document.addEventListener('click', function(e){
+    var z = e.target.closest('.shot, .diagram');
+    if (!z) return;
+    var img = z.querySelector('img');
+    openLb(z.getAttribute('data-full') || img.src, img.alt, z.getAttribute('data-cap') || '');
+  });
+
+  var start = parseInt((location.hash || '').replace('#',''), 10);
+  go(start > 0 && start <= slides.length ? start - 1 : 0);
+})();
+</script>
+</body>
+</html>
