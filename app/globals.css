@@ -819,33 +819,72 @@ body {
    Anchored at the top: shrinking toward the middle would lift the artwork away
    from the card's top edge and open a gap the design doesn't have. */
 /* ── A finished poster ───────────────────────────────────────────────────────
-   One image, generated at the card's own 4:5, already carrying its ground, its
-   colour field and its browser window. It is the whole card: it sits under the
-   title and tagline and bleeds to every edge, so nothing from the layered
-   system below should also be drawn. */
+   One image, generated at 4:5, already carrying its own ground, colour field
+   and browser window. Everything the layered system adds would be drawn a
+   second time on top of art that already has it. */
 .poster-flat {
   object-fit: cover;
   border-radius: inherit;
-  /* Under the text, above the card's background wash. */
   z-index: 0;
 }
 
-/* A card showing a finished poster takes its ratio from the artwork and drops
-   the parts the artwork already contains. */
-.catalog-item.has-flat {
+/* The plate that holds a finished poster. It carries the 4:5, so the card no
+   longer has to: a card becomes a plate plus a caption. */
+.poster-plate {
+  position: relative;
+  display: block;
+  width: 100%;
   aspect-ratio: 4 / 5;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--card-bg);
+  flex: none;
+}
+
+/* Caption under the artwork rather than over it. The overlay worked where a
+   composition left clear ground at the bottom and failed where it didn't: on
+   SignatureStyle the coat and the dress form ran straight through both lines.
+   Below means a poster never has to reserve a text zone, which is what lets one
+   generated at 4:5 drop into any slot without art-directing around the type. */
+.featured-item.has-flat,
+.catalog-item.has-flat {
+  aspect-ratio: auto;
+  background: transparent;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.9rem;
+  overflow: visible;
+}
+
+/* The caption now sits on the page rather than on the card's colour, so a dark
+   project colour must not still be lightening the text. */
+.featured-item.has-flat h3,
+.featured-item.has-flat .featured-cat,
+.catalog-item.has-flat .card-title,
+.catalog-item.has-flat .card-year,
+.catalog-item.has-flat .card-tagline {
+  color: var(--ink, #1A1A1A);
+}
+.featured-item.has-flat .featured-cat,
+.catalog-item.has-flat .card-tagline,
+.catalog-item.has-flat .card-year {
+  opacity: 0.7;
 }
 
 /* The detail hero is a 16/11 landscape band, and a 4:5 poster forced into it
    loses its top and bottom: on Create Space the crop cut the browser window off
    at both ends and zoomed the box to fill. A finished poster is a composition,
-   not a texture to crop, so here the hero takes the poster's shape and centres
-   it instead of the poster taking the hero's. */
+   not a texture to crop, so the hero gives way to the plate and centres it. */
 .project-hero.catalog-item.has-flat {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: auto;
   max-width: 380px;
   margin-inline: auto;
+  padding: 0;
+  background: transparent;
 }
+
 .has-flat .poster-frame,
 .has-flat .featured-blob {
   display: none;

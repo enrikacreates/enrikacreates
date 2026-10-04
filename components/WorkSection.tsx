@@ -171,7 +171,7 @@ export function WorkSection({
                 <div className="featured-cell" key={item._id}>
                 <Link
                   href={`/work/${item.slug}`}
-                  className={`featured-item${isDarkColor(item.color) ? " dark-card" : ""}`}
+                  className={`featured-item${isDarkColor(item.color) ? " dark-card" : ""}${poster?.flat ? " has-flat" : ""}`}
                   data-anim="fade-up"
                   data-delay={i * 150}
                   // Hook for per-project poster tweaks that shouldn't leak to

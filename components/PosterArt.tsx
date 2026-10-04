@@ -27,16 +27,19 @@ export function PosterArt({ slug }: { slug: string }) {
   // optimiser serves AVIF/WebP at the size actually requested.
   if (poster.flat) {
     return (
-      <Image
-        className="poster-flat"
-        src={poster.flat}
-        alt=""
-        aria-hidden="true"
-        fill
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        draggable={false}
-        priority={false}
-      />
+      // The plate owns the 4:5 and the clipping, so the card around it is free
+      // to be an auto-height column: artwork, then caption.
+      <span className="poster-plate">
+        <Image
+          className="poster-flat"
+          src={poster.flat}
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          draggable={false}
+        />
+      </span>
     );
   }
 
