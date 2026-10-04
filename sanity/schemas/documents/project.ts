@@ -204,6 +204,24 @@ export const project = defineType({
       initialValue: false,
     }),
     defineField({
+      name: "bannerAlign",
+      title: "Banner crop",
+      type: "string",
+      group: "meta",
+      description:
+        "Which part of the poster the thin banner at the top of the case page shows. Centre suits most. Use Bottom when the middle of the poster repeats the first screenshot underneath it, or Top to lead with the poster's sky.",
+      options: {
+        list: [
+          { title: "Top", value: "top" },
+          { title: "Centre", value: "center" },
+          { title: "Bottom", value: "bottom" },
+        ],
+        layout: "radio",
+        direction: "horizontal",
+      },
+      initialValue: "center",
+    }),
+    defineField({
       name: "displayOrder",
       title: "Display order",
       type: "number",

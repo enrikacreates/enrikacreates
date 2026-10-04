@@ -1058,10 +1058,20 @@ body {
   border-radius: 0;
   background: transparent;
 }
+/* Which band of the poster the banner crops to, set per project in the Studio.
+   Centre suits most: at 50% 0 the band was mostly the poster's empty sky, and
+   the subject sits around the middle in all of them. It is a choice rather than
+   a constant because the right band depends on what sits under it. On 50 States
+   the middle of the poster is the same portrait as the first screenshot below,
+   so centre made the page say the same thing twice. */
 .project-hero.catalog-item.has-flat .poster-flat {
-  /* Pulled off the top edge: at 50% 0 the band was mostly the poster's empty
-     sky, and the subject sits around the middle in every one of them. */
   object-position: 50% 42%;
+}
+.project-hero.catalog-item.has-flat[data-banner-align="top"] .poster-flat {
+  object-position: 50% 8%;
+}
+.project-hero.catalog-item.has-flat[data-banner-align="bottom"] .poster-flat {
+  object-position: 50% 88%;
 }
 
 .has-flat .poster-frame,

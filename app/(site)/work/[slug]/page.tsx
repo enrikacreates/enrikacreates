@@ -166,6 +166,11 @@ export default async function ProjectDetailPage({
           <div
             className={`${heroClass}${poster ? " has-poster" : ""}${poster?.flat ? " has-flat" : ""}`}
             data-poster={poster ? item.slug : undefined}
+            // Which band of the poster the banner shows. Editorial per project:
+            // on 50 States the middle of the poster is the same portrait as the
+            // first screenshot below it, so centre read as the page saying the
+            // same thing twice.
+            data-banner-align={item.bannerAlign ?? "center"}
             style={{ "--card-color": item.color } as React.CSSProperties}
           >
             {poster ? (

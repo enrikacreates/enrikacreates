@@ -76,6 +76,7 @@ const PROJECT_FULL_FIELDS = /* groq */ `
   result,
   galleryIntro,
   skills,
+  bannerAlign,
   keyScreens[]{
     caption,
     image{..., asset->{_id, url, metadata}, hotspot, crop}
