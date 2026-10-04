@@ -209,14 +209,26 @@ export const PROJECTS = [
         pad: 28,
         wait: 1800,
       },
+      // Two tiers of the same bar. The copy changes with how full the day is,
+      // which one screenshot cannot show and two full-page shots hide, since
+      // the bar is a sliver at the top of each.
       {
-        name: "crop-flowup",
+        name: "crop-flowup-now",
         path: "/today",
         auth: "member",
         clipTo: "text:ACTIONS",
         clipMin: 700,
-        pad: 20,
+        pad: 18,
         wait: 1500,
+      },
+      {
+        name: "crop-flowup-busy",
+        path: "/day/2026-07-14",
+        auth: "member",
+        clipTo: "text:ACTIONS",
+        clipMin: 700,
+        pad: 18,
+        wait: 1800,
       },
       // The feedback step of the daily loop. NOT the Stats mode: the score
       // breakdown opens in place on the day you are already looking at, which
