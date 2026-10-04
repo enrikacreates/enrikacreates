@@ -967,6 +967,31 @@ body {
    get out of the way, so a wide crop is the right use of it.
    Cropping a composition is fine HERE precisely because it isn't the
    presentation of the artwork, the card is. */
+/* The project's own words for what kind of thing this is, under the tagline.
+   These already show beneath the card on the home grid; the detail page was
+   the one place that dropped them. Separated by dots rather than set as chips,
+   so they stay a reading line and don't compete with the skills below. */
+.project-signals {
+  list-style: none;
+  margin: 0.55rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(44, 37, 32, 0.55);
+}
+.project-signals li + li::before {
+  content: "·";
+  margin-right: 0.85rem;
+  opacity: 0.6;
+}
+
 /* ── Previous / next case ────────────────────────────────────────────────────
    Parked in the margin the 900px detail column already leaves empty, so moving
    between cases costs no vertical space and no trip back to the grid. Fixed
@@ -2803,9 +2828,15 @@ body.detail-open {
   font-weight: 400;
   color: #2C2520;
   padding: 0.45rem 1rem;
-  background: rgba(44, 37, 32, 0.05);
+  /* Bone, held back. A tint of the ink took whatever was behind it, which on a
+     case page is now the project's own colour, so the chips dissolved into it.
+     Bone makes them read as objects on the page, the same surface the cards
+     use. At full strength though they matched the white story card below and
+     pulled rank on it, so they sit at 62%: present enough to scan, not so solid
+     that they compete with the thing they introduce. */
+  background: rgba(255, 253, 247, 0.62);
   border-radius: 100px;
-  box-shadow: 0 1px 2px rgba(44, 37, 32, 0.04);
+  box-shadow: 0 1px 2px rgba(44, 37, 32, 0.06);
 }
 
 .gallery-grid {

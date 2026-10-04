@@ -53,6 +53,7 @@ import { KeyScreens } from "@/components/KeyScreens";
 import { ProcessTimeline } from "@/components/ProcessTimeline";
 import { Gallery } from "@/components/Gallery";
 import { CaseNav } from "@/components/CaseNav";
+import { ProjectSkills } from "@/components/ProjectSkills";
 
 /** Which hero treatment to render. See the note at the top of this file. */
 const HERO_TREATMENT: "poster" | "shapes" | "none" = "poster";
@@ -197,7 +198,26 @@ export default async function ProjectDetailPage({
           <span className="card-year">{item.year}</span>
           <h1 className="card-title">{item.title}</h1>
           <p className="card-tagline">{item.tagline}</p>
+          {/* What kind of thing this is, in the project's own words. These
+              already existed and already show under the card on the home grid;
+              the detail page was the one place that dropped them. */}
+          {item.signals && item.signals.length > 0 && (
+            <ul className="project-signals">
+              {item.signals.map((sig) => (
+                <li key={sig}>{sig}</li>
+              ))}
+            </ul>
+          )}
         </header>
+
+        {/* Skills above the story rather than closing it. On betterstories they
+            sat 1314px down, three paragraphs past the fold, which is backwards
+            for the most scannable thing on the page. Centred here instead of in
+            the margin: it needs no duplicate copy for narrow screens and never
+            has to dodge the case chevrons. */}
+        {item.skills && item.skills.length > 0 && (
+          <ProjectSkills skills={item.skills} />
+        )}
 
         {/* Key screens — before the prose, so the product is the first thing
             seen rather than the fourth paragraph. */}
@@ -227,16 +247,7 @@ export default async function ProjectDetailPage({
               <p>{item.result}</p>
             </section>
           )}
-          {item.skills && item.skills.length > 0 && (
-            <section className="project-skills">
-              <p className="project-skills-label">Skills</p>
-              <ul className="project-skills-list">
-                {item.skills.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-            </section>
-          )}
+
         </div>
 
         {/* Designs slideshow — the further screens, directly under the skills
