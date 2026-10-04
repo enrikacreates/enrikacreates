@@ -967,6 +967,68 @@ body {
    get out of the way, so a wide crop is the right use of it.
    Cropping a composition is fine HERE precisely because it isn't the
    presentation of the artwork, the card is. */
+/* ── Previous / next case ────────────────────────────────────────────────────
+   Parked in the margin the 900px detail column already leaves empty, so moving
+   between cases costs no vertical space and no trip back to the grid. Fixed
+   rather than scrolled: the point is that it's reachable at any depth in a long
+   case study, which is exactly where the urge to skip to the next one lands. */
+.case-nav {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 6;
+  padding: 0 clamp(0.75rem, 2vw, 2rem);
+}
+
+.case-nav-btn {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 46px;
+  padding: 0 0.85rem;
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.82);
+  color: #2C2520;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(44, 37, 32, 0.14);
+  backdrop-filter: blur(6px);
+  transition: background 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.case-nav-btn.next { flex-direction: row-reverse; }
+.case-nav-btn:hover { background: #FFFDF7; }
+.case-nav-btn.prev:hover { transform: translateX(-3px); }
+.case-nav-btn.next:hover { transform: translateX(3px); }
+
+/* The title is the affordance, but only on demand: shown always it would be
+   two labels competing with the case you're actually reading. */
+.case-nav-title {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 400;
+  white-space: nowrap;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+}
+.case-nav-btn:hover .case-nav-title,
+.case-nav-btn:focus-visible .case-nav-title {
+  max-width: 180px;
+  opacity: 0.85;
+}
+
+/* On a phone there is no margin to park in: the column runs edge to edge, so
+   a fixed pill would sit on top of the writing. */
+@media (max-width: 860px) {
+  .case-nav { display: none; }
+}
+
 /* The page is the artwork's own colour, so the banner's background regions and
    the page are literally the same value and the join disappears. This is the
    alternative to feathering the edge: match the colours instead of blurring
@@ -980,21 +1042,13 @@ body {
   padding: 0;
   background: transparent;
 
-  /* Full bleed, so the band has no side edges to blend in the first place.
-     Hummingbird looked blended at 1000px wide only because its poster's
-     background at that crop is the same coral the page wash derives from
-     --card-color; Create Space's crop lands on saturated geometry, so its
-     edges showed. That is luck of composition, and the posters keep changing.
-     Running the band to the full width removes the question instead of
-     softening it: edges stay hard, there just aren't any to see.
-
-     Width comes from the element's own parent, which is the scroll container,
-     because the markup puts this outside the 900px inner column. 100vw from
-     inside that column counted the scrollbar and left a strip of page down the
-     right-hand edge. */
-  width: 100%;
-  max-width: none;
-  margin-inline: 0;
+  /* Sits on the content column, same width as the writing under it.
+     It ran full bleed for a while to escape its own side edges, which showed
+     wherever a crop landed on saturated artwork rather than on the poster's
+     background. Matching the page to that background colour deals with the
+     edges directly, so the width is no longer carrying that job. */
+  max-width: 1000px;
+  margin-inline: auto;
 }
 .project-hero.catalog-item.has-flat .poster-plate {
   aspect-ratio: auto;

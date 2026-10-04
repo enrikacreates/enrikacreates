@@ -37,7 +37,12 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProjectBySlug, getAllProjectSlugs } from "@/lib/sanity/fetch";
+import {
+  getProjectBySlug,
+  getAllProjectSlugs,
+  getFeaturedProjects,
+  getListedProjects,
+} from "@/lib/sanity/fetch";
 import { urlFor } from "@/lib/sanity/image";
 import { isDarkColor } from "@/lib/colorUtils";
 import { CardInner } from "@/components/CardInner";
@@ -47,6 +52,7 @@ import { Slideshow } from "@/components/Slideshow";
 import { KeyScreens } from "@/components/KeyScreens";
 import { ProcessTimeline } from "@/components/ProcessTimeline";
 import { Gallery } from "@/components/Gallery";
+import { CaseNav } from "@/components/CaseNav";
 
 /** Which hero treatment to render. See the note at the top of this file. */
 const HERO_TREATMENT: "poster" | "shapes" | "none" = "poster";
@@ -74,8 +80,31 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item = await getProjectBySlug(slug);
+  const [item, featured, listed] = await Promise.all([
+    getProjectBySlug(slug),
+    getFeaturedProjects(),
+    getListedProjects(),
+  ]);
   if (!item) notFound();
+
+  // The home page's own order: featured row, then the catalog, both gated on
+  // having a poster. Rebuilt here rather than shared because the home grid
+  // composes it inside a client component; if a third place ever needs it, it
+  // should move into lib rather than be copied again.
+  const featuredIds = new Set(featured.map((f) => f._id));
+  const sequence = [
+    ...featured,
+    ...listed.filter((p) => !featuredIds.has(p._id)),
+  ].filter((p) => getPoster(p.slug));
+
+  const at = sequence.findIndex((p) => p.slug === slug);
+  // Wraps, so the last case leads back to the first instead of dead-ending.
+  const prev = at > -1 && sequence.length > 1
+    ? sequence[(at - 1 + sequence.length) % sequence.length]
+    : undefined;
+  const next = at > -1 && sequence.length > 1
+    ? sequence[(at + 1) % sequence.length]
+    : undefined;
 
   const layout = 2; // detail hero uses the template layout (was item.layout || 2)
   const isDark = isDarkColor(item.color);
@@ -120,30 +149,32 @@ export default async function ProjectDetailPage({
         <span>Back to work</span>
       </Link>
 
-      {/* Card-as-hero: the poster artwork, or the original shapes. Title drops
-          below either way. Omitted entirely under "none".
-
-          Deliberately OUTSIDE project-detail-inner. The inner column is capped
-          at 900px, and the banner wants the full width of the scroll container.
-          Doing that from inside with 100vw overshot by the scrollbar's width,
-          which pushed the band 7px off to the left and left a strip of page
-          showing down the right edge. As a direct child it is simply 100% of
-          the thing that defines the width. */}
-      {HERO_TREATMENT !== "none" && (
-        <div
-          className={`${heroClass}${poster ? " has-poster" : ""}${poster?.flat ? " has-flat" : ""}`}
-          data-poster={poster ? item.slug : undefined}
-          style={{ "--card-color": item.color } as React.CSSProperties}
-        >
-          {poster ? (
-            <PosterArt slug={item.slug} />
-          ) : (
-            <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
-          )}
-        </div>
-      )}
+      <CaseNav
+        prev={prev && { slug: prev.slug, title: prev.title }}
+        next={next && { slug: next.slug, title: next.title }}
+      />
 
       <div className="project-detail-inner" id="project-detail-inner">
+        {/* Card-as-hero: the poster artwork, or the original shapes. Title
+            drops below either way. Omitted entirely under "none".
+
+            Inside the inner column, so the banner spans the same width as the
+            writing under it. It ran full bleed for a while to escape its own
+            side edges; matching the page to the poster's background colour
+            deals with those directly, so the width stopped carrying that job. */}
+        {HERO_TREATMENT !== "none" && (
+          <div
+            className={`${heroClass}${poster ? " has-poster" : ""}${poster?.flat ? " has-flat" : ""}`}
+            data-poster={poster ? item.slug : undefined}
+            style={{ "--card-color": item.color } as React.CSSProperties}
+          >
+            {poster ? (
+              <PosterArt slug={item.slug} />
+            ) : (
+              <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
+            )}
+          </div>
+        )}
 
         {/* Title block — below the header image */}
         <header className="project-hero-caption">
