@@ -380,9 +380,23 @@ body {
   left: 0;
   right: 0;
   margin: auto;
-  width: 100%;
+  /* The box is sized to the video's own ratio rather than stretched to the
+     pin, so it matches the pixels `contain` actually paints. It used to be
+     `width: 100%`, which left the box 1280 wide while the video painted 1188
+     centred inside it: 46px of empty box each side. The edge mask is measured
+     on the box, so its 0-4% fade ran 0->51px and only the last 5px of it
+     landed on real artwork. The cut stayed hard. Stating the ratio collapses
+     that gap, and max-width still caps the upscale. */
+  width: auto;
   height: calc(100% - var(--hero-video-reserve, 160px));
-  max-width: var(--hero-video-max-w);
+  aspect-ratio: 16 / 9;
+  /* min(100%, ...) is load-bearing, not belt-and-braces. With `width: auto`
+     the ratio derives width from height, which on a phone came out 1051px
+     against a 375px viewport: the collage hung off the right edge and only a
+     corner of it was visible. The clamp hands the width back to the container
+     whenever the ratio would overflow, and `contain` then letterboxes
+     vertically instead, which the horizontal mask does not care about. */
+  max-width: min(100%, var(--hero-video-max-w));
   max-height: calc(var(--hero-video-max-w) * 9 / 16);
   object-fit: contain;
   pointer-events: none;
@@ -810,9 +824,15 @@ body {
 .poster-frame {
   position: absolute;
   left: 9%;
-  top: 10cqw;
-  width: 82%;
-  height: 54cqw;
+  right: 9%;
+  top: 13cqw;
+  /* The bottom edge is the one that matters: it closes the dead band between
+     the artwork and the title. It is stated in pixels, not cqw, because the
+     text block it has to clear is a near-constant pixel height whatever the
+     card's width. The same card measures 63.7cqw to its title at 281px wide
+     and 73.8cqw at 377px, so a cqw bottom tracks the card instead of the text
+     and cuts 20px straight through the title at the narrow end. */
+  bottom: var(--poster-frame-bottom, 136px);
   border: 1.5px solid currentColor;
   border-radius: 8px;
   color: var(--ink, #1A1A1A);
@@ -841,15 +861,15 @@ body {
 
 /* The featured card is taller, so the window can sit lower and breathe. */
 .featured-item .poster-frame {
-  top: 12cqw;
-  height: 62cqw;
+  top: 15cqw;
+  --poster-frame-bottom: 168px;
 }
 
 /* On the detail hero the frame would fight the artwork at full size, and the
    page already announces itself as a project. Smaller and fainter. */
 .project-hero .poster-frame {
-  top: 6cqw;
-  height: 34cqw;
+  top: 8cqw;
+  --poster-frame-bottom: 44px;
   opacity: 0.12;
 }
 
