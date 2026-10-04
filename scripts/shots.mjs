@@ -291,8 +291,42 @@ try {
             await new Promise((r) => setTimeout(r, route.wait));
           }
 
+          /* A full viewport shot of a calm app is mostly empty ground, which
+           * undersells the design rather than showing it. `clipTo` crops to one
+           * component: the smallest element containing the given text that is
+           * still at least `clipMin` wide, plus `pad` of breathing room. Text
+           * rather than a CSS selector on purpose, because the class names here
+           * are generated utility soup and would rot on the next restyle. */
+          let clip;
+          if (route.clipTo) {
+            clip = await page.evaluate(
+              (sel, min) => {
+                const want = sel.replace(/^text:/, "").toLowerCase();
+                const hits = [...document.querySelectorAll("div,section,article,aside")]
+                  .filter((n) => n.textContent.toLowerCase().includes(want))
+                  .map((n) => n.getBoundingClientRect())
+                  .filter((r) => r.width >= min && r.height > 40);
+                if (!hits.length) return null;
+                // Smallest by area: the component, not the page that holds it.
+                hits.sort((a, b) => a.width * a.height - b.width * b.height);
+                const r = hits[0];
+                return { x: r.x, y: r.y, width: r.width, height: r.height };
+              },
+              route.clipTo,
+              route.clipMin ?? 280
+            );
+            if (!clip) throw new Error(`clipTo found nothing for ${route.clipTo}`);
+            const pad = route.pad ?? 28;
+            clip = {
+              x: Math.max(0, clip.x - pad),
+              y: Math.max(0, clip.y - pad),
+              width: Math.min(vp.width - Math.max(0, clip.x - pad), clip.width + pad * 2),
+              height: Math.min(vp.height - Math.max(0, clip.y - pad), clip.height + pad * 2),
+            };
+          }
+
           const file = path.join(dir, `${route.name}-${vp.label}.png`);
-          await page.screenshot({ path: file, fullPage });
+          await page.screenshot({ path: file, fullPage: clip ? false : fullPage, clip });
           console.log(`  ✓ ${file}`);
           saved++;
         } catch (err) {

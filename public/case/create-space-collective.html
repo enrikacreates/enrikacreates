@@ -34,18 +34,31 @@ body{
 .slide{
   position:fixed; inset:0; padding:var(--pad);
   padding-bottom:calc(var(--pad) + 64px);
-  display:none; flex-direction:column; gap:clamp(14px,2.2vh,28px);
+  display:none; flex-direction:column;
   overflow-y:auto; overscroll-behavior:contain;
   animation:rise .45s cubic-bezier(.16,1,.3,1) both;
 }
 .slide.active{display:flex}
+
+/* The content sits on a white card over the slide's ground. On cream it is
+   what stops the page reading as one flat field; on the accent and rose
+   slides it is what keeps a saturated colour as a frame rather than a
+   backdrop to read against. Dark slides keep their ink full bleed. */
+.panel{
+  flex:1; display:flex; flex-direction:column; gap:clamp(14px,2.2vh,28px);
+  background:#fff; border-radius:clamp(14px,1.6vw,26px);
+  padding:clamp(18px,3vw,56px);
+  box-shadow:0 1px 2px rgba(26,26,26,.04), 0 18px 48px rgba(26,26,26,.06);
+}
+.slide.dark .panel{background:transparent;box-shadow:none;padding:0}
+.slide.center .panel{justify-content:center}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.slide{animation:none}}
 
 .slide.dark{background:var(--ink);color:var(--cream)}
 .slide.accent{background:var(--yellow)}
 .slide.rose{background:var(--pink)}
-.slide.center{justify-content:center}
+
 
 /* ── Type ─────────────────────────────────────────────────────────────────── */
 .eyebrow{font-size:clamp(11px,1.5vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute)}
@@ -85,10 +98,10 @@ mark{background:var(--yellow);color:var(--ink);padding:0 .18em}
 /* Cap image height against the viewport so a slide stays a slide. Without
    this a 2880x1800 screenshot in a half-width column is 440px tall before any
    text, and eight of these overflowed. */
-.shot img{display:block;width:100%;height:auto;max-height:40vh;object-fit:contain;background:var(--cream)}
+.shot img{display:block;width:100%;height:auto;max-height:36vh;object-fit:contain;background:var(--cream)}
 /* The three-up uses a FIXED height, not a max: equal heights are what let the
    captions underneath sit on one line. */
-.cols.three .shot img{height:38vh;max-height:none}
+.cols.three .shot img{height:34vh;max-height:none}
 .cols.three figure{display:flex;flex-direction:column}
 .chrome{display:flex;gap:6px;padding:9px 12px;background:#F4F1EA;border-bottom:1px solid var(--line)}
 .chrome i{width:9px;height:9px;border-radius:50%;background:#D9D2C5}
@@ -98,11 +111,18 @@ mark{background:var(--yellow);color:var(--ink);padding:0 .18em}
 figcaption{margin-top:8px;font-size:clamp(12px,1.2vw,17px);color:var(--ink-mute)}
 .dark figcaption{color:#9E968A}
 .diagram{width:100%;background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:clamp(8px,1.4vw,22px);cursor:zoom-in}
-.diagram img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain}
+.diagram img{display:block;width:100%;height:auto;max-height:44vh;object-fit:contain}
+
+/* ── Swatches ─────────────────────────────────────────────────────────────── */
+.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:clamp(10px,1.2vw,20px)}
+.sw{display:flex;flex-direction:column;gap:8px}
+.sw .chip{height:clamp(68px,11vh,132px);border-radius:12px;border:1px solid var(--line)}
+.sw b{font-size:clamp(13px,1.3vw,19px)}
+.sw span{font-size:clamp(11px,1.1vw,15px);color:var(--ink-mute);font-variant-numeric:tabular-nums}
 
 /* ── Table ────────────────────────────────────────────────────────────────── */
 table{border-collapse:collapse;width:100%;font-size:clamp(12px,1.35vw,20px)}
-th,td{text-align:left;padding:clamp(7px,.95vw,15px) clamp(8px,1vw,16px);border-bottom:1px solid var(--line)}
+th,td{text-align:left;padding:clamp(5px,.72vw,11px) clamp(8px,1vw,16px);border-bottom:1px solid var(--line)}
 th{font-weight:700}
 td{color:var(--ink-soft)}
 
@@ -174,6 +194,7 @@ td{color:var(--ink-soft)}
   .dark .card{background:#fff!important;border-color:#ccc!important}
   .dark .eyebrow{color:#666!important}
   .bar,.lb,.lb-close{display:none!important}
+  .panel{box-shadow:none;background:transparent!important;padding:0;border-radius:0}
   .shot{cursor:default;box-shadow:none}
   .shot img,.cols.three .shot img,.diagram img{max-height:none;height:auto}
   .shot:hover{transform:none;box-shadow:none}
@@ -187,14 +208,17 @@ td{color:var(--ink-soft)}
 
 <!-- 1 ─ cover -->
 <section class="slide active center">
+  <div class="panel">
   <p class="hand">a community for meaning makers</p>
   <h1>Create Space<br>Collective</h1>
   <p class="lede" style="max-width:42ch">A membership space for people who make things. Tactile practice kits, live make-alongs, and real support to finish and share the work.</p>
   <p class="note">Enrika Greathouse · product design and build · 2026</p>
+  </div>
 </section>
 
 <!-- 2 ─ problem -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">The problem</p>
   <h2>Making is the easy part to talk about</h2>
   <p class="lede" style="max-width:48ch">Most creative people do not need another place to discuss making things. They need the thing they are making to actually leave the building.</p>
@@ -203,31 +227,55 @@ td{color:var(--ink-soft)}
     <div class="card"><h3>Courses end alone</h3><p>The lesson finishes, the support stops, the project does not ship.</p></div>
     <div class="card"><h3>The middle is solitary</h3><p>The hard part is the middle, and nobody is there for it.</p></div>
   </div>
+  </div>
 </section>
 
 <!-- 3 ─ thesis -->
 <section class="slide accent center">
+  <div class="panel">
   <p class="eyebrow">The belief it is built on</p>
   <h1 style="max-width:18ch">A tool to do the work, not just a place to connect.</h1>
   <p class="lede" style="max-width:52ch">A place to connect puts the rooms at the centre and measures conversation. A tool to do the work puts the loop at the centre and measures work leaving the building.</p>
+  </div>
 </section>
 
+<!-- palette -->
+<section class="slide">
+  <div class="panel">
+  <p class="eyebrow">The palette</p>
+  <h2>Cream ground, ink type, one loud accent</h2>
+  <p class="lede" style="max-width:56ch">Warm neutrals do the work. The colour is reserved, which is what lets a single highlight mean something when it appears.</p>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#FBF7EF"></div><b>Cream</b><span>#FBF7EF · the ground</span></div>
+    <div class="sw"><div class="chip" style="background:#1A1A1A"></div><b>Ink</b><span>#1A1A1A · type and line</span></div>
+    <div class="sw"><div class="chip" style="background:#ECF682"></div><b>Highlight</b><span>#ECF682 · the one accent</span></div>
+    <div class="sw"><div class="chip" style="background:#F4BFBC"></div><b>Blush</b><span>#F4BFBC</span></div>
+    <div class="sw"><div class="chip" style="background:#94D3D8"></div><b>Teal</b><span>#94D3D8</span></div>
+    <div class="sw"><div class="chip" style="background:#FC815B"></div><b>Coral</b><span>#FC815B</span></div>
+    <div class="sw"><div class="chip" style="background:#D9C9FF"></div><b>Lilac</b><span>#D9C9FF</span></div>
+  </div>
+  <p class="note">The highlight marks one phrase at a time, the way a pen would. The four softer tones belong to the rooms, so a space is recognisable before you read its name. Type is Playfair Display over DM Sans, with a hand face for the asides.</p>
+  </div>
+</section>
 <!-- 4 ─ design throughline -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">Design throughline</p>
   <h2>A room to room experience, not a dressed-up forum</h2>
-  <p class="lede" style="max-width:52ch">Clean, simple, never overwhelming, because the work is supposed to be the demanding part.</p>
+  <p class="lede" style="max-width:56ch">Clean, simple, never overwhelming: the work is supposed to be the demanding part.</p>
   <div class="cols">
-    <div class="card"><h3>Rooms, not channels</h3><p>You walk into a named place with a purpose, rather than scrolling a list of topics.</p></div>
-    <div class="card"><h3>One thing per surface</h3><p>Each room asks one question. No sidebar of unread counts competing for attention.</p></div>
-    <div class="card"><h3>Drawn, not decorated</h3><p>Hand-drawn single-weight icons, one per room. Warmth from the line itself.</p></div>
+    <div class="card"><h3>Rooms, not channels</h3><p>You walk into a named place with a purpose, not a list of topics.</p></div>
+    <div class="card"><h3>One thing per surface</h3><p>Each room asks one question. No unread counts competing for attention.</p></div>
+    <div class="card"><h3>Drawn, not decorated</h3><p>Hand-drawn single-weight icons, one per room. Warmth from the line.</p></div>
     <div class="card"><h3>Quiet by default</h3><p>Per-member notification modes, down to quiet. Presence without pressure.</p></div>
   </div>
   <p class="note">A forum optimises for conversation volume. This optimises for walking in, doing something, and leaving with it finished.</p>
+  </div>
 </section>
 
 <!-- 5 ─ the member sets the terms -->
 <section class="slide">
+  <div class="panel">
   <div class="row top">
     <div class="grow stack" style="max-width:40ch">
       <p class="eyebrow">Quiet by default, as a control</p>
@@ -245,10 +293,12 @@ td{color:var(--ink-soft)}
       <figcaption>Every one of these is set before anything happens to the member.</figcaption>
     </figure>
   </div>
+  </div>
 </section>
 
 <!-- 6 ─ framework -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">The framework I design against</p>
   <h2>Nine stages, four groups, stranger to advocate</h2>
   <p class="lede" style="max-width:54ch">Not every product has all nine. A stage left out on purpose is a decision worth stating, not a hole worth hiding.</p>
@@ -259,10 +309,12 @@ td{color:var(--ink-soft)}
     <div class="card"><h3>Grow through them</h3><p>Champion</p></div>
   </div>
   <p class="note"><b>First Win</b> is its own stage: the first time someone gets the thing they came for. Neither orientation nor habit, and where products die.</p>
+  </div>
 </section>
 
 <!-- 7 ─ arrival -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">Arrival</p>
   <h2>Stranger to first win</h2>
   <figure>
@@ -271,10 +323,12 @@ td{color:var(--ink-soft)}
       </div>
       <figcaption>Heavy line is the path walked. Dashed branches are features serving that step. Orange marks what is not built yet.</figcaption>
     </figure>
+  </div>
 </section>
 
 <!-- 8 ─ loop -->
 <section class="slide">
+  <div class="panel">
   <div class="row top">
     <div class="grow stack" style="max-width:32ch">
       <p class="eyebrow">The recurring loop</p>
@@ -292,10 +346,12 @@ td{color:var(--ink-soft)}
     </figure>
     </div>
   </div>
+  </div>
 </section>
 
 <!-- 9 ─ reach -->
 <section class="slide dark">
+  <div class="panel">
   <p class="eyebrow">Reach</p>
   <h2>The public pitch</h2>
   <div class="row top">
@@ -311,17 +367,18 @@ td{color:var(--ink-soft)}
       <p>The letters are the loop run once, in public, for free: watch, make something, write back. The outreach is a sample of the product rather than an advert for it.</p>
     </div>
   </div>
+  </div>
 </section>
 
 <!-- 10 ─ first run -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">First Run</p>
   <h2>Welcomed by a person, not a tour</h2>
   <div class="row top">
-    <figure class="grow">
-      <div class="shot fit" data-full="/assets/case/create-space/flow2-welcome-1440.png" data-cap="A personal video, one clear next step, and a confetti burst sized to feel warm rather than viral">
-        <div class="chrome"><i></i><i></i><i></i></div>
-        <img src="/assets/case/create-space/flow2-welcome-1440.png" alt="Welcome modal with confetti, a personal video and one next step" loading="lazy">
+    <figure class="grow" style="max-width:470px">
+      <div class="shot fit" data-full="/assets/case/create-space/crop-welcome.png" data-cap="A personal video, one clear next step, and a confetti burst sized to feel warm rather than viral">
+        <img src="/assets/case/create-space/crop-welcome.png" alt="The welcome modal: a personal video, one next step, and confetti" loading="lazy">
       </div>
       <figcaption>A personal video, one clear next step, and a confetti burst sized to feel warm rather than viral</figcaption>
     </figure>
@@ -330,10 +387,12 @@ td{color:var(--ink-soft)}
       <p class="note">Shown in the built-in admin preview, which lets a host re-run onboarding without consuming a member's first-run flag.</p>
     </div>
   </div>
+  </div>
 </section>
 
 <!-- 11 ─ home base -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">Home Base</p>
   <h2>Where a member starts</h2>
   <div class="row top">
@@ -343,24 +402,24 @@ td{color:var(--ink-soft)}
       <p class="note">Hold this slide in mind. What it offers is the subject of the finding.</p>
     </div>
     <figure class="grow">
-      <div class="shot fit" data-full="/assets/case/create-space/flow3-dashboard-1440.png" data-cap="All three options on Where to next are orientation. None of them is making something.">
-        <div class="chrome"><i></i><i></i><i></i></div>
-        <img src="/assets/case/create-space/flow3-dashboard-1440.png" alt="Member dashboard with a greeting and a numbered where to next list" loading="lazy">
+      <div class="shot fit" data-full="/assets/case/create-space/crop-wheretonext.png" data-cap="All three options on Where to next are orientation. None of them is making something.">
+        <img src="/assets/case/create-space/crop-wheretonext.png" alt="The Where to next card on the member dashboard, three numbered steps" loading="lazy">
       </div>
       <figcaption>All three options on Where to next are orientation. None of them is making something.</figcaption>
     </figure>
+  </div>
   </div>
 </section>
 
 <!-- 12 ─ the loop in product -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">The loop, in the product</p>
   <h2>A weekly rhythm and a place to join</h2>
   <div class="row top">
     <figure class="grow">
-      <div class="shot fit" data-full="/assets/case/create-space/living-room-1440.png" data-cap="Living Room: the weekly check-in, dated by week">
-        <div class="chrome"><i></i><i></i><i></i></div>
-        <img src="/assets/case/create-space/living-room-1440.png" alt="Living Room showing a dated weekly check-in prompt" loading="lazy">
+      <div class="shot fit" data-full="/assets/case/create-space/crop-checkin.png" data-cap="Living Room: the weekly check-in, dated by week">
+        <img src="/assets/case/create-space/crop-checkin.png" alt="The weekly check-in card in the Living Room, dated by week" loading="lazy">
       </div>
       <figcaption>Living Room: the weekly check-in, dated by week</figcaption>
     </figure>
@@ -373,10 +432,12 @@ td{color:var(--ink-soft)}
     </figure>
   </div>
   <p class="note">Personal challenges are described in the app as just yours, a pep talk then one small rep a day. That framing is the First Win shaped correctly, and it sits five steps into the loop.</p>
+  </div>
 </section>
 
 <!-- 13 ─ feedback engine -->
 <section class="slide dark">
+  <div class="panel">
   <p class="eyebrow">The detail the whole loop runs on</p>
   <h2>Feedback, on every surface</h2>
   <p class="lede" style="max-width:62ch">Support is the hub of the loop, so it cannot live in a comment box at the bottom of a page. Feedback attaches to the thing itself: a phrase, a frame, a point in a picture.</p>
@@ -404,10 +465,12 @@ td{color:var(--ink-soft)}
     </figure>
   </div>
   <p class="note">Click any of these to read them properly. Built as one feedback layer rather than three features, so a new surface inherits it instead of reimplementing it.</p>
+  </div>
 </section>
 
 <!-- 14 ─ rich both ways -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">Rich in both directions</p>
   <h2>Every way in, and a way out</h2>
   <div class="row top">
@@ -423,10 +486,12 @@ td{color:var(--ink-soft)}
       <p><b>Rich coming out.</b> Any post plays back as speech, in a reader voice the member picks. Media plays inline, highlights toggle off to read clean.</p>
     </div>
   </div>
+  </div>
 </section>
 
 <!-- 15 ─ resonance -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">Consent before critique</p>
   <h2>Feedback has a dial, and a summary</h2>
   <div class="row top">
@@ -443,10 +508,12 @@ td{color:var(--ink-soft)}
       <p class="note">The granular layer tells you what one person thought of one phrase. This tells you what the room thought of the whole thing.</p>
     </div>
   </div>
+  </div>
 </section>
 
 <!-- 16 ─ the finding -->
 <section class="slide dark">
+  <div class="panel">
   <p class="eyebrow">What the mapping found</p>
   <h2 style="max-width:22ch">The product had no First Win placed at arrival</h2>
   <div class="row top">
@@ -464,10 +531,12 @@ td{color:var(--ink-soft)}
     </figure>
   </div>
   <p class="note">Naming the gap correctly changed the size of the work by an order of magnitude. Nothing to build, something to move.</p>
+  </div>
 </section>
 
 <!-- 17 ─ architecture -->
 <section class="slide">
+  <div class="panel">
   <p class="eyebrow">Architecture · as of 3 October 2026</p>
   <h2>A door, then rooms</h2>
   <figure>
@@ -476,10 +545,12 @@ td{color:var(--ink-soft)}
       </div>
       <figcaption>Dated rather than definitive: the app is in active build. Left of the gate needs no account.</figcaption>
     </figure>
+  </div>
 </section>
 
 <!-- 18 ─ stack -->
 <section class="slide">
+  <div class="panel" style="gap:clamp(10px,1.6vh,20px)">
   <p class="eyebrow">Built with</p>
   <h2>Boring infrastructure, on purpose</h2>
   <table>
@@ -490,13 +561,15 @@ td{color:var(--ink-soft)}
     <tr><td>Media</td><td>Cloudflare R2</td><td>Member uploads and avatars, served cheaply at any size</td></tr>
     <tr><td>Email</td><td>Postmark</td><td>Transactional only</td></tr>
     <tr><td>Publishing</td><td>Delivery, own build</td><td>Multi-brand letters, blogs and social from one place</td></tr>
-    <tr><td>Hosting</td><td>Vercel</td><td>Preview per branch, zero config for the framework</td></tr>
+    <tr><td>Hosting</td><td>Vercel</td><td>Preview per branch</td></tr>
   </table>
-  <p class="note">Designed and built solo. The interesting decisions in this project are the flow ones, not the infrastructure ones.</p>
+  <p class="note">Built solo. The interesting decisions here are the flow ones, not the infrastructure ones.</p>
+  </div>
 </section>
 
 <!-- 19 ─ status -->
 <section class="slide rose">
+  <div class="panel">
   <p class="eyebrow">Where it stands</p>
   <h2>Pre-launch, by design</h2>
   <div class="cols three">
@@ -506,6 +579,7 @@ td{color:var(--ink-soft)}
   </div>
   <p class="lede" style="max-width:56ch">Soft enrollment is live and converting visitors into free members now. The full tier opens with the cohort.</p>
   <p class="note">Enrika Greathouse · enrika@smallgorillacreative.com</p>
+  </div>
 </section>
 
 </main>
