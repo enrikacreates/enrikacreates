@@ -9,7 +9,17 @@
  *   detail hero render identically. Story sections, skills, slideshow, and
  *   gallery follow.
  *
- *   Two hero treatments exist, switched by HERO_TREATMENT below:
+ *   Three hero treatments exist, switched by HERO_TREATMENT below:
+ *
+ *   "none"    no hero image at all. Kept as an option, not current.
+ *
+ *   Once the posters became full 4:5 compositions, the detail hero was a
+ *   portrait plate filling most of the first viewport with art the reader had
+ *   just clicked on from the grid. It repeated the card and pushed the title,
+ *   the tagline and the first screenshot below the fold. The poster now runs
+ *   as a banner instead: a wide crop of the same art, which keeps the colour
+ *   and the texture while giving the space back to the words. See
+ *   .project-hero.has-flat in globals.css for the banner itself.
  *
  *   "poster"  the project's poster artwork, the same art the grid card shows.
  *   "shapes"  the original CardInner composition of discs and triangles over
@@ -39,7 +49,7 @@ import { ProcessTimeline } from "@/components/ProcessTimeline";
 import { Gallery } from "@/components/Gallery";
 
 /** Which hero treatment to render. See the note at the top of this file. */
-const HERO_TREATMENT: "poster" | "shapes" = "poster";
+const HERO_TREATMENT: "poster" | "shapes" | "none" = "poster";
 
 export const dynamicParams = true;
 
@@ -102,18 +112,20 @@ export default async function ProjectDetailPage({
 
       <div className="project-detail-inner" id="project-detail-inner">
         {/* Card-as-hero: the poster artwork, or the original shapes. Title
-            drops below either way. */}
-        <div
-          className={`${heroClass}${poster ? " has-poster" : ""}${poster?.flat ? " has-flat" : ""}`}
-          data-poster={poster ? item.slug : undefined}
-          style={{ "--card-color": item.color } as React.CSSProperties}
-        >
-          {poster ? (
-            <PosterArt slug={item.slug} />
-          ) : (
-            <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
-          )}
-        </div>
+            drops below either way. Omitted entirely under "none". */}
+        {HERO_TREATMENT !== "none" && (
+          <div
+            className={`${heroClass}${poster ? " has-poster" : ""}${poster?.flat ? " has-flat" : ""}`}
+            data-poster={poster ? item.slug : undefined}
+            style={{ "--card-color": item.color } as React.CSSProperties}
+          >
+            {poster ? (
+              <PosterArt slug={item.slug} />
+            ) : (
+              <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
+            )}
+          </div>
+        )}
 
         {/* Title block — below the header image */}
         <header className="project-hero-caption">

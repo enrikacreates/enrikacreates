@@ -959,16 +959,29 @@ body {
   opacity: 0.7;
 }
 
-/* The detail hero is a 16/11 landscape band, and a 4:5 poster forced into it
-   loses its top and bottom: on Create Space the crop cut the browser window off
-   at both ends and zoomed the box to fill. A finished poster is a composition,
-   not a texture to crop, so the hero gives way to the plate and centres it. */
+/* On a detail page the poster runs as a banner, not as a plate.
+   Shown whole it filled most of the first viewport with the very art the reader
+   just clicked on from the grid, pushing the title, the tagline and the first
+   screenshot below the fold. The card already showed them the composition; here
+   the job is to carry the colour and the texture over from the grid and then
+   get out of the way, so a wide crop is the right use of it.
+   Cropping a composition is fine HERE precisely because it isn't the
+   presentation of the artwork, the card is. */
 .project-hero.catalog-item.has-flat {
   aspect-ratio: auto;
-  max-width: 380px;
+  max-width: 1000px;
   margin-inline: auto;
   padding: 0;
   background: transparent;
+}
+.project-hero.catalog-item.has-flat .poster-plate {
+  aspect-ratio: auto;
+  height: clamp(88px, 11vw, 150px);
+}
+.project-hero.catalog-item.has-flat .poster-flat {
+  /* Pulled off the top edge: at 50% 0 the band was mostly the poster's empty
+     sky, and the subject sits around the middle in every one of them. */
+  object-position: 50% 42%;
 }
 
 .has-flat .poster-frame,
@@ -2383,48 +2396,97 @@ body.detail-open {
 }
 
 /* ============================================
-   KEY SCREENS — the strip above the written story
+   KEY SCREENS — the carousel above the written story
    ============================================ */
 
+/* One screen at a time. The row version gave each shot an equal slice of the
+   column, and the shots are not the same shape: a desktop capture is wide and
+   short, a phone capture narrow and tall. The desktop one shrank to a thumbnail
+   while the phone one ran taller than the viewport beside it, so neither was
+   readable, which defeats the point of leading with them. */
 .key-screens {
-  display: grid;
-  gap: 1rem;
   max-width: 1000px;
   margin: 0 auto 2.5rem;
   padding: 0 2rem;
-  align-items: start;
+  outline: none;
 }
 
-/* Column count follows the number of screens rather than a fixed grid: two
-   phone shots deserve to be twice the width of four, and a fixed three-column
-   rule would leave a pair stranded at a third of the space. */
-.key-screens[data-count="1"] { grid-template-columns: minmax(0, 520px); justify-content: center; }
-.key-screens[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.key-screens[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.key-screens[data-count="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.key-screens-viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  /* The mount a contained screen sits on. Shots arrive at different shapes, so
+     something has to fill the margin either side of a tall one; against the
+     mount that reads as deliberate, where a shrunken screenshot read as small. */
+  background: var(--bone, #FFFDF7);
+  box-shadow: 0 2px 14px rgba(44, 37, 32, 0.10);
+}
+
+.key-screens-track {
+  display: flex;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
 
 .key-screen {
+  flex: 0 0 100%;
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* One height for every slide, so stepping from a desktop shot to a phone shot
+     doesn't resize the page under the reader. */
+  height: min(68vh, 560px);
+  padding: 1.25rem;
 }
 
 .key-screen img {
   display: block;
-  width: 100%;
+  /* Contained rather than stretched: whichever dimension runs out first sets
+     the size, so a shot is never cropped and never upscaled past its capture. */
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
   height: auto;
-  border-radius: 10px;
+  border-radius: 6px;
   /* App screenshots are usually captured against their own background, so a
-     hairline keeps a light screen from bleeding into the page. */
-  box-shadow: 0 2px 14px rgba(44, 37, 32, 0.10);
+     hairline keeps a light screen from bleeding into the mount. */
+  box-shadow: 0 2px 14px rgba(44, 37, 32, 0.12);
 }
 
-.key-screen figcaption {
+/* These dots sit on the page, not over a dark slide, so the slideshow's white
+   ones would be invisible here. */
+.key-screens-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+.key-screens-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(44, 37, 32, 0.22);
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.key-screens-dot:hover { background: rgba(44, 37, 32, 0.45); }
+.key-screens-dot.is-active {
+  background: rgba(44, 37, 32, 0.75);
+  transform: scale(1.3);
+}
+
+.key-screens-caption {
   font-family: 'Inter', sans-serif;
   font-size: 0.72rem;
   font-weight: 300;
   letter-spacing: 0.02em;
   line-height: 1.4;
   color: rgba(44, 37, 32, 0.6);
-  margin-top: 0.55rem;
+  margin: 0.7rem 0 0;
+  text-align: center;
 }
 
 /* Phone-first: a row of four at 375px gives four unreadable slivers, so the
