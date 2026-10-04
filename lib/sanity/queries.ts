@@ -142,6 +142,20 @@ export const FEATURED_PROJECTS_QUERY = /* groq */ `
   }
 `;
 
+/**
+ * Just enough of every project to build the skill index: which other work
+ * shares a given skill. Deliberately not PROJECT_FIELDS, which carries the
+ * lead image and its asset metadata for a list this only needs three fields of.
+ */
+export const SKILL_INDEX_QUERY = /* groq */ `
+  *[_type == "project" && defined(skills) && category->listed == true]
+    | order(displayOrder asc, publishedAt desc) {
+    "slug": slug.current,
+    title,
+    skills
+  }
+`;
+
 /** Single project by slug — for /work/[slug]. */
 export const PROJECT_BY_SLUG_QUERY = /* groq */ `
   *[_type == "project" && slug.current == $slug][0] {

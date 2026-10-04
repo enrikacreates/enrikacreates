@@ -45,6 +45,7 @@ import {
   getAllProjectSlugs,
   getFeaturedProjects,
   getListedProjects,
+  getSkillIndex,
 } from "@/lib/sanity/fetch";
 import { urlFor } from "@/lib/sanity/image";
 import { isDarkColor } from "@/lib/colorUtils";
@@ -84,10 +85,11 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [item, featured, listed] = await Promise.all([
+  const [item, featured, listed, skillIndex] = await Promise.all([
     getProjectBySlug(slug),
     getFeaturedProjects(),
     getListedProjects(),
+    getSkillIndex(),
   ]);
   if (!item) notFound();
 
@@ -116,6 +118,20 @@ export default async function ProjectDetailPage({
   // a download, and labelling an HTML page "download" is a small lie that the
   // click immediately exposes.
   const caseIsFile = Boolean(caseHref && /\.pdf($|\?)/i.test(caseHref));
+
+  // Which other work shares each of this project's skills. Gated on having a
+  // poster, like the grid is: a chip must not lead somewhere the site doesn't
+  // otherwise show. A skill with no other project simply isn't in the map, and
+  // the component renders that chip as plain text rather than a button.
+  const relatedBySkill: Record<string, { slug: string; title: string }[]> = {};
+  for (const s of item.skills ?? []) {
+    const others = skillIndex.filter(
+      (p) => p.slug !== slug && getPoster(p.slug) && p.skills?.includes(s)
+    );
+    if (others.length > 0) {
+      relatedBySkill[s] = others.map((p) => ({ slug: p.slug, title: p.title }));
+    }
+  }
 
   const at = sequence.findIndex((p) => p.slug === slug);
   // Wraps, so the last case leads back to the first instead of dead-ending.
@@ -254,7 +270,7 @@ export default async function ProjectDetailPage({
             the margin: it needs no duplicate copy for narrow screens and never
             has to dodge the case chevrons. */}
         {item.skills && item.skills.length > 0 && (
-          <ProjectSkills skills={item.skills} />
+          <ProjectSkills skills={item.skills} related={relatedBySkill} />
         )}
 
         {/* Key screens — before the prose, so the product is the first thing

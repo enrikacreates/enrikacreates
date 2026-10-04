@@ -18,6 +18,7 @@ import {
   PROJECTS_BY_CATEGORY_QUERY,
   FEATURED_PROJECTS_QUERY,
   PROJECT_BY_SLUG_QUERY,
+  SKILL_INDEX_QUERY,
   PROJECT_SLUGS_QUERY,
   ALL_POSTS_QUERY,
   POST_BY_SLUG_QUERY,
@@ -75,6 +76,13 @@ export async function getProjectsByCategory(
 
 export async function getFeaturedProjects(): Promise<ProjectListItem[]> {
   return client.fetch(FEATURED_PROJECTS_QUERY, {}, DEFAULT_NEXT_OPTS);
+}
+
+export type SkillIndexItem = { slug: string; title: string; skills?: string[] };
+
+/** Every listed project's skills, for "what else used this". */
+export async function getSkillIndex(): Promise<SkillIndexItem[]> {
+  return client.fetch(SKILL_INDEX_QUERY, {}, DEFAULT_NEXT_OPTS);
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
