@@ -2,14 +2,15 @@
   "name": "enrikacreates",
   "version": "2.0.0",
   "private": true,
-  "description": "Enrika Creates portfolio + blog — Next.js + Sanity (migration template)",
+  "description": "Enrika Creates portfolio + blog \u2014 Next.js + Sanity (migration template)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typegen": "sanity schema extract --enforce-required-fields && sanity typegen generate",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "poster": "node scripts/poster.mjs"
   },
   "dependencies": {
     "@sanity/image-url": "^1.0.2",
@@ -30,6 +31,7 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.15",
     "puppeteer-core": "^25.9.0",
+    "sharp": "^0.35.5",
     "typescript": "^5.6.2"
   }
 }
