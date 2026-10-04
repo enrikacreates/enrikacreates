@@ -14,10 +14,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 // Sensible fallbacks so the chrome renders even before siteSettings exists.
 const DEFAULT_THREADS = [
-  { name: "Fashion", color: "#FC7F5A" },
-  { name: "Product", color: "#3498CE" },
-  { name: "Community Building", color: "#F7B5B1" },
-  { name: "Everyday Hope Stories", color: "#E8B84A" },
+  { name: "Human Centered Design", color: "#FC7F5A" },
+  { name: "AI Powered Workflows", color: "#3498CE" },
 ];
 
 export default async function SiteLayout({
@@ -34,7 +32,7 @@ export default async function SiteLayout({
       <FloatingActions
         contactEmail={settings?.contactEmail ?? "enrika@smallgorillacreative.com"}
         newsletterTitle={settings?.newsletterTitle ?? "Enrika Creates"}
-        newsletterSub={settings?.newsletterSub ?? "One letter. Four threads woven together."}
+        newsletterSub={settings?.newsletterSub ?? "One letter. Two threads woven together."}
         threads={
           settings?.newsletterThreads && settings.newsletterThreads.length > 0
             ? settings.newsletterThreads
