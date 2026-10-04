@@ -101,7 +101,17 @@ export default async function ProjectDetailPage({
     <section
       className={`project-detail is-open${isDark ? " dark-detail" : ""}`}
       id="project-detail"
-      style={{ "--detail-color": item.color } as React.CSSProperties}
+      // When the artwork has a measured background colour, the page takes it
+      // exactly rather than a tint mixed from the project's card colour. Equal
+      // colours are what let the banner read as part of the page instead of a
+      // band laid over it, with no edge softened to get there.
+      data-poster-bg={poster?.bg ? "" : undefined}
+      style={
+        {
+          "--detail-color": item.color,
+          ...(poster?.bg ? { "--poster-bg": poster.bg } : {}),
+        } as React.CSSProperties
+      }
     >
       <Link href="/#work" className="project-back" aria-label="Back to all work">
         <svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true">
@@ -110,22 +120,30 @@ export default async function ProjectDetailPage({
         <span>Back to work</span>
       </Link>
 
+      {/* Card-as-hero: the poster artwork, or the original shapes. Title drops
+          below either way. Omitted entirely under "none".
+
+          Deliberately OUTSIDE project-detail-inner. The inner column is capped
+          at 900px, and the banner wants the full width of the scroll container.
+          Doing that from inside with 100vw overshot by the scrollbar's width,
+          which pushed the band 7px off to the left and left a strip of page
+          showing down the right edge. As a direct child it is simply 100% of
+          the thing that defines the width. */}
+      {HERO_TREATMENT !== "none" && (
+        <div
+          className={`${heroClass}${poster ? " has-poster" : ""}${poster?.flat ? " has-flat" : ""}`}
+          data-poster={poster ? item.slug : undefined}
+          style={{ "--card-color": item.color } as React.CSSProperties}
+        >
+          {poster ? (
+            <PosterArt slug={item.slug} />
+          ) : (
+            <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
+          )}
+        </div>
+      )}
+
       <div className="project-detail-inner" id="project-detail-inner">
-        {/* Card-as-hero: the poster artwork, or the original shapes. Title
-            drops below either way. Omitted entirely under "none". */}
-        {HERO_TREATMENT !== "none" && (
-          <div
-            className={`${heroClass}${poster ? " has-poster" : ""}${poster?.flat ? " has-flat" : ""}`}
-            data-poster={poster ? item.slug : undefined}
-            style={{ "--card-color": item.color } as React.CSSProperties}
-          >
-            {poster ? (
-              <PosterArt slug={item.slug} />
-            ) : (
-              <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
-            )}
-          </div>
-        )}
 
         {/* Title block — below the header image */}
         <header className="project-hero-caption">

@@ -35,6 +35,8 @@ export interface Poster {
    * generated image contains all three.
    */
   flat?: string;
+  /** The poster's own flat background colour. See FLAT_POSTER_BG. */
+  bg?: string;
   blob: boolean;
   /**
    * A faint browser window drawn behind the artwork, to say at a glance that
@@ -153,6 +155,30 @@ const POSTERS: Record<string, Poster> = {
  * To add one: generate at 4:5, save it as `public/assets/posters/<slug>.png`,
  * and add the slug here. Nothing else. The file name is the wiring.
  */
+/**
+ * Each poster's own background colour, so a page can be the same colour as the
+ * artwork sitting on it rather than a tint derived from the project's card
+ * colour. Matching exactly is what makes a banner read as part of the page
+ * instead of a band laid over it, and it does that without softening an edge.
+ *
+ * Measured, not eyeballed: the mean of the top 4.5% of each PNG, which is flat
+ * field in all of them. Median per-pixel deviation came out 2-4 and the 95th
+ * percentile 5-11, so these are the real colours and not an average of two.
+ * Re-measure when a poster is replaced; the paper grain means picking a single
+ * pixel is not good enough.
+ */
+const FLAT_POSTER_BG: Record<string, string> = {
+  "create-space-collective": "#FBBCA6",
+  signaturestyle: "#FDB8A1",
+  "50-states-of-freedom": "#AEC0A1",
+  deeplyreader: "#EECB86",
+  hummingbird: "#FBB6A0",
+  betterstories: "#87BBD9",
+  "bti-production-hub": "#EFC77C",
+  "the-daily-story": "#F3CC80",
+  thestoryoftelling: "#94B8AD",
+};
+
 const FLAT_POSTERS = new Set([
   "create-space-collective",
   "signaturestyle",
@@ -171,7 +197,13 @@ const FLAT_POSTERS = new Set([
 
 export function getPoster(slug: string): Poster | undefined {
   if (FLAT_POSTERS.has(slug)) {
-    return { blob: false, frame: false, flat: `/assets/posters/${slug}.png`, layers: [] };
+    return {
+      blob: false,
+      frame: false,
+      flat: `/assets/posters/${slug}.png`,
+      bg: FLAT_POSTER_BG[slug],
+      layers: [],
+    };
   }
   return POSTERS[slug];
 }
