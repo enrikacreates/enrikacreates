@@ -41,7 +41,10 @@ const POSTER = "/assets/hero/hero-poster.jpg";
  */
 const TIME_CURVE = 1.1;
 
-/** How hard the playhead chases its target each frame. Lower is smoother/laggier. */
+/**
+ * How hard the playhead chases its target, expressed per 60fps frame and then
+ * converted to wall-clock time in the loop. Lower is smoother/laggier.
+ */
 const LERP = 0.12;
 
 /** Don't touch currentTime for sub-frame deltas; seeking is not free. */
@@ -53,9 +56,11 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
   const quoteRef = useRef<HTMLQuoteElement>(null);
   const cueRef = useRef<HTMLAnchorElement>(null);
 
-  /** Where the playhead should be, and where it currently is. */
+  /**
+   * Where the playhead should be. Where it IS is read off the element itself,
+   * so the easing can't accumulate a lead on the frame actually showing.
+   */
   const target = useRef(0);
-  const current = useRef(0);
   const unlocked = useRef(false);
 
   /** Mobile Safari won't paint a seek until the element has played once. */
@@ -149,6 +154,25 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
      */
     let seeking = false;
     let seekStarted = 0;
+    let lastFrame = performance.now();
+
+    /**
+     * Shortest gap between seeks, in ms.
+     *
+     * Waiting for every `seeked` before issuing the next one was too strict:
+     * the playhead then advanced once per completed seek, so a slow seek read
+     * as a hold followed by a catch-up leap. Measured end to end down the zone,
+     * the steps came out 0.2, 0.46, 0, 0.98, 0, 1.03 seconds of video. That is
+     * the racing.
+     *
+     * The original fault was re-targeting on every rAF, which at 60/s cancelled
+     * each seek before the decoder could finish and collapsed readyState. The
+     * cure is a floor on the rate, not a ban: pre-empt a seek that has been
+     * pending longer than this, and otherwise take the `seeked` as soon as it
+     * lands. Fast seeks stay frame-rate smooth, slow ones degrade to ~20/s
+     * instead of stalling outright.
+     */
+    const MIN_SEEK_INTERVAL = 45;
     const releaseSeek = () => {
       seeking = false;
     };
@@ -157,8 +181,6 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
 
     function tick() {
       if (!running) return;
-      // Ease the playhead toward the target rather than snapping to it.
-      current.current += (target.current - current.current) * LERP;
 
       const v = video!;
       // A seek needs metadata (readyState >= 1) and a real duration, not a
@@ -167,18 +189,34 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
       const seekable =
         v.readyState >= 1 && Number.isFinite(v.duration) && v.duration > 0;
 
-      // Watchdog: `seeked` is reliable, but a dropped event would otherwise
-      // wedge the loop shut for good. Cheaper to re-arm than to risk that.
-      if (seeking && performance.now() - seekStarted > 400) seeking = false;
+      const now = performance.now();
+      const dt = Math.min(0.1, (now - lastFrame) / 1000);
+      lastFrame = now;
 
-      if (
-        !seeking &&
-        seekable &&
-        Math.abs(v.currentTime - current.current) > MIN_SEEK_DELTA
-      ) {
-        seeking = true;
-        seekStarted = performance.now();
-        v.currentTime = current.current;
+      // A pending seek only blocks the next one until the interval is up; past
+      // that we re-target rather than let the reveal sit still. This doubles as
+      // the watchdog, so a dropped `seeked` can't wedge the loop shut.
+      const free = !seeking || now - seekStarted > MIN_SEEK_INTERVAL;
+
+      if (free && seekable) {
+        // Ease from where the playhead ACTUALLY is, not from a free-running
+        // variable. Easing a separate value meant it kept advancing during a
+        // seek, so a slow seek let it run far ahead and the next one jumped
+        // straight there: the reveal held, then raced to catch up.
+        //
+        // And ease in wall-clock time, not per frame. We now step once per
+        // completed seek rather than once per rAF, so a fixed per-frame
+        // fraction would scrub at whatever rate the decoder happened to manage.
+        // This keeps the same feel whether that is 60 steps a second or 20.
+        const from = v.currentTime;
+        const k = 1 - Math.pow(1 - LERP, dt * 60);
+        const next = from + (target.current - from) * k;
+
+        if (Math.abs(next - from) > MIN_SEEK_DELTA) {
+          seeking = true;
+          seekStarted = now;
+          v.currentTime = next;
+        }
       }
       raf = requestAnimationFrame(tick);
     }
