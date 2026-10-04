@@ -130,15 +130,55 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
       paintOverlays(p);
     }
 
+    /**
+     * One seek in flight at a time.
+     *
+     * Assigning `currentTime` while the element is still servicing a seek
+     * cancels that seek and starts another. The rAF loop was assigning on every
+     * frame, so a fast scroll back to the top issued ~60 cancellations a second
+     * and the decoder never finished one: readyState fell from 4 (HAVE_ENOUGH)
+     * to 1 (HAVE_METADATA), and with no decoded frame the element painted
+     * nothing. The old `readyState >= 2` guard then made it permanent, because
+     * at readyState 1 the loop stopped seeking at all and could never climb
+     * back out. That is the blank hero on the way back up.
+     *
+     * So: issue a seek only when none is pending, and let the next frame pick
+     * up wherever the playhead has eased to by then. The target keeps updating
+     * meanwhile, so nothing is queued or replayed, and the seek rate throttles
+     * itself to whatever the decoder can actually sustain.
+     */
+    let seeking = false;
+    let seekStarted = 0;
+    const releaseSeek = () => {
+      seeking = false;
+    };
+    video.addEventListener("seeked", releaseSeek);
+    video.addEventListener("error", releaseSeek);
+
     function tick() {
       if (!running) return;
       // Ease the playhead toward the target rather than snapping to it.
       current.current += (target.current - current.current) * LERP;
+
+      const v = video!;
+      // A seek needs metadata (readyState >= 1) and a real duration, not a
+      // decoded frame. Gating on >= 2 is what trapped it when a frame was the
+      // very thing a seek would have produced.
+      const seekable =
+        v.readyState >= 1 && Number.isFinite(v.duration) && v.duration > 0;
+
+      // Watchdog: `seeked` is reliable, but a dropped event would otherwise
+      // wedge the loop shut for good. Cheaper to re-arm than to risk that.
+      if (seeking && performance.now() - seekStarted > 400) seeking = false;
+
       if (
-        video!.readyState >= 2 &&
-        Math.abs(video!.currentTime - current.current) > MIN_SEEK_DELTA
+        !seeking &&
+        seekable &&
+        Math.abs(v.currentTime - current.current) > MIN_SEEK_DELTA
       ) {
-        video!.currentTime = current.current;
+        seeking = true;
+        seekStarted = performance.now();
+        v.currentTime = current.current;
       }
       raf = requestAnimationFrame(tick);
     }
@@ -150,7 +190,9 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
     function settleForReducedMotion() {
       const p = progress();
       paintOverlays(p);
-      if (video!.readyState >= 2) video!.currentTime = video!.duration || 0;
+      if (video!.readyState >= 1 && Number.isFinite(video!.duration)) {
+        video!.currentTime = video!.duration;
+      }
     }
 
     if (reduced.matches) {
@@ -175,6 +217,8 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       video.removeEventListener("loadedmetadata", onScroll);
+      video.removeEventListener("seeked", releaseSeek);
+      video.removeEventListener("error", releaseSeek);
     };
   }, []);
 

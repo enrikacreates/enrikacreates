@@ -824,17 +824,25 @@ body {
    second time on top of art that already has it. */
 .poster-flat {
   object-fit: cover;
+  /* Anchored to the top, so the plate's crop comes off the BOTTOM. The default
+     centre would take half the cut off the top and behead the compositions. */
+  object-position: 50% 0;
   border-radius: inherit;
   z-index: 0;
 }
 
-/* The plate that holds a finished poster. It carries the 4:5, so the card no
-   longer has to: a card becomes a plate plus a caption. */
+/* The plate that holds a finished poster.
+   The posters are generated at 4:5, but their last fifth is empty cream, which
+   met the page's own cream and left the card with no bottom edge: the artwork
+   dissolved instead of ending. The plate is square, so that dead band is cropped
+   away and every composition sits on its own ground right to the edge.
+   Generating at 4:5 is still correct, it just means the bottom ~20% is a margin
+   rather than a place to put anything. */
 .poster-plate {
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
   border-radius: 4px;
   overflow: hidden;
   background: var(--card-bg);
@@ -1578,6 +1586,21 @@ body {
   opacity: 0.5;
   z-index: 4;
   letter-spacing: 0;
+}
+
+/* dark-card is decided from the project's colour, but on a poster card the text
+   doesn't sit on that colour: it sits on the blob's cream. betterstories is
+   blue, so it was judged dark and its title rendered near-cream on cream,
+   effectively invisible. Same specificity as the dark-card rules above, so this
+   has to stay below them. */
+.catalog-item.has-poster.dark-card .card-title,
+.catalog-item.has-poster.dark-card .card-tagline,
+.catalog-item.has-poster.dark-card .card-year {
+  color: var(--ink, #2C2520);
+}
+.catalog-item.has-poster.dark-card .card-tagline,
+.catalog-item.has-poster.dark-card .card-year {
+  opacity: 0.7;
 }
 
 /* Shared content elements */
