@@ -65,21 +65,24 @@ export function ProjectSkills({
 
       {open && (
         <div className="skill-related" role="region" aria-label={`Other work using ${open}`}>
-          <p className="skill-related-label">
-            Also used in
-            <button type="button" className="skill-related-close" onClick={() => setOpen(null)} aria-label="Close">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </button>
-          </p>
+          <span className="skill-related-label">Also used in</span>
           <ul>
             {others.map((p) => (
               <li key={p.slug}>
-                <Link href={`/work/${p.slug}`}>{p.title}</Link>
+                <Link href={`/work/${p.slug}`}>
+                  {p.title}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
               </li>
             ))}
           </ul>
+          <button type="button" className="skill-related-close" onClick={() => setOpen(null)} aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
         </div>
       )}
     </section>
