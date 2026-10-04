@@ -890,6 +890,23 @@ body {
   padding: 0;
 }
 
+/* The title reserves two lines and bottom-aligns inside them, so a one-line
+   title donates ~27px of slack to the gap above it, right after the year. That
+   reservation existed to stop a wrapping title lifting the artwork's ceiling
+   above it. Nothing sits above the title any more: the plate is at the top of
+   the card at a fixed ratio, and the grid already stretches every card in a row
+   to the same height, so the alignment it was protecting is free now.
+
+   Dropped for flat cards, leaving a deliberate gap on the year instead. */
+.catalog-item.has-flat .card-title {
+  min-height: 0;
+  display: block;
+}
+.catalog-item.has-flat .card-year,
+.featured-item.has-flat .card-year {
+  margin-bottom: 0.45rem;
+}
+
 /* The two rows ran different caption treatments: the catalog had a year, a
    serif title and a sentence-case tagline, the featured row had no year and an
    uppercase letterspaced one. There was a reason when a featured card was a
