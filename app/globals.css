@@ -980,11 +980,11 @@ body {
   justify-content: center;
   gap: 0.35rem 0.85rem;
   font-family: var(--font-body);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(44, 37, 32, 0.55);
+  color: rgba(44, 37, 32, 0.72);
 }
 .project-signals li + li::before {
   content: "·";
