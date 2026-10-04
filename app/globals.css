@@ -19,6 +19,10 @@
      are generated on, so artwork sits on its own colour rather than on the page
      colour, which read slightly cold behind it. */
   --cream-warm: #F2E9D7;
+  /* The card mount. Sits between the page (#F3EDE4) and pure white: enough
+     lift to read as a separate surface, not so much that it goes cold against
+     a warm palette. */
+  --bone: #FFFDF7;
   /* How much of a project's colour survives on the card ground. The full
      brand colours are correct as identity but wrong as a field: three
      saturated blocks side by side compete with the artwork sitting on them,
@@ -862,10 +866,11 @@ body {
 .featured-item.has-flat,
 .catalog-item.has-flat {
   aspect-ratio: auto;
-  /* White at rest, not just under the hover shadow. The page is cream, so a
-     white mount lifts every poster off it and gives the card an edge of its own
-     without drawing a border. */
-  background: #FFFFFF;
+  /* A mount at rest, not just under the hover shadow. The page is cream, so a
+     lighter card lifts every poster off it and gives the card an edge of its
+     own without drawing a border. Bone rather than pure white: against a warm
+     palette #FFF read as cold and as a hole rather than a surface. */
+  background: var(--bone, #FFFDF7);
   /* Room between the artwork and the card's own edge, so the hover shadow has
      something to sit against. Flush, it cropped; with the mount, it lifts. */
   padding: 14px;
