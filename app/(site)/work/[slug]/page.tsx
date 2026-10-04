@@ -171,7 +171,18 @@ export default async function ProjectDetailPage({
             // first screenshot below it, so centre read as the page saying the
             // same thing twice.
             data-banner-align={item.bannerAlign ?? "center"}
-            style={{ "--card-color": item.color } as React.CSSProperties}
+            style={
+              {
+                "--card-color": item.color,
+                // An exact band beats the preset when one is set. Clamped here
+                // rather than trusted: this comes from a CMS number field.
+                ...(typeof item.bannerFocus === "number"
+                  ? {
+                      "--banner-focus": `${Math.min(100, Math.max(0, item.bannerFocus))}%`,
+                    }
+                  : {}),
+              } as React.CSSProperties
+            }
           >
             {poster ? (
               <PosterArt slug={item.slug} />

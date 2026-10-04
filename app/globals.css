@@ -1065,13 +1065,17 @@ body {
    the middle of the poster is the same portrait as the first screenshot below,
    so centre made the page say the same thing twice. */
 .project-hero.catalog-item.has-flat .poster-flat {
-  object-position: 50% 42%;
+  object-position: 50% var(--banner-focus, 42%);
 }
 .project-hero.catalog-item.has-flat[data-banner-align="top"] .poster-flat {
-  object-position: 50% 8%;
+  object-position: 50% var(--banner-focus, 10%);
 }
+/* 80%, not 100%. Measured across the nine posters, the artwork runs out around
+   84% of the file height (81% on 50 States) and everything below is empty
+   ground, so a literal bottom crop showed almost nothing. 88% was the first
+   attempt and landed in exactly that dead band. */
 .project-hero.catalog-item.has-flat[data-banner-align="bottom"] .poster-flat {
-  object-position: 50% 88%;
+  object-position: 50% var(--banner-focus, 80%);
 }
 
 .has-flat .poster-frame,

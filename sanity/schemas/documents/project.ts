@@ -222,6 +222,15 @@ export const project = defineType({
       initialValue: "center",
     }),
     defineField({
+      name: "bannerFocus",
+      title: "Banner focal point (%)",
+      type: "number",
+      group: "meta",
+      description:
+        "Optional. Overrides the choice above with an exact band: 0 is the very top of the poster, 100 the very bottom. Useful when the part you want sits between the presets. The posters run out of artwork around 84% and are empty cream below that, so values past ~80 tend to show nothing.",
+      validation: (Rule) => Rule.min(0).max(100),
+    }),
+    defineField({
       name: "displayOrder",
       title: "Display order",
       type: "number",

@@ -112,6 +112,8 @@ export interface Project extends ProjectListItem {
   skills?: string[];
   /** Which band of the poster the case page's banner crops to. */
   bannerAlign?: "top" | "center" | "bottom";
+  /** Exact band, 0-100. Overrides bannerAlign when set. */
+  bannerFocus?: number;
   keyScreens?: GalleryItem[];
   slides?: ProjectSlide[];
   gallery?: GalleryItem[];
