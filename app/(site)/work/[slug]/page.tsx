@@ -185,7 +185,7 @@ export default async function ProjectDetailPage({
             }
           >
             {poster ? (
-              <PosterArt slug={item.slug} />
+              <PosterArt slug={item.slug} as="banner" />
             ) : (
               <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
             )}

@@ -14,7 +14,25 @@ import Image from "next/image";
 
 import { getPoster } from "@/lib/posters";
 
-export function PosterArt({ slug }: { slug: string }) {
+/**
+ * `sizes` has to describe the box the image actually lands in, and this
+ * component renders into two very different ones. On the grid a poster is a
+ * third of a row; on a case page it is a banner the width of the content
+ * column. Describing the card in both places made the browser fetch a 640px
+ * variant for a 900px banner and upscale it 1.75x, on a 1x display.
+ */
+const SIZES = {
+  card: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+  banner: "(max-width: 1000px) 100vw, 1000px",
+} as const;
+
+export function PosterArt({
+  slug,
+  as = "card",
+}: {
+  slug: string;
+  as?: keyof typeof SIZES;
+}) {
   const poster = getPoster(slug);
   if (!poster) return null;
 
@@ -36,7 +54,7 @@ export function PosterArt({ slug }: { slug: string }) {
           alt=""
           aria-hidden="true"
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes={SIZES[as]}
           draggable={false}
         />
       </span>
