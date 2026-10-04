@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="840" viewBox="0 0 900 840"
+     font-family="Inter, -apple-system, sans-serif">
+  <!--
+    The Daily Story, one day.
+
+    Vision sits in the hub because the app says so itself: "the north star that
+    everything else flows from". The parallel with Create Space is deliberate.
+    That product puts peer support at the centre, so its engine is other
+    people. This one puts your own stated intent at the centre. Same structural
+    move, opposite answer.
+
+    Two tracks run through the middle of the day and they are kept apart on
+    purpose. Actions and projects COMPLETE, and travel the funnel. Daily Do's
+    RECUR, and reset. Most planners conflate the two, which is why a list
+    holding both "finish the tax return" and "drink water" serves neither. Both
+    tracks score into the same six categories, which is what lets one number
+    mean something across a whole day.
+
+    Stats is outside the ring, not in it. Nothing in the daily turn requires
+    going anywhere: the coaching bar and the score breakdown both open on the
+    surface you are already looking at. Stats is the one place you travel to,
+    and it is for quarters and years, read against the season you were in.
+  -->
+  <defs>
+    <marker id="d" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="e" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#8A7E72" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text x="450" y="34" text-anchor="middle" font-family="Playfair Display, Georgia, serif"
+        font-size="15" font-style="italic" fill="#1A1A1A">Not just productive. Memorable.</text>
+
+  <!-- ring -->
+  <g stroke="#1A1A1A" stroke-width="1.7" fill="none" stroke-linecap="round">
+    <path d="M558 212 C 641 230, 707 302, 715 380" marker-end="url(#d)"/>
+    <path d="M715 478 C 705 564, 637 630, 558 646" marker-end="url(#d)"/>
+    <path d="M342 646 C 261 630, 197 564, 187 478" marker-end="url(#d)"/>
+    <path d="M187 380 C 197 302, 261 230, 342 212" marker-end="url(#d)"/>
+  </g>
+
+  <!-- hub: Vision -->
+  <circle cx="450" cy="412" r="58" fill="#FBF7EF" stroke="#8A7E72" stroke-width="1.3" stroke-dasharray="4 4"/>
+  <text x="450" y="402" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="18" fill="#1A1A1A">Vision</text>
+  <text x="450" y="424" text-anchor="middle" font-size="11" fill="#6B6158">the north star</text>
+  <text x="450" y="506" text-anchor="middle" font-size="11.5" fill="#8A7E72" font-style="italic">everything else flows from it,</text>
+  <text x="450" y="523" text-anchor="middle" font-size="11.5" fill="#8A7E72" font-style="italic">including what earns promotion</text>
+
+  <!-- stations -->
+  <g stroke="#1A1A1A" stroke-width="1.7" fill="#FBF7EF" stroke-linejoin="round">
+    <path d="M341 174 L557 172 Q563 172 563 178 L561 234 Q561 240 555 240 L343 238 Q337 238 337 232 L335 180 Q335 174 341 174 Z"/>
+    <path d="M659 382 L853 380 Q859 380 859 386 L857 470 Q857 476 851 476 L661 474 Q655 474 655 468 L653 388 Q653 382 659 382 Z"/>
+    <path d="M343 618 L559 616 Q565 616 565 622 L563 678 Q563 684 557 684 L345 682 Q339 682 339 676 L337 624 Q337 618 343 618 Z"/>
+    <path d="M47 380 L241 382 Q247 382 247 388 L245 468 Q245 474 239 474 L49 476 Q43 476 43 470 L41 386 Q41 380 47 380 Z"/>
+  </g>
+
+  <g font-family="Playfair Display, Georgia, serif" font-size="21" fill="#1A1A1A" text-anchor="middle">
+    <text x="450" y="212">Envision the day</text>
+    <text x="756" y="420">Get it out</text>
+    <text x="451" y="656">Promote and do</text>
+    <text x="144" y="420">Story and score</text>
+  </g>
+  <g font-size="12" fill="#6B6158" text-anchor="middle">
+    <text x="756" y="444">Write: braindump, coach</text>
+    <text x="144" y="444">the day lands</text>
+  </g>
+
+  <!-- branches -->
+  <g stroke="#8A7E72" stroke-width="1.1" fill="none" stroke-dasharray="3 4" stroke-linecap="round">
+    <path d="M450 172 L450 146"/>
+    <path d="M790 476 L790 502"/>
+    <path d="M451 684 L451 710"/>
+    <path d="M110 476 L110 502"/>
+  </g>
+  <g font-size="12" fill="#6B6158" text-anchor="middle">
+    <text x="450" y="112">Daily Vision: what does today</text>
+    <text x="450" y="134">look and feel like?</text>
+    <text x="790" y="522">free write, then select a line</text>
+    <text x="790" y="544">and make it an action</text>
+    <text x="110" y="522">Hope, Hangup, Happened, Heart</text>
+    <text x="110" y="544">points by category, in place</text>
+    <text x="451" y="730">zap to Now, run the timer</text>
+    <text x="451" y="752">Daily Do's run alongside</text>
+  </g>
+
+  <!-- the two tracks, named once -->
+  <text x="450" y="566" text-anchor="middle" font-size="11.5" fill="#1A1A1A">Two tracks, kept apart on purpose:</text>
+  <text x="450" y="583" text-anchor="middle" font-size="11.5" fill="#6B6158">actions COMPLETE and travel the funnel · Daily Do's RECUR and reset</text>
+  <text x="450" y="600" text-anchor="middle" font-size="11.5" fill="#6B6158">both score into Move, Play, Nourish, Clean, Be, Create, Work</text>
+
+  <!-- Stats, set clear of the ring. An anchored leader into the right station
+       printed the label straight through it, and the point of the note is that
+       Stats is NOT attached to this ring. -->
+  <text x="878" y="686" text-anchor="end" font-size="11.5" fill="#8A7E72" font-style="italic">Stats sits outside this ring:</text>
+  <text x="878" y="703" text-anchor="end" font-size="11.5" fill="#8A7E72" font-style="italic">quarters and years, read by season</text>
+
+  <text x="450" y="800" text-anchor="middle" font-size="11.5" fill="#8A7E72">
+    Nothing in the daily turn asks you to go anywhere. The coaching and the score both open where you already are.
+  </text>
+  <text x="450" y="818" text-anchor="middle" font-size="11.5" fill="#8A7E72">
+    Flow Up runs across the whole turn: six tiers, from Ready to Peak flow, sized against the day's planned actions.
+  </text>
+</svg>

@@ -242,6 +242,51 @@ try {
             }
           }
 
+          /* Some of the best screens are not addressable. The Daily Story's
+           * modes live in a transient UI store, deliberately not persisted, so
+           * there is no URL and no storage key to set: the only way in is to
+           * press the thing a person presses. Each step is a CSS selector, or
+           * "text:Label" to match a control by its visible text. */
+          for (const step of route.click ?? []) {
+            await page.evaluate((sel) => {
+              const el = sel.startsWith("text:")
+                ? (() => {
+                    const want = sel.slice(5);
+                    const all = [...document.querySelectorAll("button, a, [role=button]")];
+                    // Exact first, then contains. UI labels carry curly
+                    // apostrophes and stray whitespace that an exact match
+                    // loses on, and failing to click is worse than clicking a
+                    // slightly looser match.
+                    return (
+                      all.find((n) => n.textContent.trim() === want) ??
+                      all.find((n) => n.textContent.trim().includes(want))
+                    );
+                  })()
+                : document.querySelector(sel);
+              if (!el) throw new Error(`nothing matched ${sel}`);
+              el.click();
+            }, step);
+            await new Promise((r) => setTimeout(r, route.clickWait ?? 700));
+          }
+
+          /* Long settings pages keep their most interesting controls below the
+           * fold, and a viewport capture of the top of one says nothing. Scroll
+           * to a named thing first, by CSS selector or "text:Label". */
+          if (route.scrollTo) {
+            await page.evaluate((sel) => {
+              // Case-insensitive: labels are often uppercased in CSS, so the
+              // DOM text is "Reader voice" where the screen says READER VOICE.
+              const want = sel.startsWith("text:") ? sel.slice(5).toLowerCase() : null;
+              const el = want
+                ? [...document.querySelectorAll("h1,h2,h3,h4,p,span,div,label,button")]
+                    .find((n) => n.textContent.trim().toLowerCase().startsWith(want))
+                : document.querySelector(sel);
+              if (!el) throw new Error(`nothing to scroll to for ${sel}`);
+              el.scrollIntoView({ block: "center" });
+            }, route.scrollTo);
+            await new Promise((r) => setTimeout(r, 500));
+          }
+
           if (route.wait) {
             await new Promise((r) => setTimeout(r, route.wait));
           }

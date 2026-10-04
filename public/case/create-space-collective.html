@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create Space Collective, a case study · Enrika Greathouse</title>
+<meta name="description" content="Designing and building a membership space for people who make things. Flow framework, two diagrams, and the gap the mapping found.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;700&family=Caveat:wght@400;600&display=swap">
+<style>
+/* ── Tokens ────────────────────────────────────────────────────────────────
+   Create Space's own palette, so the case study and the product it is about
+   read as one thing. */
+:root{
+  --cream:#FBF7EF; --cream-warm:#F2E9D7; --ink:#1A1A1A; --ink-soft:#4A4540;
+  --ink-mute:#6B6158; --line:#E6DFD2; --yellow:#ECF682; --pink:#F4BFBC;
+  --coral:#FC815B; --teal:#94D3D8;
+  --display:'Playfair Display',Georgia,serif; --body:'DM Sans',-apple-system,sans-serif;
+  --hand:'Caveat',cursive;
+  --pad:clamp(20px,5vw,88px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--body); color:var(--ink); background:var(--cream);
+  overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+
+/* ── Slides ────────────────────────────────────────────────────────────────
+   One slide visible at a time, like a deck rather than a scrolling page. Each
+   slide may scroll INTERNALLY on a short screen, which is what keeps this
+   usable on a phone without redesigning every slide. */
+.slide{
+  position:fixed; inset:0; padding:var(--pad);
+  padding-bottom:calc(var(--pad) + 64px);
+  display:none; flex-direction:column; gap:clamp(14px,2.2vh,28px);
+  overflow-y:auto; overscroll-behavior:contain;
+  animation:rise .45s cubic-bezier(.16,1,.3,1) both;
+}
+.slide.active{display:flex}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide{animation:none}}
+
+.slide.dark{background:var(--ink);color:var(--cream)}
+.slide.accent{background:var(--yellow)}
+.slide.rose{background:var(--pink)}
+.slide.center{justify-content:center}
+
+/* ── Type ─────────────────────────────────────────────────────────────────── */
+.eyebrow{font-size:clamp(11px,1.5vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute)}
+.dark .eyebrow{color:var(--teal)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,7.4vw,104px);line-height:1.04;letter-spacing:-.01em}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(26px,4.4vw,58px);line-height:1.1}
+h3{font-size:clamp(16px,1.9vw,26px);font-weight:700;line-height:1.25}
+p{font-size:clamp(14px,1.55vw,23px);line-height:1.5;color:var(--ink-soft)}
+.dark p{color:#C9C2B4}
+.lede{font-size:clamp(16px,2.1vw,32px);line-height:1.38;color:var(--ink)}
+.dark .lede{color:var(--cream)}
+.hand{font-family:var(--hand);font-size:clamp(20px,2.8vw,40px);color:var(--ink-mute)}
+.note{font-size:clamp(12px,1.25vw,18px);color:var(--ink-mute)}
+.dark .note{color:#9E968A}
+b{font-weight:700}
+mark{background:var(--yellow);color:var(--ink);padding:0 .18em}
+
+/* ── Layout helpers ───────────────────────────────────────────────────────── */
+.row{display:flex;gap:clamp(16px,2.4vw,40px);align-items:center}
+.row.top{align-items:flex-start}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(12px,1.6vw,26px)}
+.cols.three{grid-template-columns:repeat(3,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(14px,1.8vw,30px);display:flex;flex-direction:column;gap:8px}
+.dark .card{background:#242424;border-color:#3A3A3A}
+.grow{flex:1;min-width:0}
+.stack{display:flex;flex-direction:column;gap:clamp(8px,1.3vh,18px)}
+
+/* ── Figures ──────────────────────────────────────────────────────────────── */
+/* Screenshots get a window frame, the detail everything else is judged
+   against. Click any of them: see the lightbox below. */
+.shot{
+  width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;
+  overflow:hidden;cursor:zoom-in;transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease;
+  box-shadow:0 1px 2px rgba(26,26,26,.05);
+}
+.shot:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(26,26,26,.14)}
+/* Cap image height against the viewport so a slide stays a slide. Without
+   this a 2880x1800 screenshot in a half-width column is 440px tall before any
+   text, and eight of these overflowed. */
+.shot img{display:block;width:100%;height:auto;max-height:40vh;object-fit:contain;background:var(--cream)}
+/* The three-up uses a FIXED height, not a max: equal heights are what let the
+   captions underneath sit on one line. */
+.cols.three .shot img{height:38vh;max-height:none}
+.cols.three figure{display:flex;flex-direction:column}
+.chrome{display:flex;gap:6px;padding:9px 12px;background:#F4F1EA;border-bottom:1px solid var(--line)}
+.chrome i{width:9px;height:9px;border-radius:50%;background:#D9D2C5}
+.chrome i:nth-child(1){background:#F0A7A0}
+.chrome i:nth-child(2){background:#F2D08A}
+.chrome i:nth-child(3){background:#A9CDA4}
+figcaption{margin-top:8px;font-size:clamp(12px,1.2vw,17px);color:var(--ink-mute)}
+.dark figcaption{color:#9E968A}
+.diagram{width:100%;background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:clamp(8px,1.4vw,22px);cursor:zoom-in}
+.diagram img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+table{border-collapse:collapse;width:100%;font-size:clamp(12px,1.35vw,20px)}
+th,td{text-align:left;padding:clamp(7px,.95vw,15px) clamp(8px,1vw,16px);border-bottom:1px solid var(--line)}
+th{font-weight:700}
+td{color:var(--ink-soft)}
+
+/* ── Chrome: dots, arrows, progress ───────────────────────────────────────── */
+.bar{
+  position:fixed;left:0;right:0;bottom:0;height:64px;display:flex;align-items:center;
+  gap:14px;padding:0 var(--pad);background:linear-gradient(to top,rgba(251,247,239,.96),rgba(251,247,239,0));
+  pointer-events:none;z-index:40;
+}
+.dark-bar .bar{background:linear-gradient(to top,rgba(26,26,26,.96),rgba(26,26,26,0))}
+.bar>*{pointer-events:auto}
+.mark{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);white-space:nowrap}
+.dark-bar .mark{color:#9E968A}
+.dots{display:flex;gap:7px;flex:1;flex-wrap:wrap}
+.dots button{
+  width:9px;height:9px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  background:rgba(26,26,26,.2);transition:background .2s,transform .2s;
+}
+.dark-bar .dots button{background:rgba(251,247,239,.26)}
+.dots button:hover{transform:scale(1.35)}
+.dots button[aria-current="true"]{background:var(--coral);transform:scale(1.35)}
+.nav{display:flex;gap:8px}
+.nav button{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;
+  cursor:pointer;font-size:15px;color:var(--ink);display:grid;place-items:center;
+}
+.dark-bar .nav button{background:#242424;border-color:#3A3A3A;color:var(--cream)}
+.nav button:disabled{opacity:.35;cursor:default}
+.count{font-size:12px;color:var(--ink-mute);min-width:52px;text-align:right}
+.dark-bar .count{color:#9E968A}
+
+/* ── Lightbox ─────────────────────────────────────────────────────────────── */
+/* The thing a slide deck cannot do: see the screenshot at full size. */
+.lb{
+  position:fixed;inset:0;z-index:100;display:none;
+  background:rgba(20,18,16,.93);padding:clamp(12px,3vw,48px);
+}
+.lb[open],.lb.on{display:grid;place-items:center}
+.lb img{max-width:100%;max-height:calc(100vh - 120px);object-fit:contain;border-radius:8px;background:#fff}
+.lb figcaption{position:fixed;left:0;right:0;bottom:22px;text-align:center;color:#D9D2C5;padding:0 24px}
+.lb-close{
+  position:fixed;top:18px;right:18px;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(251,247,239,.3);background:rgba(0,0,0,.4);color:#fff;
+  font-size:20px;cursor:pointer;display:grid;place-items:center;
+}
+
+/* ── Phone ────────────────────────────────────────────────────────────────── */
+@media (max-width:760px){
+  .shot img,.cols.three .shot img,.diagram img{max-height:none;height:auto}
+  .row{flex-direction:column;align-items:stretch}
+  .cols.three{grid-template-columns:1fr}
+  .bar{height:56px;gap:10px}
+  .mark{display:none}
+  .dots button{width:7px;height:7px}
+}
+
+/* ── Print ────────────────────────────────────────────────────────────────── */
+/* The download path. Every slide is revealed and given its own page, which is
+   the part a hand-rolled HTML deck usually forgets. */
+@media print{
+  body{overflow:visible;background:#fff}
+  .slide{
+    position:static!important;display:flex!important;break-after:page;page-break-after:always;
+    min-height:auto;overflow:visible;animation:none;padding:14mm;border-bottom:1px solid #ddd;
+  }
+  .slide:last-of-type{break-after:auto;page-break-after:auto}
+  .slide.dark{background:#fff!important;color:#000!important}
+  .dark p,.dark .note,.dark figcaption{color:#444!important}
+  .dark .card{background:#fff!important;border-color:#ccc!important}
+  .dark .eyebrow{color:#666!important}
+  .bar,.lb,.lb-close{display:none!important}
+  .shot{cursor:default;box-shadow:none}
+  .shot img,.cols.three .shot img,.diagram img{max-height:none;height:auto}
+  .shot:hover{transform:none;box-shadow:none}
+  @page{size:landscape;margin:0}
+}
+</style>
+</head>
+<body>
+
+<main id="deck">
+
+<!-- 1 ─ cover -->
+<section class="slide active center">
+  <p class="hand">a community for meaning makers</p>
+  <h1>Create Space<br>Collective</h1>
+  <p class="lede" style="max-width:42ch">A membership space for people who make things. Tactile practice kits, live make-alongs, and real support to finish and share the work.</p>
+  <p class="note">Enrika Greathouse · product design and build · 2026</p>
+</section>
+
+<!-- 2 ─ problem -->
+<section class="slide">
+  <p class="eyebrow">The problem</p>
+  <h2>Making is the easy part to talk about</h2>
+  <p class="lede" style="max-width:48ch">Most creative people do not need another place to discuss making things. They need the thing they are making to actually leave the building.</p>
+  <div class="cols three">
+    <div class="card"><h3>Communities stall at talking</h3><p>Feeds reward posting about the work rather than finishing it.</p></div>
+    <div class="card"><h3>Courses end alone</h3><p>The lesson finishes, the support stops, the project does not ship.</p></div>
+    <div class="card"><h3>The middle is solitary</h3><p>The hard part is the middle, and nobody is there for it.</p></div>
+  </div>
+</section>
+
+<!-- 3 ─ thesis -->
+<section class="slide accent center">
+  <p class="eyebrow">The belief it is built on</p>
+  <h1 style="max-width:18ch">A tool to do the work, not just a place to connect.</h1>
+  <p class="lede" style="max-width:52ch">A place to connect puts the rooms at the centre and measures conversation. A tool to do the work puts the loop at the centre and measures work leaving the building.</p>
+</section>
+
+<!-- 4 ─ design throughline -->
+<section class="slide">
+  <p class="eyebrow">Design throughline</p>
+  <h2>A room to room experience, not a dressed-up forum</h2>
+  <p class="lede" style="max-width:52ch">Clean, simple, never overwhelming, because the work is supposed to be the demanding part.</p>
+  <div class="cols">
+    <div class="card"><h3>Rooms, not channels</h3><p>You walk into a named place with a purpose, rather than scrolling a list of topics.</p></div>
+    <div class="card"><h3>One thing per surface</h3><p>Each room asks one question. No sidebar of unread counts competing for attention.</p></div>
+    <div class="card"><h3>Drawn, not decorated</h3><p>Hand-drawn single-weight icons, one per room. Warmth from the line itself.</p></div>
+    <div class="card"><h3>Quiet by default</h3><p>Per-member notification modes, down to quiet. Presence without pressure.</p></div>
+  </div>
+  <p class="note">A forum optimises for conversation volume. This optimises for walking in, doing something, and leaving with it finished.</p>
+</section>
+
+<!-- 5 ─ the member sets the terms -->
+<section class="slide">
+  <div class="row top">
+    <div class="grow stack" style="max-width:40ch">
+      <p class="eyebrow">Quiet by default, as a control</p>
+      <h2>The member sets the terms</h2>
+      <p><b>How quiet do you like your space?</b> Notification modes, down to quiet. Mentions still reach you.</p>
+      <p><b>Match-ups, on or off.</b> Weekly meetups suggested from shared goals, only if invited.</p>
+      <p><b>Reader voice.</b> The voice that reads things aloud, with a sample to hear first.</p>
+      <p><b>Welcome Committee.</b> Count me in, or not now. Greeting newcomers is opt-in.</p>
+    </div>
+    <figure class="grow" style="flex:1.5">
+      <div class="shot fit" data-full="/assets/case/create-space/flow4c-terms-1440.png" data-cap="Account settings: match-ups, notification quietness, reader voice, and the Welcome Committee invitation">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/flow4c-terms-1440.png" alt="Account settings showing match-ups, a quietness control reading Creation Mode, a reader voice picker, and a Welcome Committee invitation" loading="lazy">
+      </div>
+      <figcaption>Every one of these is set before anything happens to the member.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 6 ─ framework -->
+<section class="slide">
+  <p class="eyebrow">The framework I design against</p>
+  <h2>Nine stages, four groups, stranger to advocate</h2>
+  <p class="lede" style="max-width:54ch">Not every product has all nine. A stage left out on purpose is a decision worth stating, not a hole worth hiding.</p>
+  <div class="cols">
+    <div class="card"><h3>Get them in</h3><p>Reach<br>Enroll</p></div>
+    <div class="card"><h3>Get them going</h3><p>First Run<br>Setup<br><b>First Win</b></p></div>
+    <div class="card"><h3>Keep them</h3><p>Home Base<br>The Loop<br>Return</p></div>
+    <div class="card"><h3>Grow through them</h3><p>Champion</p></div>
+  </div>
+  <p class="note"><b>First Win</b> is its own stage: the first time someone gets the thing they came for. Neither orientation nor habit, and where products die.</p>
+</section>
+
+<!-- 7 ─ arrival -->
+<section class="slide">
+  <p class="eyebrow">Arrival</p>
+  <h2>Stranger to first win</h2>
+  <figure>
+      <div class="diagram" data-full="/assets/projects/create-space-collective/flow-arrival.svg" data-cap="Heavy line is the path walked. Dashed branches are features serving that step. Orange marks what is not built yet.">
+        <img src="/assets/projects/create-space-collective/flow-arrival.svg" alt="Five stage arrival flow from Reach to First Win with supporting features branching off each stage" loading="lazy">
+      </div>
+      <figcaption>Heavy line is the path walked. Dashed branches are features serving that step. Orange marks what is not built yet.</figcaption>
+    </figure>
+</section>
+
+<!-- 8 ─ loop -->
+<section class="slide">
+  <div class="row top">
+    <div class="grow stack" style="max-width:32ch">
+      <p class="eyebrow">The recurring loop</p>
+      <h2>Support is the hub, not a step</h2>
+      <p>Drawn as a step it would say support arrives once the work is done, which is the opposite of what the place is for.</p>
+      <p>Shipping has two ranges and the order is the argument: seen by a few who care, then by everyone.</p>
+      <p>Celebrating closes the turn. It is a state, not a page, so it is built into the end of each experience.</p>
+    </div>
+    <div class="grow" style="flex:1.4">
+      <figure>
+      <div class="diagram" data-full="/assets/projects/create-space-collective/flow-loop.svg" data-cap="Four experience types feed one loop. They share a contract, not a data model.">
+        <img src="/assets/projects/create-space-collective/flow-loop.svg" alt="Closed loop: join an experience, do the work, ship the work, celebrate your wins, with peer to peer support as the hub" loading="lazy">
+      </div>
+      <figcaption>Four experience types feed one loop. They share a contract, not a data model.</figcaption>
+    </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 9 ─ reach -->
+<section class="slide dark">
+  <p class="eyebrow">Reach</p>
+  <h2>The public pitch</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/landing-1440.png" data-cap="The landing page, promising meaningful work out into the world in its first sentence">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/landing-1440.png" alt="Create Space marketing landing page" loading="lazy">
+      </div>
+      <figcaption>The landing page, promising meaningful work out into the world in its first sentence</figcaption>
+    </figure>
+    <div class="grow stack" style="max-width:30ch">
+      <p>Outreach runs on live interactive letters and small events, published from <b>Delivery</b>, a multi-brand publisher built alongside this.</p>
+      <p>The letters are the loop run once, in public, for free: watch, make something, write back. The outreach is a sample of the product rather than an advert for it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 ─ first run -->
+<section class="slide">
+  <p class="eyebrow">First Run</p>
+  <h2>Welcomed by a person, not a tour</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/flow2-welcome-1440.png" data-cap="A personal video, one clear next step, and a confetti burst sized to feel warm rather than viral">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/flow2-welcome-1440.png" alt="Welcome modal with confetti, a personal video and one next step" loading="lazy">
+      </div>
+      <figcaption>A personal video, one clear next step, and a confetti burst sized to feel warm rather than viral</figcaption>
+    </figure>
+    <div class="grow stack" style="max-width:30ch">
+      <p>Opening it also asks the welcome committee to say hi: existing members are notified to greet the newcomer, matched on shared profile signal.</p>
+      <p class="note">Shown in the built-in admin preview, which lets a host re-run onboarding without consuming a member's first-run flag.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 ─ home base -->
+<section class="slide">
+  <p class="eyebrow">Home Base</p>
+  <h2>Where a member starts</h2>
+  <div class="row top">
+    <div class="grow stack" style="max-width:30ch">
+      <p>The dashboard greets you by name and offers a numbered <b>Where to next</b>: step into a space, watch the walkthrough, see what is happening.</p>
+      <p>The rooms rail runs down the left, hand-drawn, one icon per space, so the place reads as a floor plan rather than as navigation.</p>
+      <p class="note">Hold this slide in mind. What it offers is the subject of the finding.</p>
+    </div>
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/flow3-dashboard-1440.png" data-cap="All three options on Where to next are orientation. None of them is making something.">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/flow3-dashboard-1440.png" alt="Member dashboard with a greeting and a numbered where to next list" loading="lazy">
+      </div>
+      <figcaption>All three options on Where to next are orientation. None of them is making something.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 12 ─ the loop in product -->
+<section class="slide">
+  <p class="eyebrow">The loop, in the product</p>
+  <h2>A weekly rhythm and a place to join</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/living-room-1440.png" data-cap="Living Room: the weekly check-in, dated by week">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/living-room-1440.png" alt="Living Room showing a dated weekly check-in prompt" loading="lazy">
+      </div>
+      <figcaption>Living Room: the weekly check-in, dated by week</figcaption>
+    </figure>
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/challenges-1440.png" data-cap="Challenges: personal and community, split on purpose">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/challenges-1440.png" alt="Challenges page split into personal and community challenges with progress bars" loading="lazy">
+      </div>
+      <figcaption>Challenges: personal and community, split on purpose</figcaption>
+    </figure>
+  </div>
+  <p class="note">Personal challenges are described in the app as just yours, a pep talk then one small rep a day. That framing is the First Win shaped correctly, and it sits five steps into the loop.</p>
+</section>
+
+<!-- 13 ─ feedback engine -->
+<section class="slide dark">
+  <p class="eyebrow">The detail the whole loop runs on</p>
+  <h2>Feedback, on every surface</h2>
+  <p class="lede" style="max-width:62ch">Support is the hub of the loop, so it cannot live in a comment box at the bottom of a page. Feedback attaches to the thing itself: a phrase, a frame, a point in a picture.</p>
+  <div class="cols three">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/detail-video.webp" data-cap="Video, frame by frame">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/detail-video.webp" alt="A video post with a note pinned at two minutes one second and markers along the timeline" loading="lazy">
+      </div>
+      <figcaption>Video, frame by frame</figcaption>
+    </figure>
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/detail-image.png" data-cap="Images, pinned to a point">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/detail-image.png" alt="A photo with a pinned question anchored to a point in the image" loading="lazy">
+      </div>
+      <figcaption>Images, pinned to a point</figcaption>
+    </figure>
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/detail-writing.png" data-cap="Writing, by the phrase">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/detail-writing.png" alt="A written post with a highlighted phrase and a reply anchored to that phrase" loading="lazy">
+      </div>
+      <figcaption>Writing, by the phrase</figcaption>
+    </figure>
+  </div>
+  <p class="note">Click any of these to read them properly. Built as one feedback layer rather than three features, so a new surface inherits it instead of reimplementing it.</p>
+</section>
+
+<!-- 14 ─ rich both ways -->
+<section class="slide">
+  <p class="eyebrow">Rich in both directions</p>
+  <h2>Every way in, and a way out</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/detail-composer.png" data-cap="The composer: photo, voice note, screen or camera recording, embed, GIF, reaction">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/detail-composer.png" alt="The reply composer offering photo, voice, recording, embed, GIF and reaction" loading="lazy">
+      </div>
+      <figcaption>The composer: photo, voice note, screen or camera recording, embed, GIF, reaction</figcaption>
+    </figure>
+    <div class="grow stack" style="max-width:30ch">
+      <p><b>Rich going in.</b> It asks you to offer encouraging feedback, then gives you more than text to do it with.</p>
+      <p><b>Rich coming out.</b> Any post plays back as speech, in a reader voice the member picks. Media plays inline, highlights toggle off to read clean.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 15 ─ resonance -->
+<section class="slide">
+  <p class="eyebrow">Consent before critique</p>
+  <h2>Feedback has a dial, and a summary</h2>
+  <div class="row top">
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/detail-resonance.png" data-cap="Resonance: sentiment, counts and reaction tallies in one read">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/detail-resonance.png" alt="A resonance panel showing sentiment counts, a feedback level reading encouragement welcome, and reaction tallies" loading="lazy">
+      </div>
+      <figcaption>Resonance: sentiment, counts and reaction tallies in one read</figcaption>
+    </figure>
+    <div class="grow stack" style="max-width:32ch">
+      <p><b>The maker sets the level first.</b> Encouragement welcome tells the room what kind of response is wanted before anyone replies. That is what makes honest critique possible later.</p>
+      <p><b>Resonance aggregates the answer.</b> A maker sees the shape of the response without opening every reply.</p>
+      <p class="note">The granular layer tells you what one person thought of one phrase. This tells you what the room thought of the whole thing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 16 ─ the finding -->
+<section class="slide dark">
+  <p class="eyebrow">What the mapping found</p>
+  <h2 style="max-width:22ch">The product had no First Win placed at arrival</h2>
+  <div class="row top">
+    <div class="grow stack" style="max-width:44ch">
+      <p>Every option on the dashboard was orientation. The thing the landing page promises in its first sentence was four clicks away.</p>
+      <p>The fix turned out to be <b>placement, not capability</b>. Every door into a first post already worked: weekly check-in, Daily Do, work log, ask for help. All of them already land in the Living Room.</p>
+      <p>Ask for help counting as a first win is the deliberate part: someone stuck with nothing made yet, which is often why they joined, can still cross the line on day one.</p>
+    </div>
+    <figure class="grow">
+      <div class="shot fit" data-full="/assets/case/create-space/made-it-wall-1440.png" data-cap="The empty state already said it: your first win goes here. Nobody saw it on day one.">
+        <div class="chrome"><i></i><i></i><i></i></div>
+        <img src="/assets/case/create-space/made-it-wall-1440.png" alt="The I Made It Wall empty state reading your first win goes here" loading="lazy">
+      </div>
+      <figcaption>The empty state already said it: your first win goes here. Nobody saw it on day one.</figcaption>
+    </figure>
+  </div>
+  <p class="note">Naming the gap correctly changed the size of the work by an order of magnitude. Nothing to build, something to move.</p>
+</section>
+
+<!-- 17 ─ architecture -->
+<section class="slide">
+  <p class="eyebrow">Architecture · as of 3 October 2026</p>
+  <h2>A door, then rooms</h2>
+  <figure>
+      <div class="diagram" data-full="/assets/projects/create-space-collective/architecture.svg" data-cap="Dated rather than definitive: the app is in active build. Left of the gate needs no account.">
+        <img src="/assets/projects/create-space-collective/architecture.svg" alt="Information architecture: public surfaces and enrollment left of an account gate, first run, home and member rooms to the right, over a data and services layer" loading="lazy">
+      </div>
+      <figcaption>Dated rather than definitive: the app is in active build. Left of the gate needs no account.</figcaption>
+    </figure>
+</section>
+
+<!-- 18 ─ stack -->
+<section class="slide">
+  <p class="eyebrow">Built with</p>
+  <h2>Boring infrastructure, on purpose</h2>
+  <table>
+    <tr><th style="width:24%">Layer</th><th style="width:32%">Choice</th><th>Why</th></tr>
+    <tr><td>Framework</td><td>Next.js 16, React 19</td><td>Server components for gated rooms, one deploy target</td></tr>
+    <tr><td>Styling</td><td>Tailwind v4</td><td>Design tokens in one stylesheet, hand-drawn assets stay SVG</td></tr>
+    <tr><td>Data and auth</td><td>Supabase, Postgres</td><td>Row level security per room, realtime presence, SSR cookies</td></tr>
+    <tr><td>Media</td><td>Cloudflare R2</td><td>Member uploads and avatars, served cheaply at any size</td></tr>
+    <tr><td>Email</td><td>Postmark</td><td>Transactional only</td></tr>
+    <tr><td>Publishing</td><td>Delivery, own build</td><td>Multi-brand letters, blogs and social from one place</td></tr>
+    <tr><td>Hosting</td><td>Vercel</td><td>Preview per branch, zero config for the framework</td></tr>
+  </table>
+  <p class="note">Designed and built solo. The interesting decisions in this project are the flow ones, not the infrastructure ones.</p>
+</section>
+
+<!-- 19 ─ status -->
+<section class="slide rose">
+  <p class="eyebrow">Where it stands</p>
+  <h2>Pre-launch, by design</h2>
+  <div class="cols three">
+    <div class="card"><h3>Shipped</h3><p>Public site, invite flow, onboarding, Living Room, Challenges, Maker Rooms, Live Studio, the wall, welcome committee, the feedback layer</p></div>
+    <div class="card"><h3>In build</h3><p>Pods and Paths, the interactive Letters edition, Delivery, the First Win placement</p></div>
+    <div class="card"><h3>Next</h3><p>Open the gates to the free members already gathering, with the Living Room seeded so the flywheel has something to turn on</p></div>
+  </div>
+  <p class="lede" style="max-width:56ch">Soft enrollment is live and converting visitors into free members now. The full tier opens with the cohort.</p>
+  <p class="note">Enrika Greathouse · enrika@smallgorillacreative.com</p>
+</section>
+
+</main>
+
+<!-- lightbox -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Full size image">
+  <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
+  <img id="lbImg" alt="">
+  <figcaption id="lbCap"></figcaption>
+</div>
+
+<!-- chrome -->
+<div class="bar">
+  <span class="mark">Create Space Collective · case study</span>
+  <div class="dots" id="dots" role="tablist" aria-label="Slides"></div>
+  <div class="nav">
+    <button id="prev" aria-label="Previous slide">←</button>
+    <button id="next" aria-label="Next slide">→</button>
+  </div>
+  <span class="count" id="count"></span>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var dots = document.getElementById('dots');
+  var count = document.getElementById('count');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var i = 0;
+
+  slides.forEach(function(s, n){
+    var b = document.createElement('button');
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-label','Slide ' + (n+1));
+    b.addEventListener('click', function(){ go(n); });
+    dots.appendChild(b);
+  });
+
+  function go(n){
+    if (n < 0 || n >= slides.length) return;
+    slides[i].classList.remove('active');
+    i = n;
+    slides[i].classList.add('active');
+    slides[i].scrollTop = 0;
+    // The bar sits over the slide, so it has to know when the slide is dark.
+    document.body.classList.toggle('dark-bar', slides[i].classList.contains('dark'));
+    [].forEach.call(dots.children, function(d, k){
+      d.setAttribute('aria-current', k === i ? 'true' : 'false');
+    });
+    count.textContent = (i+1) + ' / ' + slides.length;
+    prev.disabled = i === 0;
+    next.disabled = i === slides.length - 1;
+    if (history.replaceState) history.replaceState(null, '', '#' + (i+1));
+  }
+
+  prev.addEventListener('click', function(){ go(i-1); });
+  next.addEventListener('click', function(){ go(i+1); });
+
+  document.addEventListener('keydown', function(e){
+    if (lb.classList.contains('on')) { if (e.key === 'Escape') closeLb(); return; }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') go(i+1);
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   go(i-1);
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(slides.length-1);
+  });
+
+  /* Lightbox: the whole reason this is a web page and not a deck export.
+     Click any screenshot to see it at full size. */
+  var lb = document.getElementById('lb');
+  var lbImg = document.getElementById('lbImg');
+  var lbCap = document.getElementById('lbCap');
+  var lastFocus = null;
+
+  function openLb(src, alt, cap){
+    lastFocus = document.activeElement;
+    lbImg.src = src; lbImg.alt = alt || '';
+    lbCap.textContent = cap || '';
+    lb.classList.add('on');
+    document.getElementById('lbClose').focus();
+  }
+  function closeLb(){
+    lb.classList.remove('on');
+    lbImg.removeAttribute('src');
+    if (lastFocus) lastFocus.focus();
+  }
+  document.getElementById('lbClose').addEventListener('click', closeLb);
+  lb.addEventListener('click', function(e){ if (e.target === lb || e.target === lbImg) closeLb(); });
+
+  document.addEventListener('click', function(e){
+    var z = e.target.closest('.shot, .diagram');
+    if (!z) return;
+    var img = z.querySelector('img');
+    openLb(z.getAttribute('data-full') || img.src, img.alt, z.getAttribute('data-cap') || '');
+  });
+
+  var start = parseInt((location.hash || '').replace('#',''), 10);
+  go(start > 0 && start <= slides.length ? start - 1 : 0);
+})();
+</script>
+</body>
+</html>

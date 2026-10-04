@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="900" viewBox="0 0 2000 900"
+     font-family="Inter, -apple-system, sans-serif">
+  <!--
+    Create Space, information architecture as of 2026-10-03.
+
+    Dated on purpose: the app is actively being built, and an undated
+    architecture diagram goes quietly wrong without anyone noticing. Pods and
+    Paths are drawn dashed because they are planned rather than shipped.
+
+    The vertical gate is the point of the drawing. Everything left of it is
+    reachable without an account and everything right of it is a room you have
+    been let into, which is the product's whole shape: a door, then rooms.
+  -->
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <g font-size="19" fill="#8A7E72" letter-spacing="1.8">
+    <text x="60" y="64">PUBLIC</text>
+    <text x="392" y="64">ENROLL</text>
+    <text x="772" y="64">FIRST RUN</text>
+    <text x="1096" y="64">HOME</text>
+    <text x="1420" y="64">ROOMS</text>
+  </g>
+
+  <!-- the gate -->
+  <path d="M716 36 L716 540" stroke="#FC815B" stroke-width="1.6" stroke-dasharray="8 6" fill="none" stroke-linecap="round"/>
+  <text x="716" y="572" text-anchor="middle" font-size="19" fill="#FC815B" font-style="italic">account required</text>
+
+  <g stroke="#1A1A1A" stroke-width="1.6" fill="#FBF7EF" stroke-linejoin="round">
+    <rect x="60" y="92" width="260" height="56" rx="10"/>
+    <rect x="60" y="164" width="260" height="56" rx="10"/>
+    <rect x="60" y="236" width="260" height="56" rx="10"/>
+    <rect x="60" y="308" width="260" height="56" rx="10"/>
+    <rect x="392" y="92" width="260" height="56" rx="10"/>
+    <rect x="392" y="164" width="260" height="56" rx="10"/>
+    <rect x="392" y="236" width="260" height="56" rx="10"/>
+    <rect x="392" y="308" width="260" height="56" rx="10"/>
+    <rect x="772" y="92" width="260" height="56" rx="10"/>
+    <rect x="772" y="164" width="260" height="56" rx="10"/>
+    <rect x="1096" y="92" width="260" height="56" rx="10"/>
+    <rect x="1096" y="164" width="260" height="56" rx="10"/>
+    <rect x="1420" y="92" width="256" height="56" rx="10"/>
+    <rect x="1420" y="164" width="256" height="56" rx="10"/>
+    <rect x="1420" y="236" width="256" height="56" rx="10"/>
+    <rect x="1420" y="308" width="256" height="56" rx="10"/>
+    <rect x="1420" y="380" width="256" height="56" rx="10"/>
+    <rect x="1700" y="92" width="256" height="56" rx="10"/>
+    <rect x="1700" y="164" width="256" height="56" rx="10"/>
+    <rect x="1700" y="236" width="256" height="56" rx="10"/>
+    <rect x="1700" y="308" width="256" height="56" rx="10"/>
+  </g>
+
+  <!-- planned, not shipped -->
+  <g stroke="#1A1A1A" stroke-width="1.6" fill="#FBF7EF" stroke-dasharray="7 5" stroke-linejoin="round">
+    <rect x="1420" y="452" width="256" height="56" rx="10"/>
+    <rect x="1700" y="380" width="256" height="56" rx="10"/>
+  </g>
+  <text x="1420" y="534" font-size="17" fill="#FC815B" font-style="italic">dashed: planned, not shipped</text>
+
+  <g font-size="21" fill="#1A1A1A" text-anchor="middle">
+    <text x="190" y="127">Landing</text>
+    <text x="190" y="199">Our Story</text>
+    <text x="190" y="271">Values</text>
+    <text x="190" y="343">Letters</text>
+    <text x="522" y="127">Request an invite</text>
+    <text x="522" y="199">Sign up</text>
+    <text x="522" y="271">Billing</text>
+    <text x="522" y="343">Thank you</text>
+    <text x="902" y="127">Welcome</text>
+    <text x="902" y="199">Profile setup</text>
+    <text x="1226" y="127">Dashboard</text>
+    <text x="1226" y="199">Where to next</text>
+    <text x="1548" y="127">Living Room</text>
+    <text x="1548" y="199">Challenges</text>
+    <text x="1548" y="271">Live Studio</text>
+    <text x="1548" y="343">Maker Rooms</text>
+    <text x="1548" y="415">What's On</text>
+    <text x="1548" y="487">Pods</text>
+    <text x="1828" y="127">I Made It! Wall</text>
+    <text x="1828" y="199">Show and Tell</text>
+    <text x="1828" y="271">Library and Tools</text>
+    <text x="1828" y="343">Account and Admin</text>
+    <text x="1828" y="415">Paths</text>
+  </g>
+
+  <g stroke="#1A1A1A" stroke-width="1.6" fill="none" stroke-linecap="round">
+    <path d="M324 190 L386 160" marker-end="url(#a)"/>
+    <path d="M656 190 L766 150" marker-end="url(#a)"/>
+    <path d="M1036 130 L1090 125" marker-end="url(#a)"/>
+    <path d="M1360 150 L1414 200" marker-end="url(#a)"/>
+    <path d="M1360 150 L1414 300" marker-end="url(#a)"/>
+  </g>
+
+  <!-- the layer everything sits on -->
+  <path d="M60 612 L1956 612" stroke="#8A7E72" stroke-width="1.2" stroke-dasharray="4 5" fill="none"/>
+  <text x="60" y="656" font-size="19" fill="#8A7E72" letter-spacing="1.8">DATA AND SERVICES</text>
+
+  <g stroke="#1A1A1A" stroke-width="1.6" fill="#FBF7EF" stroke-linejoin="round">
+    <rect x="60" y="692" width="352" height="92" rx="10"/>
+    <rect x="444" y="692" width="352" height="92" rx="10"/>
+    <rect x="828" y="692" width="352" height="92" rx="10"/>
+    <rect x="1212" y="692" width="352" height="92" rx="10"/>
+    <rect x="1596" y="692" width="360" height="92" rx="10"/>
+  </g>
+  <g font-size="21" fill="#1A1A1A" text-anchor="middle">
+    <text x="236" y="730">Supabase Postgres</text>
+    <text x="620" y="730">Auth, SSR cookies</text>
+    <text x="1004" y="730">Cloudflare R2</text>
+    <text x="1388" y="730">Postmark</text>
+    <text x="1776" y="730">Delivery</text>
+  </g>
+  <g font-size="17" fill="#6B6158" text-anchor="middle">
+    <text x="236" y="760">row level security per room</text>
+    <text x="620" y="760">realtime presence</text>
+    <text x="1004" y="760">member media and avatars</text>
+    <text x="1388" y="760">transactional email only</text>
+    <text x="1776" y="760">letters, own multi-brand publisher</text>
+  </g>
+
+  <text x="60" y="832" font-size="19" fill="#8A7E72">Snapshot: 3 October 2026. The app is in active build, so this is dated rather than definitive.</text>
+  <text x="60" y="862" font-size="19" fill="#8A7E72">Left of the gate needs no account. Right of it, every surface is a room you have been let into.</text>
+</svg>

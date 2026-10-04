@@ -89,6 +89,17 @@ export const PROJECTS = [
       },
 
       /* --- Day to day: join a challenge, then the weekly loop --- */
+      // The member's own controls: interests, match-ups, how quiet they want
+      // the space, and which voice reads things aloud to them.
+      { name: "flow4b-account", path: "/account", auth: "member", wait: 1600 },
+      // The controls themselves sit well down the page, so scroll to them.
+      {
+        name: "flow4c-terms",
+        path: "/account",
+        auth: "member",
+        scrollTo: "text:READER VOICE",
+        wait: 1400,
+      },
       { name: "flow5-challenges", path: "/challenges", auth: "member" },
       { name: "flow6-check-in", path: "/living-room", auth: "member" },
       { name: "flow7-ship", path: "/made-it-wall", auth: "member" },
@@ -111,7 +122,122 @@ export const PROJECTS = [
   {
     slug: "thedailystory",
     baseUrl: "http://localhost:5190",
-    routes: [{ name: "home", path: "/" }],
+    // Vite SPA, so routing is client side: give each route a beat to render
+    // after the shell loads or the capture catches an empty frame.
+    routes: [
+      { name: "flow1-login", path: "/login", wait: 700 },
+      // The five step onboarding: Identity, Narrative, Vision, Vibes, VIPs.
+      // Redirects to /today once it has been completed, so on a real account
+      // this captures the destination rather than the steps.
+      { name: "flow2-setup", path: "/map", auth: "member", wait: 1200 },
+      // Flow Up is a six tier coaching ladder sized against the day's planned
+      // actions: Ready, Spark, Momentum, In the flow, Almost peak, Peak flow.
+      // The copy changes with the tier, which a single screenshot cannot show,
+      // so the same URL is captured twice at different points in a real day.
+      { name: "flow3-focus", path: "/today", auth: "member", wait: 1500 },
+      { name: "flow3e-momentum", path: "/today", auth: "member", wait: 1500 },
+      // The app is date addressable, which matters for capture: "today" is
+      // whatever today happens to be, and a rest day photographs as an empty
+      // product. 2026-07-14 scored 67 against a next best of 16, so it is the
+      // day that actually shows the mechanic carrying a full load.
+      { name: "flow3b-busy-day", path: "/day/2026-07-14", auth: "member", wait: 1800 },
+      { name: "flow3c-week", path: "/week/2026-07-14", auth: "member", wait: 1800 },
+      // The feedback step of the daily loop. NOT the Stats mode: the score
+      // breakdown opens in place on the day you are already looking at, which
+      // is why it is the one that actually gets used.
+      {
+        name: "flow3d-score",
+        path: "/day/2026-07-14",
+        auth: "member",
+        click: ['button[title^="See what earned"]'],
+        wait: 1400,
+      },
+      // The north star page itself. Distinct from Vision MODE below, which is
+      // the dashboard with focus switched off.
+      { name: "flow4-northstar", path: "/vision", auth: "member", wait: 1200 },
+      { name: "flow5-projects", path: "/projects", auth: "member", wait: 1200 },
+      { name: "flow6-goals", path: "/goals", auth: "member", wait: 1200 },
+
+      /* --- The Dailies: the recurring track ---
+         Distinct from the funnel. Actions and projects get promoted and then
+         they are done; these reset. Keeping the two apart is the design, which
+         is why they are captured as their own set. */
+      {
+        name: "daily1-story",
+        path: "/today",
+        auth: "member",
+        click: ["text:Daily Story"],
+        wait: 1200,
+      },
+      {
+        name: "daily2-vision",
+        path: "/today",
+        auth: "member",
+        click: ["text:Daily Vision"],
+        wait: 1200,
+      },
+      // Time of day buckets: Morning, Day, Evening, Night.
+      {
+        name: "daily3-dos",
+        path: "/today",
+        auth: "member",
+        click: ["text:Daily Do"],
+        wait: 1200,
+      },
+      // Category buckets: Move, Play, Nourish, Clean, Be, Create. The same six
+      // that the scores table keeps columns for.
+      {
+        name: "daily4-dos-details",
+        path: "/today",
+        auth: "member",
+        click: ["text:Daily Do", "text:Details"],
+        wait: 1400,
+      },
+
+      /* --- The five modes, reached through the eye switcher ---
+         Board, Write and Stats are transient UI state by design, so there is
+         no URL for them: the capture opens the switcher and presses the mode,
+         exactly as a person would. */
+      { name: "mode1-focus", path: "/today", auth: "member", wait: 1500 },
+      {
+        name: "mode2-vision",
+        path: "/today",
+        auth: "member",
+        click: ['[aria-label="Switch view"]', "text:Vision"],
+        wait: 1500,
+      },
+      {
+        name: "mode3-board",
+        path: "/today",
+        auth: "member",
+        click: ['[aria-label="Switch view"]', "text:Board"],
+        wait: 1800,
+      },
+      {
+        name: "mode4-write",
+        path: "/today",
+        auth: "member",
+        click: ['[aria-label="Switch view"]', "text:Write"],
+        wait: 1800,
+      },
+      {
+        name: "mode5-stats",
+        path: "/today",
+        auth: "member",
+        click: ['[aria-label="Switch view"]', "text:Stats"],
+        wait: 1800,
+      },
+      // Stats follows the active date context, so opened from today it shows a
+      // month that has barely started. Opened from the busy day it shows the
+      // month the mechanic actually ran in.
+      {
+        name: "mode5b-stats-july",
+        path: "/day/2026-07-14",
+        auth: "member",
+        click: ['[aria-label="Switch view"]', "text:Stats"],
+        wait: 2000,
+      },
+    ],
   },
 
   {

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="440" viewBox="0 0 1280 440"
+     font-family="Inter, -apple-system, sans-serif">
+  <!--
+    The Daily Story, the promotion funnel.
+
+    A pipeline rather than a loop, because it does not come round: work moves
+    one way and then it is done. This is the product's whole argument. Every
+    other planner makes you recopy a task to carry it forward; here you promote
+    it, and the thing you wrote once keeps its identity all the way through.
+
+    Actions and projects only. The Dailies are a separate track entirely and
+    never appear on this board.
+
+    Ongoing is drawn beside the Bucket List, as the second SOURCE, rather than
+    as a stage in the row. The test is whether a thing leaves it. Read a book
+    is ongoing for three months: what gets promoted is a session of it, and
+    when the session ends the book is still ongoing. It returns. That makes it
+    a home, like the Bucket List, and the two differ only by whether the work
+    has started. Put in the row it would promise that items pass THROUGH on
+    their way to a week, which is not what happens.
+
+    The return arrow is the whole distinction, so it is drawn rather than
+    described. It is also the newest column and still settling, so it keeps a
+    marker.
+
+    Counts are the real board, not invented: 271 items across the stages.
+  -->
+  <defs>
+    <marker id="f" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 1 L9 5 L0 9" fill="none" stroke="#2F9E8F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text x="640" y="40" text-anchor="middle" font-family="Playfair Display, Georgia, serif"
+        font-size="15" font-style="italic" fill="#1A1A1A">You never rewrite the task. You promote it.</text>
+
+  <!-- stages -->
+  <g stroke="#1A1A1A" stroke-width="1.7" fill="#FBF7EF" stroke-linejoin="round">
+    <path d="M44 150 L268 148 Q274 148 274 154 L272 226 Q272 232 266 232 L46 230 Q40 230 40 224 L38 156 Q38 150 44 150 Z"/>
+    <path d="M336 148 L560 150 Q566 150 566 156 L564 224 Q564 230 558 230 L338 232 Q332 232 332 226 L330 154 Q330 148 336 148 Z"/>
+    <path d="M628 150 L852 148 Q858 148 858 154 L856 226 Q856 232 850 232 L630 230 Q624 230 624 224 L622 156 Q622 150 628 150 Z"/>
+    <path d="M920 148 L1144 150 Q1150 150 1150 156 L1148 224 Q1148 230 1142 230 L922 232 Q916 232 916 226 L914 154 Q914 148 920 148 Z"/>
+  </g>
+
+  <g font-family="Playfair Display, Georgia, serif" font-size="21" fill="#1A1A1A" text-anchor="middle">
+    <text x="156" y="188">Bucket List</text>
+    <text x="448" y="188">This Week</text>
+    <text x="740" y="188">Today</text>
+    <text x="1032" y="188">Now</text>
+  </g>
+  <g font-size="12" fill="#6B6158" text-anchor="middle">
+    <text x="156" y="212">someday, 17</text>
+    <text x="448" y="212">the buffer, 2</text>
+    <text x="740" y="212">on the plate, 19</text>
+    <text x="1032" y="212">one thing, timed, 2</text>
+  </g>
+
+  <!-- the main line -->
+  <g stroke="#1A1A1A" stroke-width="1.7" fill="none" stroke-linecap="round">
+    <path d="M276 190 L322 190" marker-end="url(#f)"/>
+    <path d="M568 190 L614 190" marker-end="url(#f)"/>
+    <path d="M860 190 L906 190" marker-end="url(#f)"/>
+  </g>
+
+  <!-- the zap: straight to NOW, skipping everything -->
+  <g stroke="#2F9E8F" stroke-width="1.6" fill="none" stroke-linecap="round">
+    <path d="M156 146 C 420 80, 820 80, 1030 142" marker-end="url(#g)"/>
+  </g>
+  <text x="596" y="86" text-anchor="middle" font-size="12" fill="#2F9E8F">zap: straight to Now, skipping the stages</text>
+
+  <!-- Ongoing: the second source, beside the Bucket List -->
+  <path d="M44 296 L268 298 Q274 298 274 304 L272 368 Q272 374 266 374 L46 372 Q40 372 40 366 L38 302 Q38 296 44 296 Z"
+        fill="#FBF7EF" stroke="#1A1A1A" stroke-width="1.7" stroke-dasharray="7 5" stroke-linejoin="round"/>
+  <text x="156" y="332" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="20" fill="#1A1A1A">Ongoing</text>
+  <text x="156" y="354" text-anchor="middle" font-size="12" fill="#6B6158">started, no end date, 2</text>
+  <text x="156" y="282" text-anchor="middle" font-size="10.5" fill="#FC815B" font-style="italic">newest column, still settling</text>
+
+  <text x="18" y="262" font-size="11" fill="#8A7E72" font-style="italic">two homes</text>
+  <g stroke="#8A7E72" stroke-width="1.1" fill="none" stroke-dasharray="3 4" stroke-linecap="round">
+    <path d="M14 254 L14 334 L34 334"/>
+    <path d="M14 254 L14 190 L34 190"/>
+  </g>
+
+  <!-- out for a session, then back: the thing that makes it a home -->
+  <g stroke="#1A1A1A" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-dasharray="5 4">
+    <path d="M276 326 C 420 326, 560 300, 700 242" marker-end="url(#f)"/>
+    <path d="M700 268 C 560 352, 420 364, 276 356" marker-end="url(#f)"/>
+  </g>
+  <text x="470" y="392" text-anchor="middle" font-size="11" fill="#6B6158">out for a session, then back: it is still ongoing</text>
+
+  <text x="40" y="406" font-size="11.5" fill="#8A7E72">
+    Actions and projects only. The Dailies are a separate track and never appear here. Drag to restage.
+  </text>
+  <text x="40" y="424" font-size="11.5" fill="#8A7E72">
+    Two homes, one row. Bucket List is not started; Ongoing is started but undateable. The row itself is commitment to a date.
+  </text>
+</svg>

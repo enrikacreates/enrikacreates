@@ -17,6 +17,9 @@ const nextConfig = {
   async rewrites() {
     return [
       { source: "/appplan", destination: "/appplan.html" },
+      // Long-form case studies: hand-built HTML decks in /public/case, served
+      // at a clean URL. Same pattern as /appplan above.
+      { source: "/case/:slug", destination: "/case/:slug.html" },
     ];
   },
   // Single-page model: the catalog lives on the home page now. Old /work
