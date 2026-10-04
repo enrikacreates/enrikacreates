@@ -29,6 +29,15 @@ export interface PosterLayer {
 
 export interface Poster {
   blob: boolean;
+  /**
+   * A faint browser window drawn behind the artwork, to say at a glance that
+   * this project is software you open rather than an object you hold.
+   *
+   * On by default, because everything in the grid today is a digital product.
+   * Set false for work that isn't: the textile and pattern pieces would be
+   * actively misdescribed by a browser chrome behind them.
+   */
+  frame?: boolean;
   layers: PosterLayer[];
 }
 

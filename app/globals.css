@@ -800,6 +800,59 @@ body {
 /* Holds the layers so a card type can rescale the whole composition at once.
    Anchored at the top: shrinking toward the middle would lift the artwork away
    from the card's top edge and open a gap the design doesn't have. */
+/* ── The browser frame ───────────────────────────────────────────────────────
+   A faint window drawn behind the artwork so a card says "software" without
+   anyone reading a word. Deliberately quiet: at full strength it competed with
+   the poster, which is the thing the card is actually for.
+
+   Sized and placed in cqw like the layers, so it holds its proportions across
+   all three card shapes rather than needing a value per tier. */
+.poster-frame {
+  position: absolute;
+  left: 9%;
+  top: 10cqw;
+  width: 82%;
+  height: 54cqw;
+  border: 1.5px solid currentColor;
+  border-radius: 8px;
+  color: var(--ink, #1A1A1A);
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: 0;
+}
+.poster-frame-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 11px;
+  border-bottom: 1.5px solid currentColor;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 5px;
+}
+.poster-frame-bar i {
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* The featured card is taller, so the window can sit lower and breathe. */
+.featured-item .poster-frame {
+  top: 12cqw;
+  height: 62cqw;
+}
+
+/* On the detail hero the frame would fight the artwork at full size, and the
+   page already announces itself as a project. Smaller and fainter. */
+.project-hero .poster-frame {
+  top: 6cqw;
+  height: 34cqw;
+  opacity: 0.12;
+}
+
 .poster-stage {
   position: absolute;
   inset: 0;

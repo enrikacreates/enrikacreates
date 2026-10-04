@@ -23,6 +23,16 @@ export function PosterArt({ slug }: { slug: string }) {
     <>
       <span className="featured-blob-clip" aria-hidden="true">
         {poster.blob && <span className="featured-blob" />}
+        {/* A faint browser window behind the artwork, so a card reads as
+            software at a glance. Drawn rather than an image so it inherits the
+            card's own ink colour and costs no request. */}
+        {poster.frame !== false && (
+          <span className="poster-frame">
+            <span className="poster-frame-bar">
+              <i /><i /><i />
+            </span>
+          </span>
+        )}
         {/* Layers sit inside a stage so a card type can rescale the whole
             composition at once. Scaling each layer on its own would move them
             relative to each other, because each would shrink toward its own top
