@@ -977,6 +977,26 @@ body {
 .project-hero.catalog-item.has-flat .poster-plate {
   aspect-ratio: auto;
   height: clamp(88px, 11vw, 150px);
+  /* No plate furniture here. A radius, a mount colour and a hard edge make the
+     band read as a card sitting ON the page; this one should be part of it. */
+  border-radius: 0;
+  background: transparent;
+  /* Dissolve the edges instead of ending them.
+     Whether a banner blended used to depend on what the crop happened to land
+     on: Hummingbird's band caught the poster's cream curve, which matched the
+     page, while Create Space's caught saturated blue and pink geometry and read
+     as a pasted rectangle. Content decided it, so no crop position fixes it for
+     every poster. Fading the sides and the foot into the page makes the blend a
+     property of the banner rather than a lucky composition.
+     Two gradients intersected: one across, one down. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 15%, #000 85%, transparent 100%),
+    linear-gradient(to bottom, #000 0, #000 45%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 15%, #000 85%, transparent 100%),
+    linear-gradient(to bottom, #000 0, #000 45%, transparent 100%);
+  mask-composite: intersect;
 }
 .project-hero.catalog-item.has-flat .poster-flat {
   /* Pulled off the top edge: at 50% 0 the band was mostly the poster's empty
