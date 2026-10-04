@@ -5,9 +5,24 @@
  *   Was a modal overlay in vanilla (openProjectDetail). Now a real SSR page:
  *   deep-linkable, indexable, with proper back navigation.
  *
- *   Hero = the card design blown up (card-as-hero), reusing CardInner so the
- *   grid card and detail hero render identically. Story sections, skills,
- *   slideshow, and gallery follow.
+ *   Hero = the card design blown up (card-as-hero), so the grid card and the
+ *   detail hero render identically. Story sections, skills, slideshow, and
+ *   gallery follow.
+ *
+ *   Two hero treatments exist, switched by HERO_TREATMENT below:
+ *
+ *   "poster"  the project's poster artwork, the same art the grid card shows.
+ *   "shapes"  the original CardInner composition of discs and triangles over
+ *             the lead image.
+ *
+ *   Poster is the default because shapes left most of the first viewport
+ *   empty: on a project whose lead image is absent or pale, the hero was a
+ *   field of card colour with one disc and a small triangle, and the title sat
+ *   below the fold. That is the first thing anyone sees after clicking a card.
+ *
+ *   The shapes path is kept intact rather than deleted. Flip the constant to
+ *   bring it back everywhere, and a project with no poster still falls back to
+ *   it automatically.
  */
 
 import Link from "next/link";
@@ -16,10 +31,15 @@ import { getProjectBySlug, getAllProjectSlugs } from "@/lib/sanity/fetch";
 import { urlFor } from "@/lib/sanity/image";
 import { isDarkColor } from "@/lib/colorUtils";
 import { CardInner } from "@/components/CardInner";
+import { PosterArt } from "@/components/PosterArt";
+import { getPoster } from "@/lib/posters";
 import { Slideshow } from "@/components/Slideshow";
 import { KeyScreens } from "@/components/KeyScreens";
 import { ProcessTimeline } from "@/components/ProcessTimeline";
 import { Gallery } from "@/components/Gallery";
+
+/** Which hero treatment to render. See the note at the top of this file. */
+const HERO_TREATMENT: "poster" | "shapes" = "poster";
 
 export const dynamicParams = true;
 
@@ -64,6 +84,9 @@ export default async function ProjectDetailPage({
     .filter(Boolean)
     .join(" ");
 
+  // A project with no poster keeps the shapes hero, whatever the constant says.
+  const poster = HERO_TREATMENT === "poster" ? getPoster(item.slug) : undefined;
+
   return (
     <section
       className={`project-detail is-open${isDark ? " dark-detail" : ""}`}
@@ -78,9 +101,18 @@ export default async function ProjectDetailPage({
       </Link>
 
       <div className="project-detail-inner" id="project-detail-inner">
-        {/* Card-as-hero — image + shapes only; title drops below */}
-        <div className={heroClass} style={{ "--card-color": item.color } as React.CSSProperties}>
-          <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
+        {/* Card-as-hero: the poster artwork, or the original shapes. Title
+            drops below either way. */}
+        <div
+          className={`${heroClass}${poster ? " has-poster" : ""}`}
+          data-poster={poster ? item.slug : undefined}
+          style={{ "--card-color": item.color } as React.CSSProperties}
+        >
+          {poster ? (
+            <PosterArt slug={item.slug} />
+          ) : (
+            <CardInner layout={layout} item={item} collageUrl={collageUrl} hideContent />
+          )}
         </div>
 
         {/* Title block — below the header image */}

@@ -1873,6 +1873,36 @@ body.detail-open {
   box-shadow: none;
 }
 
+/* Poster hero: a third tier for the same compositions.
+   The posters position vertically in cqw, percent of card WIDTH, so a tier's
+   factor is really a statement about its aspect ratio. Featured is 3/4 (height
+   1.33x width) at scale 1; catalog is 1/1 at 0.75; this hero is 16/11, so its
+   height is only 0.69x its width and the composition has to come down further
+   again. 0.52 is that ratio carried through, and it lands the artwork in the
+   same place relative to the frame. */
+.project-hero.catalog-item.has-poster {
+  container-type: inline-size;
+  --tier-scale: 0.52;
+}
+
+/* The hero has no text inside it (the title sits below), so the artwork can
+   sit in the middle of the frame rather than clearing a caption. Without this
+   it hugged the top and left a third of the blob empty underneath. */
+.project-hero.catalog-item.has-poster .poster-stage {
+  --tier-shift: 9cqw;
+}
+
+/* The blob needs its own proportions here. The card version is 108% wide and
+   nearly square, which on a 16/11 frame is half again taller than the frame:
+   it stopped reading as a shape and became a flood with a flat cut across the
+   top. Wider and much shorter keeps it a shape with its curve visible. */
+.project-hero.catalog-item.has-poster .featured-blob {
+  width: 94%;
+  aspect-ratio: 1 / 0.72;
+  left: 3%;
+  bottom: -9%;
+}
+
 /* Make the title in the hero larger (page title scale) */
 .project-hero.catalog-item .card-title {
   font-size: clamp(2rem, 4.5vw, 3.2rem);
