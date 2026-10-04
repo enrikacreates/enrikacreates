@@ -862,8 +862,14 @@ body {
 .featured-item.has-flat,
 .catalog-item.has-flat {
   aspect-ratio: auto;
-  background: transparent;
-  padding: 0;
+  /* White at rest, not just under the hover shadow. The page is cream, so a
+     white mount lifts every poster off it and gives the card an edge of its own
+     without drawing a border. */
+  background: #FFFFFF;
+  /* Room between the artwork and the card's own edge, so the hover shadow has
+     something to sit against. Flush, it cropped; with the mount, it lifts. */
+  padding: 14px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -877,6 +883,43 @@ body {
 .catalog-item.has-flat .card-content {
   position: static;
   padding: 0;
+}
+
+/* The two rows ran different caption treatments: the catalog had a year, a
+   serif title and a sentence-case tagline, the featured row had no year and an
+   uppercase letterspaced one. There was a reason when a featured card was a
+   different object; there isn't now that both are a plate plus a caption. */
+.featured-item.has-flat h3 {
+  font-size: clamp(1.25rem, 2.2vw, 1.55rem);
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+.featured-item.has-flat .featured-cat {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 300;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.45;
+  color: rgba(44, 37, 32, 0.75);
+  min-height: calc(2 * 1.45em);
+}
+
+/* Hover: the shadow stays on the whole card, so the panel picks up the artwork
+   and its caption together. What it was missing is room. With no padding the
+   plate ran flush to the panel's edge, so the shadow read as a crop rather than
+   as a card being lifted. The padding is what turns it into a mount. */
+.catalog-item.has-flat:hover,
+.featured-item.has-flat:hover {
+  box-shadow: 0 18px 40px rgba(44, 37, 32, 0.18);
+}
+.catalog-item.has-flat,
+.featured-item.has-flat {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.featured-item.has-flat:hover {
+  transform: translateY(-6px);
 }
 
 /* The caption now sits on the page rather than on the card's colour, so a dark
@@ -1647,8 +1690,8 @@ body {
 
 .card-tagline {
   font-family: var(--font-body);
-  font-size: 0.78rem;
-  line-height: 1.4;
+  font-size: 0.9rem;
+  line-height: 1.45;
   font-weight: 300;
   color: rgba(44, 37, 32, 0.75);
   margin: 0 0 0.85rem;
@@ -1660,7 +1703,9 @@ body {
      Three is the observed worst case across 1024-1800px. Costs a little empty
      space under shorter taglines; buys a title position that doesn't move, so
      each poster is positioned once rather than per breakpoint. */
-  min-height: calc(2 * 1.4 * 0.78rem);
+  /* In em, so the reservation follows the font size instead of having to be
+     recomputed every time the type changes. */
+  min-height: calc(2 * 1.45em);
 }
 
 .card-cat {

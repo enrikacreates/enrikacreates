@@ -202,6 +202,10 @@ export function WorkSection({
                       draggable={false}
                     />
                   )}
+                  {/* Same caption shape as a catalog card: year, title,
+                      tagline. The two rows were running different treatments
+                      for no reason once both became a plate plus a caption. */}
+                  <span className="card-year">{item.year}</span>
                   <h3>{item.title}</h3>
                   <p className="featured-cat">{item.tagline}</p>
                 </Link>
