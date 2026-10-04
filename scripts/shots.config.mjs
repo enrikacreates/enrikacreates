@@ -34,10 +34,59 @@ export const PROJECTS = [
   },
 
   {
+    // Paid client work, both live on their real domains. Public, so these need
+    // no signed-in profile.
     slug: "bernadettejiwa",
-    baseUrl: "https://bernadettejiwa.vercel.app",
+    baseUrl: "https://bernadettejiwa.com",
     routes: [
-      { name: "home", path: "/" },
+      { name: "home", path: "/", wait: 1400 },
+      { name: "search", path: "/search", wait: 1200 },
+    ],
+  },
+
+  {
+    slug: "thestoryoftelling",
+    baseUrl: "https://thestoryoftelling.com",
+    routes: [
+      { name: "home", path: "/", wait: 1400 },
+      { name: "blog", path: "/blog", wait: 1600 },
+      { name: "about", path: "/about", wait: 1200 },
+      { name: "books", path: "/books", wait: 1200 },
+      { name: "search", path: "/search", wait: 1200 },
+    ],
+  },
+
+  {
+    // One static page, hash routed, so the whole thing is one capture plus a
+    // couple of sections scrolled into view.
+    slug: "whatislovebook",
+    baseUrl: "https://whatislovebook.org",
+    routes: [
+      { name: "home", path: "/", wait: 1800 },
+      // Sections are addressed by id, not by a heading string: the page is one
+      // document with hash routing, so a text match lands nowhere useful.
+      { name: "authors", path: "/", scrollTo: "#authors", wait: 1600 },
+      { name: "supporters", path: "/", scrollTo: "#earlysupporters-section", wait: 1600 },
+    ],
+  },
+
+  {
+    // Client work, and the only app here whose infrastructure lives in the
+    // client's own accounts: there is no local env that connects, so this one
+    // is captured against production. Everything in it is the team's test
+    // data; nothing real had been scheduled through it yet.
+    slug: "bti-production-hub",
+    baseUrl: "https://btistudio.app",
+    routes: [
+      { name: "flow1-login", path: "/login", wait: 900 },
+      // Where it started: a single request form, before any of the rest existed.
+      { name: "flow2-request", path: "/requests/new", wait: 1200 },
+      { name: "flow3-board", path: "/board", auth: "member", wait: 1500 },
+      { name: "flow4-calendar", path: "/calendar", auth: "member", wait: 1500 },
+      { name: "flow5-capacity", path: "/capacity", auth: "member", wait: 1500 },
+      { name: "flow6-tasks", path: "/tasks", auth: "member", wait: 1200 },
+      { name: "flow7-team", path: "/team", auth: "member", wait: 1200 },
+      { name: "flow8-notes", path: "/notes", auth: "member", wait: 1200 },
     ],
   },
 
