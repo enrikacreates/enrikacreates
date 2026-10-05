@@ -19,7 +19,9 @@
 export const PROJECTS = [
   {
     slug: "betterstories",
-    baseUrl: "https://betterstories.tech",
+    /* Not betterstories.tech: that domain has no DNS record at all, and
+       betterstories.vercel.app is a different product by someone else. */
+    baseUrl: "https://betterstories-one.vercel.app",
     routes: [
       { name: "home", path: "/" },
     ],
@@ -92,7 +94,11 @@ export const PROJECTS = [
     slug: "whatislovebook",
     baseUrl: "https://whatislovebook.org",
     routes: [
-      { name: "home", path: "/", wait: 1800 },
+      /* wait: the HEAR MORE section is three Vimeo players, and a player
+         paints black until it has fetched its own thumbnail. Too short a wait
+         photographs three black squares in the middle of the page, which the
+         card's hover then scrolls straight through. */
+      { name: "home", path: "/", wait: 3000, poster: true, embedThumbnails: true },
       // Sections are addressed by id, not by a heading string: the page is one
       // document with hash routing, so a text match lands nowhere useful.
       { name: "authors", path: "/", scrollTo: "#authors", wait: 1600 },

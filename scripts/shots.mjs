@@ -704,6 +704,77 @@ try {
             }
           }
 
+          /* A Vimeo or YouTube player paints black until it has fetched its
+           * own thumbnail, and in a headless browser it never does -- What Is
+           * Love came back with three black squares in the middle of the page,
+           * which the card's hover then scrolls straight through. No wait
+           * fixes it; the player is deciding not to load.
+           *
+           * So fetch the poster frame from the provider's public oEmbed and
+           * put it where the player was. That is the frame a visitor sees
+           * before pressing play, so the capture shows the page as it reads,
+           * not as a headless browser happens to render it. */
+          if (posterMode && route.embedThumbnails) {
+            const embeds = await page.evaluate(() =>
+              [...document.querySelectorAll("iframe")]
+                .map((el, i) => {
+                  const r = el.getBoundingClientRect();
+                  const vimeo = el.src.match(/player\.vimeo\.com\/video\/(\d+)/);
+                  const yt = el.src.match(/youtube(?:-nocookie)?\.com\/embed\/([\w-]+)/);
+                  if ((!vimeo && !yt) || r.width < 40) return null;
+                  el.setAttribute("data-shot-embed", String(i));
+                  return {
+                    i,
+                    url: vimeo
+                      ? `https://vimeo.com/${vimeo[1]}`
+                      : `https://www.youtube.com/watch?v=${yt[1]}`,
+                    provider: vimeo ? "vimeo" : "youtube",
+                  };
+                })
+                .filter(Boolean)
+            );
+
+            const thumbs = [];
+            for (const e of embeds) {
+              try {
+                const endpoint =
+                  e.provider === "vimeo"
+                    ? `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(e.url)}&width=1280`
+                    : `https://www.youtube.com/oembed?url=${encodeURIComponent(e.url)}&format=json`;
+                const res = await fetch(endpoint, { signal: AbortSignal.timeout(8000) });
+                if (!res.ok) continue;
+                const json = await res.json();
+                if (json.thumbnail_url) thumbs.push({ i: e.i, src: json.thumbnail_url });
+              } catch {
+                /* A thumbnail that cannot be fetched leaves the player as it
+                   was: a black square is bad, an exploded layout is worse. */
+              }
+            }
+
+            if (thumbs.length) {
+              await page.evaluate(async (list) => {
+                await Promise.all(
+                  list.map(
+                    ({ i, src }) =>
+                      new Promise((resolve) => {
+                        const frame = document.querySelector(`[data-shot-embed="${i}"]`);
+                        if (!frame) return resolve();
+                        const img = new Image();
+                        img.onload = img.onerror = () => {
+                          img.style.cssText =
+                            "width:100%;height:100%;object-fit:cover;display:block";
+                          frame.replaceWith(img);
+                          resolve();
+                        };
+                        img.src = src;
+                      })
+                  )
+                );
+              }, thumbs);
+              console.log(`    swapped ${thumbs.length} video player${thumbs.length === 1 ? "" : "s"} for their poster frames`);
+            }
+          }
+
           /* Client work can be shown as a working system without showing the
            * client's business. `blur` takes the selectors holding the names
            * and titles and softens them in the page before the shot, so the

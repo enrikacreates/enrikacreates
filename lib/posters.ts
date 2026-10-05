@@ -259,6 +259,18 @@ const SCREENS: Record<string, Screen> = {
        420px-wide screen across the whole card. */
     width: 0.42,
   },
+  "what-is-love": {
+    src: "/assets/projects/whatislovebook/shots/fullpage.webp",
+    top: 0.42,
+    width: 0.9,
+  },
+  betterstories: {
+    src: "/assets/projects/betterstories/shots/fullpage.webp",
+    /* Lower than the others: the page is 0.90x, one viewport, so a full-height
+       window would leave almost nothing to travel. */
+    top: 0.55,
+    width: 0.9,
+  },
   "bti-production-hub": {
     src: "/assets/projects/bti-production-hub/shots/fullpage.webp",
     top: 0.42,
