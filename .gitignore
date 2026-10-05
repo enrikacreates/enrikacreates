@@ -47,3 +47,7 @@ public/assets/projects/*/shots/
 # Chrome profile holding signed-in sessions for `npm run shots`. Never commit:
 # it contains live auth cookies for the apps being captured.
 .shots-profile/
+
+# Local contact sheet for reviewing poster captures. Never deployed: it lists
+# client screens (BTI) that have no business on a public portfolio.
+/public/_shots.html
