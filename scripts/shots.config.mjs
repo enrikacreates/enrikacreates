@@ -236,7 +236,12 @@ export const PROJECTS = [
 
   {
     slug: "thedailystory",
-    baseUrl: "http://localhost:5190",
+    // The live app, not a dev server. Captures kept photographing an empty
+    // product: even flow3b-busy-day, pointed at the one day chosen for scoring
+    // 67, came out +0 PTS with the panel still saying "Loading...". Capturing
+    // production means the data is whatever is really there, and there is no
+    // dev server to have forgotten to start.
+    baseUrl: "https://thedailystory.app",
     // Vite SPA, so routing is client side: give each route a beat to render
     // after the shell loads or the capture catches an empty frame.
     routes: [
