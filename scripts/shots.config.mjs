@@ -291,11 +291,23 @@ export const PROJECTS = [
 
   {
     slug: "deeplyreader",
-    baseUrl: "http://localhost:5188",
+    baseUrl: "https://reader-khaki.vercel.app",
     /* `/` redirects to the last realm used, so the realm pages are the real
      * surfaces. The landing opens on a video, which a still capture can only
      * photograph one arbitrary frame of, so it is not a poster candidate. */
-    routes: [{ name: "home", path: "/" }],
+    routes: [
+      /* One route: the reader is a single-page app with no router, so every
+         view is internal state. "All books" is the signed-in library, which
+         the signed-out screen has no reason to render. */
+      {
+        name: "library",
+        path: "/",
+        auth: "member",
+        wait: 2500,
+        expect: "All books",
+        poster: true,
+      },
+    ],
   },
 
   {

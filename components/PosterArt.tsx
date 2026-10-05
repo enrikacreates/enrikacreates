@@ -53,9 +53,12 @@ export function PosterArt({
   slug: string;
   as?: keyof typeof SIZES;
 }) {
-  const poster = getPoster(slug);
+  /* Only a card seats a real screen. The banner on a case page is a wide crop
+     of the same 4:5 artwork, so a screen placed for the card's proportions
+     arrives there as a stray band of browser chrome across the image. */
+  const screen = as === "card" ? getScreen(slug) : undefined;
+  const poster = getPoster(slug, Boolean(screen));
   if (!poster) return null;
-  const screen = getScreen(slug);
 
   // A finished poster is the whole card. It arrives at the card's own 4:5, so
   // `cover` crops nothing, and it already contains the ground, the colour field

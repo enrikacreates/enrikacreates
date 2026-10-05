@@ -316,7 +316,13 @@ export function getScreen(
   return { ...screen, top: screen.top ?? SCREEN_TOP, ratio };
 }
 
-export function getPoster(slug: string): Poster | undefined {
+/**
+ * @param withScreen whether a real screenshot will be layered on top. Only the
+ *   card does that; a case page's banner is a wide crop of a 4:5 poster, and a
+ *   screen seated for the card's proportions lands across it as a stray strip
+ *   of browser chrome. The banner gets the artwork whole.
+ */
+export function getPoster(slug: string, withScreen = false): Poster | undefined {
   if (FLAT_POSTERS.has(slug)) {
     return {
       blob: false,
@@ -324,9 +330,10 @@ export function getPoster(slug: string): Poster | undefined {
       // A layered screen renders the untouched artwork and positions the
       // screenshot over it; without this the baked screen would show through
       // underneath the layer, doubled.
-      flat: SCREENS[slug]
-        ? `/assets/posters/${slug}-art.png`
-        : `/assets/posters/${slug}.png`,
+      flat:
+        withScreen && SCREENS[slug]
+          ? `/assets/posters/${slug}-art.png`
+          : `/assets/posters/${slug}.png`,
       bg: FLAT_POSTER_BG[slug],
       layers: [],
     };
