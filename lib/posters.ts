@@ -203,12 +203,44 @@ const FLAT_POSTERS = new Set([
   "thestoryoftelling",
 ]);
 
+/**
+ * Projects whose card carries a live, scrollable screenshot.
+ *
+ * Baking the screen into the poster PNG makes a still; layering it in the DOM
+ * makes something that can move. The still and the layer look identical at
+ * rest, because the layer uses the same geometry the compositor used, so this
+ * costs nothing visually and buys the hover scroll.
+ *
+ * `top` and `width` are fractions of the poster, matching --screen-top and
+ * --screen-width. Tune per project: the right spot depends on where that
+ * poster's hero object sits.
+ *
+ * The screenshot wants to be a FULL PAGE capture, not a viewport one. A
+ * viewport-height image has nothing to scroll.
+ */
+const SCREENS: Record<string, { src: string; top: number; width: number }> = {
+  "the-daily-story": {
+    src: "/assets/projects/thedailystory/shots/vision-clean-1440.png",
+    top: 0.57,
+    width: 0.74,
+  },
+};
+
+export function getScreen(slug: string) {
+  return SCREENS[slug];
+}
+
 export function getPoster(slug: string): Poster | undefined {
   if (FLAT_POSTERS.has(slug)) {
     return {
       blob: false,
       frame: false,
-      flat: `/assets/posters/${slug}.png`,
+      // A layered screen renders the untouched artwork and positions the
+      // screenshot over it; without this the baked screen would show through
+      // underneath the layer, doubled.
+      flat: SCREENS[slug]
+        ? `/assets/posters/${slug}-art.png`
+        : `/assets/posters/${slug}.png`,
       bg: FLAT_POSTER_BG[slug],
       layers: [],
     };

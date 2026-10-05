@@ -12,7 +12,7 @@
 
 import Image from "next/image";
 
-import { getPoster } from "@/lib/posters";
+import { getPoster, getScreen } from "@/lib/posters";
 
 /**
  * `sizes` has to describe the box the image actually lands in, and this
@@ -35,6 +35,7 @@ export function PosterArt({
 }) {
   const poster = getPoster(slug);
   if (!poster) return null;
+  const screen = getScreen(slug);
 
   // A finished poster is the whole card. It arrives at the card's own 4:5, so
   // `cover` crops nothing, and it already contains the ground, the colour field
@@ -57,6 +58,24 @@ export function PosterArt({
           sizes={SIZES[as]}
           draggable={false}
         />
+        {screen && (
+          // A real screen, seated where the compositor would have baked it and
+          // free to move. The window clips; the shot inside it slides on hover,
+          // so the card answers "what's in there" with the thing itself.
+          <span
+            className="poster-screen"
+            style={
+              {
+                "--screen-top": `${screen.top * 100}%`,
+                "--screen-width": `${screen.width * 100}%`,
+              } as React.CSSProperties
+            }
+            aria-hidden="true"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={screen.src} alt="" draggable={false} />
+          </span>
+        )}
       </span>
     );
   }

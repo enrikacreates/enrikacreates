@@ -864,6 +864,54 @@ body {
   z-index: 0;
 }
 
+/* A real screen, seated in the poster and scrollable on hover.
+   Baked into the PNG it is a still; as a layer it can move. At rest it is
+   pixel-identical to the baked version, because it uses the geometry the
+   compositor used, so nothing changes until someone hovers.
+
+   The window clips and the image inside it slides. The travel is the image's
+   own overflow, so a full-page capture scrolls a long way and a viewport-sized
+   one barely moves: the motion is honest about how much there is to see. */
+.poster-screen {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: var(--screen-top, 57%);
+  width: var(--screen-width, 74%);
+  /* Runs past the plate's own edge; the plate crops it, which is what makes
+     the screen look cut off mid-content rather than neatly ended. */
+  bottom: 0;
+  overflow: hidden;
+  border-radius: 6px 6px 0 0;
+  z-index: 1;
+}
+.poster-screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Long, slow and eased, so it reads as someone scrolling rather than as an
+     animation playing. Returns on its own when the pointer leaves. */
+  transition: transform 3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+
+/* translateY by a share of the image's own height, so one rule serves a short
+   capture and a tall one: a full-page shot travels far, a viewport shot barely
+   moves, and neither needs its own number. */
+.catalog-item:hover .poster-screen img,
+.featured-cell:hover .poster-screen img,
+.catalog-item:focus-within .poster-screen img,
+.featured-cell:focus-within .poster-screen img {
+  transform: translateY(calc(-100% + var(--screen-reveal, 62%)));
+}
+
+/* Someone who has asked for less motion gets the still. */
+@media (prefers-reduced-motion: reduce) {
+  .poster-screen img { transition: none; }
+  .catalog-item:hover .poster-screen img,
+  .featured-cell:hover .poster-screen img { transform: none; }
+}
+
 /* The plate that holds a finished poster.
    The posters are generated at 4:5, but their last stretch is empty cream, which
    met the page's own cream and left the card with no bottom edge: the artwork
