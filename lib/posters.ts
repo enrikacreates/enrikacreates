@@ -246,6 +246,14 @@ const SCREENS: Record<string, Screen> = {
     width: 0.9,
     ratio: 3450 / 1045,
   },
+  "create-space-collective": {
+    src: "/assets/projects/create-space-collective/shots/fullpage.webp",
+    top: 0.42,
+    width: 0.9,
+    // Capped from the page's full 7.53x: eight screens is more than a
+    // three-second hover can walk without flinging.
+    ratio: 4730 / 1100,
+  },
 };
 export function getScreen(slug: string) {
   return SCREENS[slug];

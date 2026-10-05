@@ -125,7 +125,7 @@ export const PROJECTS = [
     slug: "create-space-collective",
     baseUrl: "http://localhost:3210",
     routes: [
-      { name: "landing", path: "/" },
+      { name: "landing", path: "/", poster: true, loggedOut: true },
       { name: "our-story", path: "/our-story" },
       { name: "values", path: "/values" },
       { name: "studio", path: "/studio" },
@@ -143,7 +143,7 @@ export const PROJECTS = [
          mode skips the ping; setting the seen-flag then keeps the modal shut
          so what's behind it can be photographed. */
       {
-        name: "flow3-dashboard", poster: true,
+        name: "flow3-dashboard",
         path: "/home",
         visitFirst: "/home?welcome=preview",
         set: { cs_welcomed_v1: "1" },
@@ -225,13 +225,31 @@ export const PROJECTS = [
   {
     slug: "crushit",
     baseUrl: "http://localhost:5175",
-    routes: [{ name: "home", path: "/" }],
+    routes: [
+      { name: "home", path: "/" },
+      {
+        name: "dashboard",
+        path: "/",
+        auth: "member",
+        wait: 1800,
+        poster: true,
+      },
+    ],
   },
 
   {
     slug: "deeplyreader",
     baseUrl: "http://localhost:5188",
-    routes: [{ name: "home", path: "/" }],
+    routes: [
+      { name: "home", path: "/" },
+      {
+        name: "dashboard",
+        path: "/",
+        auth: "member",
+        wait: 1800,
+        poster: true,
+      },
+    ],
   },
 
   {
@@ -410,19 +428,46 @@ export const PROJECTS = [
   {
     slug: "storeit",
     baseUrl: "http://localhost:3230",
-    routes: [{ name: "home", path: "/" }],
+    routes: [
+      { name: "home", path: "/" },
+      {
+        name: "dashboard",
+        path: "/",
+        auth: "member",
+        wait: 1800,
+        poster: true,
+      },
+    ],
   },
 
   {
     slug: "caashflow",
     baseUrl: "http://localhost:3220",
-    routes: [{ name: "home", path: "/" }],
+    routes: [
+      { name: "home", path: "/" },
+      {
+        name: "dashboard",
+        path: "/",
+        auth: "member",
+        wait: 1800,
+        poster: true,
+      },
+    ],
   },
 
   {
     slug: "hummingbird",
     baseUrl: "http://localhost:8082",
-    routes: [{ name: "home", path: "/" }],
+    routes: [
+      { name: "home", path: "/" },
+      {
+        name: "dashboard",
+        path: "/",
+        auth: "member",
+        wait: 1800,
+        poster: true,
+      },
+    ],
   },
 
   {
@@ -437,13 +482,31 @@ export const PROJECTS = [
   {
     slug: "signaturestyle",
     baseUrl: "http://localhost:5174",
-    routes: [{ name: "home", path: "/" }],
+    routes: [
+      { name: "home", path: "/" },
+      {
+        name: "dashboard",
+        path: "/",
+        auth: "member",
+        wait: 1800,
+        poster: true,
+      },
+    ],
   },
 
   {
     slug: "visionmap",
     baseUrl: "http://localhost:3001",
-    routes: [{ name: "home", path: "/" }],
+    routes: [
+      { name: "home", path: "/" },
+      {
+        name: "dashboard",
+        path: "/",
+        auth: "member",
+        wait: 1800,
+        poster: true,
+      },
+    ],
   },
 ];
 

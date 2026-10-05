@@ -237,7 +237,13 @@ try {
       }
 
       for (const vp of viewports) {
-        const page = await browser.newPage();
+        /* A route marked `loggedOut` has to be captured as a stranger sees
+         * it, and the persistent profile is signed in to most of these apps:
+         * a landing page captured through it shows a member nav, or redirects
+         * past the landing entirely. An isolated context starts with no
+         * cookies and no storage, which is exactly a first-time visitor. */
+        const context = route.loggedOut ? await browser.createBrowserContext() : null;
+        const page = await (context ?? browser).newPage();
         try {
           /* A wide overlay with few columns photographs as mostly empty
            * ground. `vw` narrows the viewport for one route so its content
@@ -430,23 +436,38 @@ try {
             await page.screenshot({ path: tmp, fullPage: true });
             const file = path.join(dir, "fullpage.webp");
             const { width: rw, height: rh } = await sharp(tmp).metadata();
-            await sharp(tmp)
+
+            /* A marketing page can run eight screens deep, and the hover has
+             * three seconds: past a point the reveal stops reading as someone
+             * scrolling and starts reading as a page being flung. Cap the
+             * capture rather than speed the animation up, so every card moves
+             * at the same pace and a long page simply shows its first stretch.
+             * `posterTop` starts the crop lower where the top is the dull bit. */
+            const top = Math.min(route.posterTop ?? 0, Math.max(0, rh - 100));
+            const maxH = Math.round(rw * POSTER.ratio.max);
+            const h0 = Math.min(rh - top, maxH);
+            const cropped = top > 0 || h0 < rh;
+
+            let pipeline = sharp(tmp);
+            if (cropped) {
+              pipeline = pipeline.extract({ left: 0, top, width: rw, height: h0 });
+            }
+            await pipeline
               .resize({ width: Math.min(rw, POSTER.width) })
               .webp({ quality: 82 })
               .toFile(file);
             await unlink(tmp).catch(() => {});
 
-            const ratio = rh / rw;
+            const ratio = h0 / rw;
             const w = POSTER.width;
             const h = Math.round(w * ratio);
-            const fit =
-              ratio < POSTER.ratio.min
+            const note = cropped
+              ? `  (page is ${(rh / rw).toFixed(2)}x, capped)`
+              : ratio < POSTER.ratio.min
                 ? "  short — little to reveal on hover"
-                : ratio > POSTER.ratio.max
-                  ? "  long — the hover will skim rather than scroll"
-                  : "";
-            console.log(`  ✓ ${file}  ${w}x${h}  ${ratio.toFixed(2)}x tall${fit}`);
-            posters.push({ slug: project.slug, route: route.path, w: rw, h: rh });
+                : "";
+            console.log(`  ✓ ${file}  ${w}x${h}  ${ratio.toFixed(2)}x tall${note}`);
+            posters.push({ slug: project.slug, route: route.path, w: rw, h: h0 });
             saved++;
             continue;
           }
@@ -460,6 +481,7 @@ try {
           console.log(`  ✗ ${route.path} @${vp.label}: ${err.message}`);
         } finally {
           await page.close();
+          await context?.close();
         }
       }
     }
