@@ -261,28 +261,7 @@ export const PROJECTS = [
     /* `/` redirects to the last realm used, so the realm pages are the real
      * surfaces. The landing opens on a video, which a still capture can only
      * photograph one arbitrary frame of, so it is not a poster candidate. */
-    routes: [
-      { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* The two states worth showing fight each other by scroll: the masthead
-         is full size only at scrollY === 0, the photo clusters bloom only past
-         30. So rest at the top for the masthead and open the clusters by
-         parking the cursor on one, which blooms all of them. */
-      {
-        name: "wardrobe",
-        path: "/wardrobe",
-        auth: "member",
-        wait: 2000,
-        poster: true,
-        posterScroll: 0,
-        posterHover: 'div[class*="aspect-"] img',
-        posterHoverPark: true,
-      },
-      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
-      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
-      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
-      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
-      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
-    ],
+    routes: [{ name: "home", path: "/" }],
   },
 
   {
@@ -291,28 +270,7 @@ export const PROJECTS = [
     /* `/` redirects to the last realm used, so the realm pages are the real
      * surfaces. The landing opens on a video, which a still capture can only
      * photograph one arbitrary frame of, so it is not a poster candidate. */
-    routes: [
-      { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* The two states worth showing fight each other by scroll: the masthead
-         is full size only at scrollY === 0, the photo clusters bloom only past
-         30. So rest at the top for the masthead and open the clusters by
-         parking the cursor on one, which blooms all of them. */
-      {
-        name: "wardrobe",
-        path: "/wardrobe",
-        auth: "member",
-        wait: 2000,
-        poster: true,
-        posterScroll: 0,
-        posterHover: 'div[class*="aspect-"] img',
-        posterHoverPark: true,
-      },
-      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
-      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
-      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
-      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
-      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
-    ],
+    routes: [{ name: "home", path: "/" }],
   },
 
   {
@@ -494,28 +452,7 @@ export const PROJECTS = [
     /* `/` redirects to the last realm used, so the realm pages are the real
      * surfaces. The landing opens on a video, which a still capture can only
      * photograph one arbitrary frame of, so it is not a poster candidate. */
-    routes: [
-      { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* The two states worth showing fight each other by scroll: the masthead
-         is full size only at scrollY === 0, the photo clusters bloom only past
-         30. So rest at the top for the masthead and open the clusters by
-         parking the cursor on one, which blooms all of them. */
-      {
-        name: "wardrobe",
-        path: "/wardrobe",
-        auth: "member",
-        wait: 2000,
-        poster: true,
-        posterScroll: 0,
-        posterHover: 'div[class*="aspect-"] img',
-        posterHoverPark: true,
-      },
-      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
-      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
-      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
-      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
-      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
-    ],
+    routes: [{ name: "home", path: "/" }],
   },
 
   {
@@ -524,57 +461,25 @@ export const PROJECTS = [
     /* `/` redirects to the last realm used, so the realm pages are the real
      * surfaces. The landing opens on a video, which a still capture can only
      * photograph one arbitrary frame of, so it is not a poster candidate. */
-    routes: [
-      { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* The two states worth showing fight each other by scroll: the masthead
-         is full size only at scrollY === 0, the photo clusters bloom only past
-         30. So rest at the top for the masthead and open the clusters by
-         parking the cursor on one, which blooms all of them. */
-      {
-        name: "wardrobe",
-        path: "/wardrobe",
-        auth: "member",
-        wait: 2000,
-        poster: true,
-        posterScroll: 0,
-        posterHover: 'div[class*="aspect-"] img',
-        posterHoverPark: true,
-      },
-      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
-      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
-      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
-      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
-      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
-    ],
+    routes: [{ name: "home", path: "/" }],
   },
 
   {
     slug: "hummingbird",
     baseUrl: "http://localhost:8082",
-    /* `/` redirects to the last realm used, so the realm pages are the real
-     * surfaces. The landing opens on a video, which a still capture can only
-     * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
-      { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* The two states worth showing fight each other by scroll: the masthead
-         is full size only at scrollY === 0, the photo clusters bloom only past
-         30. So rest at the top for the masthead and open the clusters by
-         parking the cursor on one, which blooms all of them. */
+      /* A list of real songs with waveforms, tags and takes: content with
+         natural overflow, where the signed-out welcome is one motionless
+         viewport. Expo web renders the phone centred on a decorative
+         backdrop, so the seated screen is narrow rather than full width. */
       {
-        name: "wardrobe",
-        path: "/wardrobe",
+        name: "songbook",
+        path: "/",
         auth: "member",
-        wait: 2000,
+        wait: 2600,
         poster: true,
-        posterScroll: 0,
-        posterHover: 'div[class*="aspect-"] img',
-        posterHoverPark: true,
+        posterExpand: true,
       },
-      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
-      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
-      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
-      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
-      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
     ],
   },
 
@@ -623,28 +528,7 @@ export const PROJECTS = [
     /* `/` redirects to the last realm used, so the realm pages are the real
      * surfaces. The landing opens on a video, which a still capture can only
      * photograph one arbitrary frame of, so it is not a poster candidate. */
-    routes: [
-      { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* The two states worth showing fight each other by scroll: the masthead
-         is full size only at scrollY === 0, the photo clusters bloom only past
-         30. So rest at the top for the masthead and open the clusters by
-         parking the cursor on one, which blooms all of them. */
-      {
-        name: "wardrobe",
-        path: "/wardrobe",
-        auth: "member",
-        wait: 2000,
-        poster: true,
-        posterScroll: 0,
-        posterHover: 'div[class*="aspect-"] img',
-        posterHoverPark: true,
-      },
-      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
-      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
-      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
-      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
-      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
-    ],
+    routes: [{ name: "home", path: "/" }],
   },
 ];
 

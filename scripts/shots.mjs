@@ -602,6 +602,40 @@ try {
             }
           }
 
+          /* An app shell scrolls INSIDE itself: React Native Web, and anything
+           * else that pins a root to 100vh and puts a scroll container in it,
+           * has a document exactly one viewport tall no matter how much
+           * content there is. A full-page capture of one is a single screen
+           * with nothing to reveal. Letting the inner container grow to its
+           * own content turns it back into a page that can be photographed
+           * whole, which is what Hummingbird's songbook needs to scroll. */
+          if (posterMode && route.posterExpand) {
+            const grew = await page.evaluate(() => {
+              const before = document.documentElement.scrollHeight;
+              for (const el of document.querySelectorAll("*")) {
+                const cs = getComputedStyle(el);
+                const scrolls = /auto|scroll/.test(cs.overflowY);
+                if (scrolls && el.scrollHeight > el.clientHeight + 40) {
+                  el.style.setProperty("height", "auto", "important");
+                  el.style.setProperty("max-height", "none", "important");
+                  el.style.setProperty("overflow", "visible", "important");
+                }
+              }
+              /* The shell above it is usually pinned to the viewport too, so
+               * the freed content would just overflow a box that stays 100vh. */
+              for (const el of [document.documentElement, document.body,
+                                ...document.querySelectorAll("#root, #__next, [data-reactroot]")]) {
+                if (!el) continue;
+                el.style.setProperty("height", "auto", "important");
+                el.style.setProperty("min-height", "0", "important");
+                el.style.setProperty("overflow", "visible", "important");
+              }
+              return [before, document.documentElement.scrollHeight];
+            });
+            await new Promise((r) => setTimeout(r, 500));
+            console.log(`    expanded the scroll container: ${grew[0]}px -> ${grew[1]}px`);
+          }
+
           if (posterMode) {
             /* Straight to webp at the card's own width. The intermediate png
              * is 2x and large; nothing downstream wants it. */
