@@ -1,6 +1,6 @@
 # goldcoast-law
 
-Generated 2026-10-05T00:44:55.617Z · gpt-image-2.5-sunburst · 1024x1536 · high
+Generated 2026-10-05T00:46:35.178Z · gpt-image-2.5-sunburst · 1024x1536 · high
 
 ## Subject
 
@@ -8,17 +8,17 @@ a set of legal documents and a pair of speech forms. A single sheet of ruled pap
 
 ## Colour
 
-#2B3F63
+#C3D3E0
 
 ## Revision notes
 
-Use a deep navy blue background. The background is dark, so every hand-drawn mark, squiggle, zigzag and thin line must be OFF-WHITE or CREAM, never black: black marks vanish on navy. The browser window outline must also be a pale off-white hairline so it stays visible. Keep the paper stack small in the frame, one element among several rather than the subject that fills it. Leave generous empty space around the composition and a clear band of empty ground across the bottom third.
+The background is a LIGHT pale blue-grey, not a dark navy. Deep navy blue is used only as an accent colour on the cut-paper elements themselves: the speech shapes, a folder, a book. Because the background is light, the hand-drawn marks, squiggles and the browser window outline are all DARK navy or black so they stay visible. Keep the paper stack small in the frame, one element among several rather than the subject that fills it. Leave generous empty space around the composition and a clear band of empty ground across the bottom third.
 
 ## Full prompt
 
 Flat paper-collage illustration, portrait, 4:5.
 
-A single flat saturated background colour, #2B3F63, bleeding to all four
+A single flat saturated background colour, #C3D3E0, bleeding to all four
 edges. Over it, one large off-white organic shape, a soft asymmetric curve
 rising from the bottom corners like a low hill, which the composition sits on.
 
@@ -64,4 +64,4 @@ No text, no lettering, no words, no numbers anywhere in the image.
 Subject: a set of legal documents and a pair of speech forms. A single sheet of ruled paper as the hero element, centred, built from cut-paper planes, with only one or two sheets behind it. Two overlapping speech shapes above, one offset from the other as though the same words twice. A set of scales and a fountain pen rendered as engraved illustration, smaller, set at different depths.
 
 Important corrections, these take priority over anything above:
-Use a deep navy blue background. The background is dark, so every hand-drawn mark, squiggle, zigzag and thin line must be OFF-WHITE or CREAM, never black: black marks vanish on navy. The browser window outline must also be a pale off-white hairline so it stays visible. Keep the paper stack small in the frame, one element among several rather than the subject that fills it. Leave generous empty space around the composition and a clear band of empty ground across the bottom third.
+The background is a LIGHT pale blue-grey, not a dark navy. Deep navy blue is used only as an accent colour on the cut-paper elements themselves: the speech shapes, a folder, a book. Because the background is light, the hand-drawn marks, squiggles and the browser window outline are all DARK navy or black so they stay visible. Keep the paper stack small in the frame, one element among several rather than the subject that fills it. Leave generous empty space around the composition and a clear band of empty ground across the bottom third.
