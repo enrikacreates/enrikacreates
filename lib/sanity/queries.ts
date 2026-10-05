@@ -137,7 +137,7 @@ export const PROJECTS_BY_CATEGORY_QUERY = /* groq */ `
  */
 export const FEATURED_PROJECTS_QUERY = /* groq */ `
   *[_type == "project" && featured == true && category->listed == true]
-    | order(displayOrder asc, publishedAt desc)[0..2] {
+    | order(displayOrder asc, publishedAt desc) {
     ${PROJECT_FIELDS}
   }
 `;

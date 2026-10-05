@@ -143,7 +143,18 @@ export default async function ProjectDetailPage({
     : undefined;
 
   const layout = 2; // detail hero uses the template layout (was item.layout || 2)
-  const isDark = isDarkColor(item.color);
+
+  // A project with no poster keeps the shapes hero, whatever the constant says.
+  const poster = HERO_TREATMENT === "poster" ? getPoster(item.slug) : undefined;
+
+  // Decided from whatever the page is ACTUALLY painted, which is the poster's
+  // own measured colour when there is one, and the project's card colour only
+  // when there isn't. These two drifted apart the moment the page started
+  // taking its background from the artwork: Goldcoast Law's card colour is a
+  // mid sage that reads dark, while its poster is pale gold, so the page was
+  // rendering the cream-on-dark treatment over a light background and the back
+  // link came out at 1.19:1 against it.
+  const isDark = isDarkColor(poster?.bg ?? item.color);
   const collageUrl = item.leadImage?.asset
     ? urlFor(item.leadImage).width(1200).height(1200).fit("crop").auto("format").url()
     : undefined;
@@ -158,9 +169,6 @@ export default async function ProjectDetailPage({
   ]
     .filter(Boolean)
     .join(" ");
-
-  // A project with no poster keeps the shapes hero, whatever the constant says.
-  const poster = HERO_TREATMENT === "poster" ? getPoster(item.slug) : undefined;
 
   return (
     <section
