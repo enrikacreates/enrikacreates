@@ -106,7 +106,7 @@ export const PROJECTS = [
       { name: "flow1-login", path: "/login", wait: 900 },
       // Where it started: a single request form, before any of the rest existed.
       { name: "flow2-request", path: "/requests/new", wait: 1200 },
-      { name: "flow3-board", path: "/board", auth: "member", wait: 1500 },
+      { name: "flow3-board", path: "/board", auth: "member", wait: 1500, poster: true },
       { name: "flow4-calendar", path: "/calendar", auth: "member", wait: 1500 },
       { name: "flow5-capacity", path: "/capacity", auth: "member", wait: 1500 },
       { name: "flow6-tasks", path: "/tasks", auth: "member", wait: 1200 },
@@ -143,7 +143,7 @@ export const PROJECTS = [
          mode skips the ping; setting the seen-flag then keeps the modal shut
          so what's behind it can be photographed. */
       {
-        name: "flow3-dashboard",
+        name: "flow3-dashboard", poster: true,
         path: "/home",
         visitFirst: "/home?welcome=preview",
         set: { cs_welcomed_v1: "1" },
@@ -254,7 +254,7 @@ export const PROJECTS = [
       // actions: Ready, Spark, Momentum, In the flow, Almost peak, Peak flow.
       // The copy changes with the tier, which a single screenshot cannot show,
       // so the same URL is captured twice at different points in a real day.
-      { name: "flow3-focus", path: "/today", auth: "member", wait: 1500 },
+      { name: "flow3-focus", path: "/today", auth: "member", wait: 1500, poster: true },
       { name: "flow3e-momentum", path: "/today", auth: "member", wait: 1500 },
       // The app is date addressable, which matters for capture: "today" is
       // whatever today happens to be, and a rest day photographs as an empty

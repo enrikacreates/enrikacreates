@@ -4,6 +4,8 @@
  *   npm run shots                      every project in shots.config.mjs
  *   npm run shots -- --project 50-states-of-freedom
  *   npm run shots -- --full            full-page instead of one viewport
+ *   npm run shots -- --poster          one tall capture per app for the card screens
+ *   npm run shots -- --poster --pick   same, but you choose the moment to fire
  *   npm run shots -- --list            print what would be captured, visit nothing
  *   npm run shots -- --login           open a window to sign in; captures nothing
  *
@@ -21,7 +23,8 @@
  */
 
 import puppeteer from "puppeteer-core";
-import { mkdir, access } from "node:fs/promises";
+import sharp from "sharp";
+import { mkdir, access, unlink } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { PROJECTS, VIEWPORTS } from "./shots.config.mjs";
@@ -59,6 +62,52 @@ const only = value("project");
 const fullPage = flag("full");
 const listOnly = flag("list");
 const loginMode = flag("login");
+const posterMode = flag("poster");
+const pickMode = flag("pick");
+
+/* ---------- poster screens ---------- */
+
+/* The capture that gets seated into a project card and scrolls on hover.
+ *
+ * One fixed width for every app, because the cards sit next to each other and
+ * a capture taken at a different width shows its content at a different scale,
+ * which reads as a mismatched set. 1100 is wide enough to be clear of the
+ * common 1024 breakpoint, so apps lay out as desktop rather than squeezed
+ * tablet, and narrow enough that the content is still legible once the card
+ * shows it ~250px wide.
+ *
+ * Captured at 2x and downsampled to 1100, which is sharper than grabbing 1100
+ * directly, then written as webp: these are decoration on a grid of cards, and
+ * the png of the first one was 795KB against 121KB for the same pixels.
+ */
+const POSTER = {
+  width: 1100,
+  height: 900,
+  /* 1x, not retina. The card shows this ~254 CSS px wide, so 1100 is already
+   * a 2x downsample on a retina display; capturing at 2x doubles the file and
+   * the headful window for no visible gain. */
+  scale: 1,
+  /* How tall the page should be, as a multiple of its width. Under this and
+   * there is barely anything to reveal on hover; over it and the three-second
+   * scroll turns into a skim. Advisory only, it never blocks a capture. */
+  ratio: { min: 2.2, max: 4.3 },
+};
+const POSTER_VP = {
+  label: "poster",
+  width: POSTER.width,
+  height: POSTER.height,
+  mobile: false,
+};
+
+const viewports = posterMode ? [POSTER_VP] : VIEWPORTS;
+
+/** The one route worth seating in a card: `poster: true` in the config, else
+ *  the first one, which is the app's front door often enough to be a default. */
+const posterRoute = (project) =>
+  project.routes.find((r) => r.poster) ?? project.routes[0];
+
+const routesFor = (project) =>
+  posterMode ? [posterRoute(project)] : project.routes;
 
 /* A persistent Chrome profile, so a signed-in session survives between runs.
  *
@@ -88,8 +137,8 @@ if (listOnly) {
   console.log("Would capture:\n");
   for (const p of targets) {
     console.log(`  ${p.slug}  (${p.baseUrl})  ->  ${outDir(p.slug)}/`);
-    for (const r of p.routes) {
-      const sizes = VIEWPORTS.map((v) => `${r.name}-${v.label}.png`).join("  ");
+    for (const r of routesFor(p)) {
+      const sizes = viewports.map((v) => `${r.name}-${v.label}.png`).join("  ");
       console.log(`    ${r.path.padEnd(18)} ${sizes}${r.auth ? `   [${r.auth}]` : ""}`);
     }
   }
@@ -116,7 +165,7 @@ async function reachable(baseUrl) {
 
 const browser = await puppeteer.launch({
   executablePath: findChrome(),
-  headless: !loginMode,
+  headless: !loginMode && !pickMode,
   userDataDir: PROFILE,
   defaultViewport: loginMode ? null : undefined,
   args: ["--hide-scrollbars", "--force-color-profile=srgb"],
@@ -151,8 +200,21 @@ if (loginMode) {
   process.exit(0);
 }
 
+/** Wait for Enter on stdin. Used wherever the script needs a person: signing
+ *  in, and choosing the moment a capture fires. */
+function waitForEnter() {
+  return new Promise((resolve) => {
+    process.stdin.resume();
+    process.stdin.once("data", () => {
+      process.stdin.pause();
+      resolve();
+    });
+  });
+}
+
 let saved = 0;
 const skipped = [];
+const posters = [];
 
 try {
   for (const project of targets) {
@@ -169,21 +231,21 @@ try {
     await mkdir(dir, { recursive: true });
     console.log(`\n${project.slug}  ${project.baseUrl}`);
 
-    for (const route of project.routes) {
+    for (const route of routesFor(project)) {
       if (route.auth) {
         console.log(`  ! ${route.path} ${route.auth} — capturing whatever renders`);
       }
 
-      for (const vp of VIEWPORTS) {
+      for (const vp of viewports) {
         const page = await browser.newPage();
         try {
           /* A wide overlay with few columns photographs as mostly empty
            * ground. `vw` narrows the viewport for one route so its content
            * fills the frame, rather than cropping emptiness out afterwards. */
           await page.setViewport({
-            width: route.vw && !vp.mobile ? route.vw : vp.width,
+            width: posterMode ? vp.width : route.vw && !vp.mobile ? route.vw : vp.width,
             height: vp.height,
-            deviceScaleFactor: 2, // retina, so it holds up scaled down
+            deviceScaleFactor: posterMode ? POSTER.scale : 2, // retina, so it holds up scaled down
             isMobile: vp.mobile,
             hasTouch: vp.mobile,
           });
@@ -328,6 +390,67 @@ try {
             };
           }
 
+          /* A full-page screenshot does not scroll, so anything that waits
+           * for the viewport to reach it never loads: lazy images stay blank
+           * and reveal-on-scroll sections stay at opacity 0. Walking down the
+           * page and back up first is what makes the capture show the page a
+           * person would actually see. */
+          if (posterMode) {
+            await page.evaluate(async () => {
+              const step = window.innerHeight * 0.8;
+              for (let y = 0; y < document.body.scrollHeight; y += step) {
+                window.scrollTo(0, y);
+                await new Promise((r) => setTimeout(r, 120));
+              }
+              window.scrollTo(0, 0);
+              await new Promise((r) => setTimeout(r, 400));
+            });
+          }
+
+          /* A script can get the width, the chrome and the lazy loading right
+           * every time, and cannot tell that the hero is cycling through its
+           * images and this one is the dull one. `--pick` hands the page over
+           * at exactly the right size with the scrollbars already hidden, so
+           * the only thing left to decide is the thing only a person can:
+           * when it looks right. */
+          if (posterMode && pickMode) {
+            await page.bringToFront();
+            console.log(
+              `\n  ${project.slug} ${route.path} is open at ${POSTER.width}px.\n` +
+                `  Get it to the moment you want, then press Enter here to capture.\n` +
+                `  (Scroll position does not matter, the capture takes the whole page.)`
+            );
+            await waitForEnter();
+          }
+
+          if (posterMode) {
+            /* Straight to webp at the card's own width. The intermediate png
+             * is 2x and large; nothing downstream wants it. */
+            const tmp = path.join(dir, `.${route.name}-poster.png`);
+            await page.screenshot({ path: tmp, fullPage: true });
+            const file = path.join(dir, "fullpage.webp");
+            const { width: rw, height: rh } = await sharp(tmp).metadata();
+            await sharp(tmp)
+              .resize({ width: Math.min(rw, POSTER.width) })
+              .webp({ quality: 82 })
+              .toFile(file);
+            await unlink(tmp).catch(() => {});
+
+            const ratio = rh / rw;
+            const w = POSTER.width;
+            const h = Math.round(w * ratio);
+            const fit =
+              ratio < POSTER.ratio.min
+                ? "  short — little to reveal on hover"
+                : ratio > POSTER.ratio.max
+                  ? "  long — the hover will skim rather than scroll"
+                  : "";
+            console.log(`  ✓ ${file}  ${w}x${h}  ${ratio.toFixed(2)}x tall${fit}`);
+            posters.push({ slug: project.slug, route: route.path, w: rw, h: rh });
+            saved++;
+            continue;
+          }
+
           const file = path.join(dir, `${route.name}-${vp.label}.png`);
           await page.screenshot({ path: file, fullPage: clip ? false : fullPage, clip });
           console.log(`  ✓ ${file}`);
@@ -346,6 +469,22 @@ try {
 }
 
 console.log(`\n${saved} screenshot${saved === 1 ? "" : "s"} saved.`);
+
+/* The measured ratio is what decides how far a capture scrolls on hover, so
+ * print it in the shape lib/posters.ts wants rather than making anyone open
+ * the file and work it out. Pasting is deliberate: which apps get a real
+ * screen, and where it sits on the artwork, stays a judgement call. */
+if (posters.length) {
+  console.log(`\nFor SCREENS in lib/posters.ts:\n`);
+  for (const p of posters) {
+    console.log(`  "${p.slug}": {`);
+    console.log(`    src: "/assets/projects/${p.slug}/shots/fullpage.webp",`);
+    console.log(`    top: 0.42,`);
+    console.log(`    width: 0.9,`);
+    console.log(`    ratio: ${p.h} / ${p.w},`);
+    console.log(`  },`);
+  }
+}
 if (skipped.length) {
   console.log(`\n${skipped.length} skipped:`);
   skipped.forEach((s) => console.log(`  - ${s}`));
