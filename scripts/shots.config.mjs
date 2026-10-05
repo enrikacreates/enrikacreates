@@ -310,6 +310,12 @@ export const PROJECTS = [
         auth: "member",
         wait: 3000,
         expect: "pick up where you left off",
+        /* The shelf's cover art is a stored preference. Solid renders every
+           book as one flat colour block, which photographs as a grid of
+           rectangles; party is the generated Memphis art the shelf is for.
+           Set rather than clicked, so the capture does not depend on whatever
+           the profile happened to choose last. */
+        set: { "deeply-cover-style": "party" },
         poster: true,
       },
       {
