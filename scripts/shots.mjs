@@ -443,6 +443,32 @@ try {
             await waitForEnter();
           }
 
+          /* A `position: fixed` element is painted ONCE, wherever it sat in
+           * the viewport, and a full-page capture is many viewports tall. A
+           * pinned bottom bar therefore comes out as a band slicing through
+           * the middle of the page: Create Space's "your work, out into the
+           * world" strip cut straight across its hero photograph.
+           *
+           * display, not visibility: a child that sets `visibility: visible`
+           * overrides a hidden parent, which left Create Space's avatar
+           * floating on its own where the bar had been. A fixed element is
+           * out of flow, so removing it reflows nothing either way. Sticky is
+           * left alone, since that renders at its natural place in the flow. */
+          if (posterMode) {
+            const pinned = await page.evaluate(() => {
+              let n = 0;
+              for (const el of document.body.querySelectorAll("*")) {
+                const cs = getComputedStyle(el);
+                if (cs.position === "fixed" && cs.display !== "none") {
+                  el.style.setProperty("display", "none", "important");
+                  n++;
+                }
+              }
+              return n;
+            });
+            if (pinned) console.log(`    hid ${pinned} pinned element${pinned === 1 ? "" : "s"}`);
+          }
+
           if (posterMode) {
             /* Straight to webp at the card's own width. The intermediate png
              * is 2x and large; nothing downstream wants it. */
