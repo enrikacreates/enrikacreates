@@ -296,16 +296,39 @@ export const PROJECTS = [
      * surfaces. The landing opens on a video, which a still capture can only
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
-      /* One route: the reader is a single-page app with no router, so every
-         view is internal state. "All books" is the signed-in library, which
-         the signed-out screen has no reason to render. */
+      /* The reader has no router: main.tsx switches on location.pathname, and
+         the voice library and saved panels open from query params that the app
+         strips from the URL on mount. So these are the app's own addresses,
+         read off its source rather than guessed.
+
+         The homepage carries the card: what you were last listening to, the
+         shelf of colour-coded books, and the quote cards below them. The rest
+         are for the case study's gallery. */
       {
-        name: "library",
+        name: "home",
         path: "/",
         auth: "member",
-        wait: 2500,
-        expect: "All books",
+        wait: 3000,
+        expect: "pick up where you left off",
         poster: true,
+      },
+      {
+        name: "spotify",
+        path: "/spotify",
+        auth: "member",
+        wait: 3000,
+        expect: "Bookmark this moment",
+      },
+      { name: "voices", path: "/?voices", auth: "member", wait: 2500, expect: "Voice library" },
+      { name: "quotes", path: "/?saved=quotes", auth: "member", wait: 2500, expect: "Quotes" },
+      /* What the Chrome extension sent here: pages and passages clipped from
+         the web, which is the half of the product that lives outside the app. */
+      {
+        name: "read-later",
+        path: "/?saved=readlater",
+        auth: "member",
+        wait: 2500,
+        expect: "Read Later",
       },
     ],
   },
