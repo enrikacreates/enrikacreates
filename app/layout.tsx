@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/siteUrl";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -10,11 +11,31 @@ import "./globals.css";
  *     to bypass site chrome.
  */
 
+/**
+ * The site's own address, now that enrikagreathouse.com is live and
+ * www 308s to it.
+ *
+ * metadataBase is what every relative URL in the metadata resolves against:
+ * canonicals, Open Graph images, share previews. It was still the .vercel.app
+ * deployment URL, which meant a shared link advertised the deployment rather
+ * than the domain, and search engines were given the wrong address as the
+ * reference. The deployment URL still works and still serves; it just no
+ * longer claims to be the site.
+ */
 export const metadata: Metadata = {
   title: "Enrika Creates",
   description:
     "I design storytelling experiences that inspire hope and ignite purpose.",
-  metadataBase: new URL("https://enrikacreates.vercel.app"),
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Enrika Creates",
+    title: "Enrika Creates",
+    description:
+      "I design storytelling experiences that inspire hope and ignite purpose.",
+  },
 };
 
 export default function RootLayout({

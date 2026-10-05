@@ -7,6 +7,8 @@
  */
 
 import type { MetadataRoute } from "next";
+
+import { SITE_URL as BASE_URL } from "@/lib/siteUrl";
 import {
   getListedCategories,
   getListedProjects,
@@ -16,9 +18,6 @@ import {
 export const revalidate = 3600;
 
 /** Set NEXT_PUBLIC_SITE_URL in Vercel; the fallback keeps local builds valid. */
-const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://enrikacreates.com"
-).replace(/\/$/, "");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [categories, projects, postSlugs] = await Promise.all([
