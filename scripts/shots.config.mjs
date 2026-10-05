@@ -26,10 +26,15 @@ export const PROJECTS = [
   },
 
   {
+    /* posterTop: the page opens with a red nav bar and then 90px of dead
+       cream before the headline, which on a card reads as the composition
+       having fallen down the frame. Starting at the eyebrow rule lets the
+       headline and the portrait lead. The poster already draws a browser
+       window around the screen, so the nav is not carrying that job. */
     slug: "50-states-of-freedom",
     baseUrl: "https://50-states-of-freedom.vercel.app",
     routes: [
-      { name: "home", path: "/" },
+      { name: "home", path: "/", posterTop: 190 },
     ],
   },
 

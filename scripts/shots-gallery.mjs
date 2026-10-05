@@ -90,6 +90,17 @@ const html = `<!doctype html><meta charset=utf-8><title>Captures</title>
 ${groups.map((g) => `<h2>${g.p}</h2><div class=row>${g.items.map(card).join("")}</div>`).join("")}
 `;
 
+/* This walk measures every capture anyway, so it is also the cheapest place to
+ * keep the size manifest honest -- including for captures taken by hand rather
+ * than by the shots script, which would otherwise never be measured at all. */
+const sizes = Object.fromEntries(
+  groups
+    .flatMap((g) => g.items)
+    .map((i) => [i.url, [i.width, i.height]])
+    .sort(([a], [b]) => a.localeCompare(b))
+);
+await writeFile("lib/screen-sizes.json", JSON.stringify(sizes, null, 2) + "\n");
+
 await writeFile("public/_shots.html", html);
 console.log(
   `public/_shots.html — ${groups.length} projects, ` +

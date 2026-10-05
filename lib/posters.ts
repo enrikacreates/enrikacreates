@@ -233,43 +233,50 @@ export type Screen = {
   top: number;
   /** Window width, as a share of the card's width. */
   width: number;
-  /** Capture height / width. */
-  ratio: number;
+  /** Capture height / width. Read from the size manifest; set here only to
+   *  override a measurement. */
+  ratio?: number;
   /** Share of the available overflow to scroll through on hover. */
   travel?: number;
 };
+
+import SIZES from "./screen-sizes.json";
 
 const SCREENS: Record<string, Screen> = {
   "the-daily-story": {
     src: "/assets/projects/thedailystory/shots/fullpage.webp",
     top: 0.42,
     width: 0.9,
-    ratio: 3450 / 1045,
   },
   "50-states-of-freedom": {
     src: "/assets/projects/50-states-of-freedom/shots/fullpage.webp",
     top: 0.42,
     width: 0.9,
-    ratio: 3754 / 1100,
   },
   signaturestyle: {
     src: "/assets/projects/signaturestyle/shots/fullpage.webp",
     top: 0.42,
     width: 0.9,
-    // Capped from the page's full 7.83x.
-    ratio: 4730 / 1100,
   },
   "create-space-collective": {
     src: "/assets/projects/create-space-collective/shots/fullpage.webp",
     top: 0.42,
     width: 0.9,
-    // Capped from the page's full 7.53x: eight screens is more than a
-    // three-second hover can walk without flinging.
-    ratio: 4730 / 1100,
   },
 };
-export function getScreen(slug: string) {
-  return SCREENS[slug];
+export function getScreen(slug: string): (Screen & { ratio: number }) | undefined {
+  const screen = SCREENS[slug];
+  if (!screen) return undefined;
+  const measured: number[] | undefined = (SIZES as Record<string, number[]>)[screen.src];
+  const ratio =
+    screen.ratio ??
+    (measured && measured[0] > 0 ? measured[1] / measured[0] : undefined);
+  /* No measurement and no override means the capture was never run through the
+   * shots script, so how far it can travel is unknown. Rendering it with a
+   * guessed ratio would scroll it to the wrong place; leaving the screen off
+   * falls back to the artwork, which is correct if plainer. */
+  if (!ratio) return undefined;
+  return { ...screen, ratio };
 }
 
 export function getPoster(slug: string): Poster | undefined {

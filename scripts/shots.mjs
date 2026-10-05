@@ -26,7 +26,7 @@
 
 import puppeteer from "puppeteer-core";
 import sharp from "sharp";
-import { mkdir, access, unlink } from "node:fs/promises";
+import { mkdir, access, unlink, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { PROJECTS, VIEWPORTS } from "./shots.config.mjs";
@@ -668,20 +668,24 @@ try {
 
 console.log(`\n${saved} screenshot${saved === 1 ? "" : "s"} saved.`);
 
-/* The measured ratio is what decides how far a capture scrolls on hover, so
- * print it in the shape lib/posters.ts wants rather than making anyone open
- * the file and work it out. Pasting is deliberate: which apps get a real
- * screen, and where it sits on the artwork, stays a judgement call. */
+/* A capture's shape decides how far it scrolls on hover, and it changes every
+ * time the page or the crop changes. Hand-copying it into lib/posters.ts meant
+ * the registry could disagree with the file on disk and nothing would say so:
+ * cropping 50 States left a stale ratio behind within the minute. The sizes go
+ * to a manifest the registry reads instead.
+ *
+ * Which apps get a real screen, and where it sits on the artwork, stays in
+ * posters.ts: those are judgements, not measurements. */
 if (posters.length) {
-  console.log(`\nFor SCREENS in lib/posters.ts:\n`);
-  for (const p of posters) {
-    console.log(`  "${p.slug}": {`);
-    console.log(`    src: "/${path.relative("public", p.file)}",`);
-    console.log(`    top: 0.42,`);
-    console.log(`    width: 0.9,`);
-    console.log(`    ratio: ${p.h} / ${p.w},`);
-    console.log(`  },`);
-  }
+  const file = "lib/screen-sizes.json";
+  let sizes = {};
+  try {
+    sizes = JSON.parse(await readFile(file, "utf8"));
+  } catch {}
+  for (const p of posters) sizes["/" + path.relative("public", p.file)] = [p.w, p.h];
+  const sorted = Object.fromEntries(Object.entries(sizes).sort(([a], [b]) => a.localeCompare(b)));
+  await writeFile(file, JSON.stringify(sorted, null, 2) + "\n");
+  console.log(`\n${file} updated (${posters.length} measured, ${Object.keys(sorted).length} total)`);
 }
 if (skipped.length) {
   console.log(`\n${skipped.length} skipped:`);
