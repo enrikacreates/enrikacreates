@@ -155,8 +155,10 @@ export function WorkSection({
       </div>
 
       <div className="work-inner">
+        {/* "Featured", not "Recent": this row is the three starred projects, and
+            some of the work below it is newer than they are. */}
         {featured.length > 0 && (
-          <h2 className="work-heading">Recent Projects</h2>
+          <h2 className="work-heading">Featured Projects</h2>
         )}
 
         {featured.length > 0 && (
