@@ -246,6 +246,12 @@ const SCREENS: Record<string, Screen> = {
     width: 0.9,
     ratio: 3450 / 1045,
   },
+  "50-states-of-freedom": {
+    src: "/assets/projects/50-states-of-freedom/shots/fullpage.webp",
+    top: 0.42,
+    width: 0.9,
+    ratio: 3754 / 1100,
+  },
   signaturestyle: {
     src: "/assets/projects/signaturestyle/shots/fullpage.webp",
     top: 0.42,
