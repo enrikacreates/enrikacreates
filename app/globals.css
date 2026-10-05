@@ -838,19 +838,16 @@ body {
   overflow-wrap: anywhere;
 }
 
-/* Phone: lift the collage out of the middle of its box.
-   The pin reserves a viewport of height, but a 16:9 collage on a 375px-wide
-   screen can only ever paint 375x211, so 380px of that reservation is empty and
-   `contain` centres the artwork in the middle of it. The result is a wordmark, a
-   statement, then a long blank, then the plants floating halfway down. Anchoring
-   the paint near the top closes the gap under the statement and pools the spare
-   height below, where the quote and the cue arrive on scroll anyway.
-
-   Not `cover`: that would fill the space by cropping the composition, and the
-   plants are meant to read whole. */
+/* Phone: a portrait cut of the same reveal.
+   The landscape clip could only ever paint 375x211 here, because `contain`
+   fits by width and the composition is 16:9, which left 380px of the pin's
+   reserved height empty with the plants floating in the middle of it. The 3:4
+   encode fills roughly 375x500 of the same box. HeroVideo picks the file at
+   this exact breakpoint; the two have to agree or the box and the footage
+   disagree about shape. */
 @media (max-width: 640px) {
   .hero-video {
-    object-position: 50% 8%;
+    aspect-ratio: 3 / 4;
   }
 }
 

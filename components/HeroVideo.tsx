@@ -23,9 +23,37 @@
 
 import { useRef, useEffect, useCallback } from "react";
 
-/** Matches the encode in public/assets/hero/. */
-const SRC = "/assets/hero/hero-reveal.mp4";
-const POSTER = "/assets/hero/hero-poster.jpg";
+/**
+ * Two encodes of the same reveal, in public/assets/hero/.
+ *
+ * The clip is a landscape composition, and on a phone `contain` could only ever
+ * paint it 375x211 inside a box reserving most of the viewport: a quarter of
+ * the screen of artwork and the rest empty. The portrait cut is the same
+ * animation recomposed at 3:4, which fills roughly 375x500 instead.
+ *
+ * Both are encoded all-keyframe. Seeking a normal GOP decodes from the previous
+ * keyframe every frame and feels like mud, which is the whole reason this is a
+ * scrubbed video rather than a timeline.
+ */
+const SRC_WIDE = "/assets/hero/hero-reveal.mp4";
+const SRC_TALL = "/assets/hero/hero-reveal-vertical.mp4";
+
+/**
+ * Each cut needs its own poster, and the poster is on screen longer than it
+ * looks. A browser shows it until the element has painted a frame, and this
+ * video only ever seeks: at the top of the page the target is already 0, so
+ * nothing seeks and the poster is what a visitor actually sees first.
+ *
+ * On desktop that went unnoticed because the poster matches the clip. On a
+ * phone the landscape poster was being contained into a 3:4 box at 375x211,
+ * which looked exactly like the small-collage problem the portrait cut exists
+ * to solve.
+ */
+const POSTER_WIDE = "/assets/hero/hero-poster.jpg";
+const POSTER_TALL = "/assets/hero/hero-poster-vertical.jpg";
+
+/** Matches the breakpoint that gives .hero-video its 3/4 ratio in globals.css. */
+const TALL_QUERY = "(max-width: 640px)";
 
 /**
  * Exponent applied to scroll progress before mapping to video time.
@@ -79,6 +107,22 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
     const zone = zoneRef.current;
     const video = videoRef.current;
     if (!zone || !video) return;
+
+    // Choose the cut before anything downloads, and re-choose if the viewport
+    // crosses the breakpoint (rotating a phone, or dragging a desktop window
+    // narrow). Changing .src resets the element, so only touch it on an actual
+    // change, never on every resize.
+    const tall = window.matchMedia(TALL_QUERY);
+    const pickSource = () => {
+      const want = tall.matches ? SRC_TALL : SRC_WIDE;
+      if (video!.getAttribute("src") === want) return;
+      video!.setAttribute("poster", tall.matches ? POSTER_TALL : POSTER_WIDE);
+      video!.setAttribute("src", want);
+      video!.load();
+      unlocked.current = false;
+    };
+    pickSource();
+    tall.addEventListener("change", pickSource);
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     let raf = 0;
@@ -257,6 +301,7 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
       video.removeEventListener("loadedmetadata", onScroll);
       video.removeEventListener("seeked", releaseSeek);
       video.removeEventListener("error", releaseSeek);
+      tall.removeEventListener("change", pickSource);
     };
   }, []);
 
@@ -277,8 +322,12 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
         <video
           ref={videoRef}
           className="hero-video"
-          src={SRC}
-          poster={POSTER}
+          // No src in the markup on purpose. Rendering the wide one and
+          // swapping after mount would have every phone download a 6MB
+          // landscape clip it never shows, on mobile data, before fetching the
+          // one it actually needs. The effect below picks before anything is
+          // fetched. The poster covers the gap.
+          // Set alongside src in the effect below, for the same reason.
           preload="auto"
           muted
           playsInline
