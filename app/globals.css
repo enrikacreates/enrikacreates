@@ -912,7 +912,7 @@ body {
    says it moves. On the plate rather than inside the window, so it stays put
    while the content slides under it. */
 .poster-plate:has(.poster-screen)::after {
-  content: "scroll to view";
+  content: "scroll to view more";
   position: absolute;
   left: 50%;
   bottom: 10px;
