@@ -168,6 +168,9 @@ const POSTERS: Record<string, Poster> = {
  * pixel is not good enough.
  */
 const FLAT_POSTER_BG: Record<string, string> = {
+  visionmap: "#7B997D",
+  bernadettejiwa: "#F6ABA8",
+  "goldcoast-law": "#7BA17E",
   "create-space-collective": "#FBBCA6",
   signaturestyle: "#FDB8A1",
   "50-states-of-freedom": "#AEC0A1",
@@ -180,6 +183,9 @@ const FLAT_POSTER_BG: Record<string, string> = {
 };
 
 const FLAT_POSTERS = new Set([
+  "visionmap",
+  "bernadettejiwa",
+  "goldcoast-law",
   "create-space-collective",
   "signaturestyle",
   "50-states-of-freedom",
