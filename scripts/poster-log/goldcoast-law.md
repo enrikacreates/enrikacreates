@@ -1,10 +1,10 @@
 # goldcoast-law
 
-Generated 2026-10-05T00:42:47.031Z · gpt-image-2.5-sunburst · 1024x1536 · high
+Generated 2026-10-05T00:44:55.617Z · gpt-image-2.5-sunburst · 1024x1536 · high
 
 ## Subject
 
-a set of legal documents and a pair of speech forms. A single sheet of ruled paper as the hero element, centred, built from cut-paper planes, with only one or two sheets behind it. Two overlapping speech shapes above, one offset from the other as though the same words twice. A set of scales and a fountain pen rendered as engraved illustration, smaller, set to either side.
+a set of legal documents and a pair of speech forms. A single sheet of ruled paper as the hero element, centred, built from cut-paper planes, with only one or two sheets behind it. Two overlapping speech shapes above, one offset from the other as though the same words twice. A set of scales and a fountain pen rendered as engraved illustration, smaller, set at different depths.
 
 ## Colour
 
@@ -12,7 +12,7 @@ a set of legal documents and a pair of speech forms. A single sheet of ruled pap
 
 ## Revision notes
 
-Use a deep navy blue background, not green. Show far fewer sheets of paper and keep the paper stack small in the frame: it should be one element among several, not the subject that fills it. Add more distinct objects around it so the composition has variety. Most importantly, leave generous empty space around the whole composition and a clear band of empty ground across the bottom third. The previous attempt was cramped: the subject ran almost edge to edge with no room to breathe.
+Use a deep navy blue background. The background is dark, so every hand-drawn mark, squiggle, zigzag and thin line must be OFF-WHITE or CREAM, never black: black marks vanish on navy. The browser window outline must also be a pale off-white hairline so it stays visible. Keep the paper stack small in the frame, one element among several rather than the subject that fills it. Leave generous empty space around the composition and a clear band of empty ground across the bottom third.
 
 ## Full prompt
 
@@ -24,25 +24,44 @@ rising from the bottom corners like a low hill, which the composition sits on.
 
 Behind the subject, a faint thin-line browser window outline: a rounded
 rectangle with a narrow title bar and three small circles at its top left,
-drawn in a single hairline weight, low contrast, clearly background furniture
-rather than part of the subject.
+drawn in a single hairline weight, clearly background furniture rather than
+part of the subject. Draw it in whichever of dark or off-white contrasts with
+the background colour: on a light background it is a dark hairline, on a dark
+background an off-white one. It should be quiet, but it must be visible.
 
-The subject is centred and built from cut-paper shapes with visible paper
-grain and fibre texture, faceted into flat planes of colour, with soft
-contact shadows underneath so the pieces read as physical paper. Mix in one or
-two elements rendered as detailed black-and-white engraved or etched
-illustration, at a smaller scale, set into the composition.
+Build the image in three clear depth planes, not as one flat layer. Something
+sits behind the subject, the subject sits on the ground shape, and something
+sits in front of or beside it closer to the viewer. Overlap the planes so each
+one partly hides the one behind it. This layering is the single most important
+part of the style.
 
-Scatter a few small hand-drawn black marks around the subject: short straight
-strokes in groups of three, small zigzags, short wavy lines. Sparse, never
-crowding the subject.
+Everything is built from cut-paper shapes with visible paper grain and fibre
+texture, faceted into flat planes of colour, with soft contact shadows beneath
+each piece so they read as physical paper at different heights.
+
+Set detailed black-and-white engraved or etched illustrations into the
+composition as accents, and place them at more than one depth: one small one
+far back among the background shapes, one larger in the foreground near the
+viewer. The contrast between flat colour paper and fine engraved line is what
+gives the image its character, and spreading the engravings across depths is
+what stops it flattening out.
+
+Scatter a few small hand-drawn marks around the subject: short straight strokes
+in groups of three, small zigzags, short wavy lines. Sparse, never crowding the
+subject.
+
+Colour these marks for contrast against the background, not black by default.
+On a light background they are black. On a dark background, such as navy or
+deep green, they are off-white or cream. Black marks on a dark background
+disappear, which costs the image the hand-drawn character they are there to
+carry. The same applies to any thin line work anywhere in the composition.
 
 The composition resolves in the top 80% of the frame. The bottom fifth is
 empty ground, no elements there.
 
 No text, no lettering, no words, no numbers anywhere in the image.
 
-Subject: a set of legal documents and a pair of speech forms. A single sheet of ruled paper as the hero element, centred, built from cut-paper planes, with only one or two sheets behind it. Two overlapping speech shapes above, one offset from the other as though the same words twice. A set of scales and a fountain pen rendered as engraved illustration, smaller, set to either side.
+Subject: a set of legal documents and a pair of speech forms. A single sheet of ruled paper as the hero element, centred, built from cut-paper planes, with only one or two sheets behind it. Two overlapping speech shapes above, one offset from the other as though the same words twice. A set of scales and a fountain pen rendered as engraved illustration, smaller, set at different depths.
 
 Important corrections, these take priority over anything above:
-Use a deep navy blue background, not green. Show far fewer sheets of paper and keep the paper stack small in the frame: it should be one element among several, not the subject that fills it. Add more distinct objects around it so the composition has variety. Most importantly, leave generous empty space around the whole composition and a clear band of empty ground across the bottom third. The previous attempt was cramped: the subject ran almost edge to edge with no room to breathe.
+Use a deep navy blue background. The background is dark, so every hand-drawn mark, squiggle, zigzag and thin line must be OFF-WHITE or CREAM, never black: black marks vanish on navy. The browser window outline must also be a pale off-white hairline so it stays visible. Keep the paper stack small in the frame, one element among several rather than the subject that fills it. Leave generous empty space around the composition and a clear band of empty ground across the bottom third.
