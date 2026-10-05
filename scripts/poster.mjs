@@ -65,7 +65,8 @@ function parseArgs(argv) {
       key === "dry-run" ||
       key === "force" ||
       key === "measure-only" ||
-      key === "no-screen"
+      key === "no-screen" ||
+      key === "screen-shadow"
     ) {
       out[key] = true;
       continue;
@@ -96,6 +97,9 @@ function usage(msg) {
     --screen-width    fraction of poster width (default 0.78)
     --screen-top      fraction of poster height for its top edge (default 0.52)
     --screen-x        fraction for its left edge (default: centred)
+    --screen-shadow   add a faint contact shadow under the screen (off by
+                      default: the illustrations cast none, so it reads as the
+                      one lit object in an unlit scene)
     --no-screen       rebuild <slug>.png from the artwork alone, dropping the
                       screenshot. Use when a capture does not work for you.
 `);
@@ -230,27 +234,33 @@ async function seatScreen(artFile, screenFile, outFile, opts = {}) {
     .png()
     .toBuffer();
 
-  // A contact shadow, kept faint on purpose. At 0.22 alpha over a short blur
-  // the blurred rectangle still read as a grey band with edges of its own,
-  // which is worse than no shadow: it looked like a second object rather than
-  // depth. Wide blur, low alpha, so it only has to stop the screen floating in
-  // a hole cut out of the artwork.
+  // No shadow by default.
+  //
+  // It went through a harsh version and a faint one before coming off
+  // entirely. The posters are flat cut-paper with no cast shadows anywhere in
+  // them, so any shadow under the screen was the one lit object in an unlit
+  // illustration. The screen reads as sitting on the artwork from the overlap
+  // alone. --screen-shadow puts it back if a particular poster needs it.
   const pad = Math.round(PW * 0.045);
-  const shadow = await sharp({
-    create: {
-      width: w + pad * 2,
-      height: h + pad,
-      channels: 4,
-      background: { r: 60, g: 52, b: 44, alpha: 0.1 },
-    },
-  })
-    .blur(Math.max(1, Math.round(PW * 0.035)))
-    .png()
-    .toBuffer();
+  const shadow = opts.screenShadow
+    ? await sharp({
+        create: {
+          width: w + pad * 2,
+          height: h + pad,
+          channels: 4,
+          background: { r: 60, g: 52, b: 44, alpha: 0.1 },
+        },
+      })
+        .blur(Math.max(1, Math.round(PW * 0.035)))
+        .png()
+        .toBuffer()
+    : null;
 
   await sharp(artFile)
     .composite([
-      { input: shadow, left: x - pad, top: y - Math.round(pad / 2) },
+      ...(shadow
+        ? [{ input: shadow, left: x - pad, top: y - Math.round(pad / 2) }]
+        : []),
       { input: rounded, left: x, top: y },
     ])
     .png()
@@ -433,6 +443,7 @@ async function main() {
       screenWidth: args["screen-width"],
       screenTop: args["screen-top"],
       screenX: args["screen-x"],
+      screenShadow: args["screen-shadow"],
     });
     console.log(
       `  seated ${path.basename(shot)} at ${box.w}x${box.h}, ${box.x},${box.y}`
