@@ -361,24 +361,71 @@ try {
            * press the thing a person presses. Each step is a CSS selector, or
            * "text:Label" to match a control by its visible text. */
           for (const step of route.click ?? []) {
-            await page.evaluate((sel) => {
-              const el = sel.startsWith("text:")
-                ? (() => {
-                    const want = sel.slice(5);
-                    const all = [...document.querySelectorAll("button, a, [role=button]")];
-                    // Exact first, then contains. UI labels carry curly
-                    // apostrophes and stray whitespace that an exact match
-                    // loses on, and failing to click is worse than clicking a
-                    // slightly looser match.
-                    return (
-                      all.find((n) => n.textContent.trim() === want) ??
-                      all.find((n) => n.textContent.trim().includes(want))
-                    );
-                  })()
-                : document.querySelector(sel);
-              if (!el) throw new Error(`nothing matched ${sel}`);
-              el.click();
-            }, step);
+            /* Find the thing, then press it with the actual mouse.
+             *
+             * Two assumptions that held for web apps and not for React Native
+             * Web: that anything pressable is a button, a link or has
+             * role=button -- Expo renders Pressable as a plain div -- and that
+             * el.click() activates it, when RNW listens for pointer events and
+             * ignores a synthetic click entirely. So the candidate set is
+             * wider, and the press is a real one at the element's centre. */
+            const find = (sel) => {
+              let el = null;
+              if (sel.startsWith("text:")) {
+                const want = sel.slice(5);
+                const all = [
+                  ...document.querySelectorAll(
+                    'button, a, [role="button"], [tabindex]:not([tabindex="-1"]), [data-focusable="true"]'
+                  ),
+                ];
+                // Exact first, then contains. UI labels carry curly
+                // apostrophes and stray whitespace that an exact match loses
+                // on, and failing to click is worse than a looser match.
+                /* Case-insensitive: labels are routinely uppercased in CSS,
+                   so the DOM reads "Vibe" where the screen says VIBE. */
+                const w = want.toLowerCase();
+                el =
+                  all.find((n) => n.textContent.trim().toLowerCase() === w) ??
+                  all.find((n) => n.textContent.trim().toLowerCase().includes(w));
+                if (!el) {
+                  /* Nothing pressable matched, so fall back to the smallest
+                     element carrying the text: in RNW the press handler often
+                     sits on an ancestor that bubbling will reach anyway. */
+                  const bearing = [...document.querySelectorAll("div, span, p, h1, h2, h3")]
+                    .filter((n) => n.textContent.toLowerCase().includes(want.toLowerCase()))
+                    .filter((n) => {
+                      const r = n.getBoundingClientRect();
+                      return r.width > 10 && r.height > 10;
+                    });
+                  bearing.sort(
+                    (a, b) =>
+                      a.getBoundingClientRect().width * a.getBoundingClientRect().height -
+                      b.getBoundingClientRect().width * b.getBoundingClientRect().height
+                  );
+                  el = bearing[0] ?? null;
+                }
+              } else {
+                el = document.querySelector(sel);
+              }
+              if (!el) return null;
+              el.scrollIntoView({ block: "center" });
+              const r = el.getBoundingClientRect();
+              return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+            };
+
+            /* Poll for it. A click fires before the app's data has arrived,
+               which is how pressing a song by name failed while that very
+               song was moments from rendering: the same race that
+               photographs a loading state, one step earlier. */
+            let box = null;
+            const until = Date.now() + (route.clickTimeout ?? 12000);
+            while (Date.now() < until) {
+              box = await page.evaluate(find, step);
+              if (box) break;
+              await new Promise((r) => setTimeout(r, 400));
+            }
+            if (!box) throw new Error(`nothing matched ${step}`);
+            await page.mouse.click(box.x, box.y);
             await new Promise((r) => setTimeout(r, route.clickWait ?? 700));
           }
 
