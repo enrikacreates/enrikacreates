@@ -909,13 +909,28 @@ body {
 
 /* A hint that the screen is yours to scroll. Without it the rise looks like a
    finished animation rather than an invitation: nothing about a still image
-   says it moves. On the plate rather than inside the window, so it stays put
-   while the content slides under it. */
-.poster-plate:has(.poster-screen)::after {
+   says it moves.
+
+   "more", because click is what views the case -- the pill must not claim the
+   invitation the click already owns.
+
+   Hung off .card-year, which is the one element sitting directly under the
+   plate in BOTH layouts: a catalog item wraps its text in .card-content and a
+   featured cell does not, so anchoring to the wrapper only lit up half the
+   grid. And on the card rather than inside the plate, because the plate clips
+   its own children -- a pill in there can only sit on the image, competing
+   with the very screen it points at. */
+.catalog-item:has(.poster-screen) .card-year,
+.featured-cell:has(.poster-screen) .card-year {
+  position: relative;
+}
+
+.catalog-item:has(.poster-screen) .card-year::after,
+.featured-cell:has(.poster-screen) .card-year::after {
   content: "scroll to view more";
   position: absolute;
   left: 50%;
-  bottom: 10px;
+  bottom: calc(100% + 2px);
   transform: translateX(-50%) translateY(4px);
   z-index: 2;
   padding: 3px 10px;
@@ -933,10 +948,10 @@ body {
   transition-delay: 420ms; /* after the rise lands, not during it */
 }
 
-.catalog-item:hover .poster-plate:has(.poster-screen)::after,
-.featured-cell:hover .poster-plate:has(.poster-screen)::after,
-.catalog-item:focus-within .poster-plate:has(.poster-screen)::after,
-.featured-cell:focus-within .poster-plate:has(.poster-screen)::after {
+.catalog-item:hover .card-year::after,
+.featured-cell:hover .card-year::after,
+.catalog-item:focus-within .card-year::after,
+.featured-cell:focus-within .card-year::after {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
@@ -944,7 +959,8 @@ body {
 /* On touch the screen is already risen, so the hint is the only thing telling
    a thumb there is more under it. No hover to wait for, so no delay. */
 @media (hover: none) {
-  .poster-plate:has(.poster-screen)::after {
+  .catalog-item:has(.poster-screen) .card-year::after,
+  .featured-cell:has(.poster-screen) .card-year::after {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
     transition-delay: 0s;
@@ -952,7 +968,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .poster-plate:has(.poster-screen)::after { transition: none; }
+  .catalog-item:has(.poster-screen) .card-year::after,
+  .featured-cell:has(.poster-screen) .card-year::after {
+    transition: none;
+  }
 }
 
 /* The rise is the whole interaction now. What is inside is the viewer's to
