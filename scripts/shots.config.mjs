@@ -73,6 +73,20 @@ export const PROJECTS = [
     baseUrl: "https://visionmap.coach",
     routes: [
       { name: "home", path: "/", wait: 2200 },
+      /* The map itself, which is the product; the landing is a signup form.
+         Gated on a string the signed-out page cannot have: "Vision Map" was
+         not enough, because the landing invites you to "create your vision
+         map" and the match is case-insensitive -- so the guard waved a
+         capture of the signup form straight through. */
+      {
+        name: "vision-map",
+        path: "/vision-map",
+        auth: "member",
+        wait: 2600,
+        expect: "What ties it all together",
+        poster: true,
+      },
+      { name: "goals", path: "/goals", auth: "member", wait: 2200, expect: "All Goals" },
     ],
   },
 
@@ -622,14 +636,6 @@ export const PROJECTS = [
     ],
   },
 
-  {
-    slug: "visionmap",
-    baseUrl: "http://localhost:3001",
-    /* `/` redirects to the last realm used, so the realm pages are the real
-     * surfaces. The landing opens on a video, which a still capture can only
-     * photograph one arbitrary frame of, so it is not a poster candidate. */
-    routes: [{ name: "home", path: "/" }],
-  },
 ];
 
 /**
