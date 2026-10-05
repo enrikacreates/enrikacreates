@@ -17,6 +17,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { HeroVideo } from "./HeroVideo";
 import { WorkSection } from "./WorkSection";
 import type { Category, ProjectListItem } from "@/lib/types";
+import { ScreenScrollReset } from "./ScreenScrollReset";
 
 interface HomeExperienceProps {
   projects: ProjectListItem[];
@@ -172,6 +173,9 @@ export function HomeExperience({
 
   return (
     <>
+      {/* A screen someone scrolled stays where they left it: scrollTop does not
+          know the card was abandoned. Renders nothing. */}
+      <ScreenScrollReset />
       {/* One stage so the wordmark stays stuck until the whole hero is done. */}
       <div className="hero-stage" ref={stageRef}>
         {heroLogo}

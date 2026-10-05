@@ -78,6 +78,11 @@ const LERP = 0.12;
 /** Don't touch currentTime for sub-frame deltas; seeking is not free. */
 const MIN_SEEK_DELTA = 1 / 48;
 
+/** Ceiling on how fast the playhead may travel: clip seconds per real second.
+ *  Normal scrubbing sits well under this; it exists to stop a stalled frame
+ *  being paid back as one jump. */
+const MAX_SCRUB_RATE = 2.5;
+
 export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
   const zoneRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -254,7 +259,24 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
         // This keeps the same feel whether that is 60 steps a second or 20.
         const from = v.currentTime;
         const k = 1 - Math.pow(1 - LERP, dt * 60);
-        const next = from + (target.current - from) * k;
+
+        // Bound the SPEED, not just the frame time.
+        //
+        // The easing above is a share of the remaining distance, so a long
+        // frame compounds: at 60fps `k` is 0.12, but a frame that hits the
+        // 100ms dt cap gives 0.54 -- four and a half times further in one
+        // step. That is the lurch where the reveal ramps up and races past the
+        // opening images, and it only shows up when the browser is busy, which
+        // is why it comes and goes. The gap is widest early in the scroll, so
+        // the first images are where it is most visible.
+        //
+        // Capping dt harder would just move the threshold. Capping clip
+        // seconds per real second makes a stall impossible to repay in one
+        // leap, at any frame rate. Ordinary scrubbing is far below the ceiling,
+        // so it only ever removes the lurch.
+        const step = (target.current - from) * k;
+        const limit = MAX_SCRUB_RATE * dt;
+        const next = from + Math.max(-limit, Math.min(limit, step));
 
         if (Math.abs(next - from) > MIN_SEEK_DELTA) {
           seeking = true;
