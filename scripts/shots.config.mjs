@@ -74,16 +74,18 @@ export const PROJECTS = [
     routes: [
       { name: "home", path: "/", wait: 2200 },
       /* The map itself, which is the product; the landing is a signup form.
-         Gated on a string the signed-out page cannot have: "Vision Map" was
-         not enough, because the landing invites you to "create your vision
-         map" and the match is case-insensitive -- so the guard waved a
-         capture of the signup form straight through. */
+         Gating it took three tries, and both failures are instructive.
+         "Vision Map" passed on the landing, which invites you to "create your
+         vision map" and the match is case-insensitive. "What ties it all
+         together" is placeholder copy that only appears on an EMPTY map, so
+         it failed against a real one -- a guard can be too specific as easily
+         as too loose. "Year in Review" is a section of the map itself. */
       {
         name: "vision-map",
         path: "/vision-map",
         auth: "member",
         wait: 2600,
-        expect: "What ties it all together",
+        expect: "Year in Review",
         poster: true,
       },
       { name: "goals", path: "/goals", auth: "member", wait: 2200, expect: "All Goals" },

@@ -529,6 +529,65 @@ try {
             await waitForEnter();
           }
 
+          /* Checked before anything touches the page. Hiding pinned elements
+             and swapping embeds both remove nodes, and on an app shell the
+             pinned element IS the content: VisionMap's board is fixed, so the
+             guard ran against a page whose map had just been hidden and
+             reported a signed-in capture as signed out. */
+          /* A route marked `auth` that ends up on a sign-in form captured the
+           * wrong thing, and it looks like a perfectly good screenshot in the
+           * output: three of today's runs quietly produced login pages because
+           * the session was signed in to a different browser than the capture
+           * profile. Fail loudly instead, and say what to do about it. */
+          if (route.auth) {
+            const landed = await page.evaluate(() => ({
+              url: location.pathname + location.search,
+              looksLikeLogin:
+                /\b(sign in|sign up|log in|login)\b/i.test(
+                  document.body.innerText.slice(0, 400)
+                ) && /password/i.test(document.body.innerHTML),
+            }));
+            const redirected =
+              !route.path.startsWith(landed.url.split("?")[0]) &&
+              !landed.url.startsWith(route.path.split("?")[0]);
+            /* `expect` is the reliable form: a signed-out app does not always
+             * redirect or show a password field. Hummingbird's logged-out
+             * state is a welcome screen at the very same URL, which no generic
+             * heuristic can tell from the real thing. Naming a string that
+             * only appears when signed in can. */
+            if (route.expect) {
+              const want = [route.expect].flat();
+              /* Poll rather than read once. A fixed `wait` is a guess about how
+                 long someone else's database takes, and losing that race
+                 photographs a loading state -- Hummingbird's songbook came back
+                 reading "0 SONGS" and "gathering your songbook..." while its
+                 own data was still in flight. */
+              const deadline = Date.now() + (route.expectTimeout ?? 15000);
+              let text = "";
+              let missing = want;
+              while (Date.now() < deadline) {
+                text = await page.evaluate(() => document.body.innerText.toLowerCase());
+                // Case-insensitive: labels are routinely uppercased in CSS, so
+                // the DOM says "Spaces" where the screen says SPACES.
+                missing = want.filter((w) => !text.includes(w.toLowerCase()));
+                if (!missing.length) break;
+                await new Promise((r) => setTimeout(r, 400));
+              }
+              if (missing.length) {
+                throw new Error(
+                  `expected ${missing.map((m) => JSON.stringify(m)).join(", ")} on the page and it is not there` +
+                    ` — likely signed out. Run: npm run shots -- --login --project ${project.slug}`
+                );
+              }
+            }
+            if (landed.looksLikeLogin && redirected) {
+              throw new Error(
+                `signed out — landed on ${landed.url}. ` +
+                  `Run: npm run shots -- --login --project ${project.slug}`
+              );
+            }
+          }
+
           /* A `position: fixed` element is painted ONCE, wherever it sat in
            * the viewport, and a full-page capture is many viewports tall. A
            * pinned bottom bar therefore comes out as a band slicing through
@@ -649,60 +708,6 @@ try {
               }
               await page.mouse.move(gap.x, gap.y);
               await new Promise((r) => setTimeout(r, 900));
-            }
-          }
-
-          /* A route marked `auth` that ends up on a sign-in form captured the
-           * wrong thing, and it looks like a perfectly good screenshot in the
-           * output: three of today's runs quietly produced login pages because
-           * the session was signed in to a different browser than the capture
-           * profile. Fail loudly instead, and say what to do about it. */
-          if (route.auth) {
-            const landed = await page.evaluate(() => ({
-              url: location.pathname + location.search,
-              looksLikeLogin:
-                /\b(sign in|sign up|log in|login)\b/i.test(
-                  document.body.innerText.slice(0, 400)
-                ) && /password/i.test(document.body.innerHTML),
-            }));
-            const redirected =
-              !route.path.startsWith(landed.url.split("?")[0]) &&
-              !landed.url.startsWith(route.path.split("?")[0]);
-            /* `expect` is the reliable form: a signed-out app does not always
-             * redirect or show a password field. Hummingbird's logged-out
-             * state is a welcome screen at the very same URL, which no generic
-             * heuristic can tell from the real thing. Naming a string that
-             * only appears when signed in can. */
-            if (route.expect) {
-              const want = [route.expect].flat();
-              /* Poll rather than read once. A fixed `wait` is a guess about how
-                 long someone else's database takes, and losing that race
-                 photographs a loading state -- Hummingbird's songbook came back
-                 reading "0 SONGS" and "gathering your songbook..." while its
-                 own data was still in flight. */
-              const deadline = Date.now() + (route.expectTimeout ?? 15000);
-              let text = "";
-              let missing = want;
-              while (Date.now() < deadline) {
-                text = await page.evaluate(() => document.body.innerText.toLowerCase());
-                // Case-insensitive: labels are routinely uppercased in CSS, so
-                // the DOM says "Spaces" where the screen says SPACES.
-                missing = want.filter((w) => !text.includes(w.toLowerCase()));
-                if (!missing.length) break;
-                await new Promise((r) => setTimeout(r, 400));
-              }
-              if (missing.length) {
-                throw new Error(
-                  `expected ${missing.map((m) => JSON.stringify(m)).join(", ")} on the page and it is not there` +
-                    ` — likely signed out. Run: npm run shots -- --login --project ${project.slug}`
-                );
-              }
-            }
-            if (landed.looksLikeLogin && redirected) {
-              throw new Error(
-                `signed out — landed on ${landed.url}. ` +
-                  `Run: npm run shots -- --login --project ${project.slug}`
-              );
             }
           }
 
