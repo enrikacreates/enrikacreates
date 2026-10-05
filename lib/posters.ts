@@ -246,6 +246,13 @@ const SCREENS: Record<string, Screen> = {
     width: 0.9,
     ratio: 3450 / 1045,
   },
+  signaturestyle: {
+    src: "/assets/projects/signaturestyle/shots/fullpage.webp",
+    top: 0.42,
+    width: 0.9,
+    // Capped from the page's full 7.83x.
+    ratio: 4730 / 1100,
+  },
   "create-space-collective": {
     src: "/assets/projects/create-space-collective/shots/fullpage.webp",
     top: 0.42,
