@@ -42,7 +42,15 @@ public/_review/
 
 # Screenshot capture output (npm run shots). Working material: the keepers get
 # uploaded into Sanity, so the local copies don't need to ship.
-public/assets/projects/*/shots/
+#
+# Except fullpage.webp. Those are the screens seated into the project cards,
+# served straight from public/ rather than through Sanity, so ignoring them
+# shipped a site whose every card pointed at a 404 -- which looked perfect
+# locally, because locally the files are right there. Note the trailing /*:
+# ignoring the DIRECTORY would stop git descending into it and the negation
+# below would never be consulted.
+public/assets/projects/*/shots/*
+!public/assets/projects/*/shots/fullpage.webp
 
 # Chrome profile holding signed-in sessions for `npm run shots`. Never commit:
 # it contains live auth cookies for the apps being captured.

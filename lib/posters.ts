@@ -279,6 +279,8 @@ const SCREENS: Record<string, Screen> = {
     width: 0.9,
   },
   visionmap: {
+    /* The signed-in map, not the landing. The landing is a signup form, which
+       is the least interesting thing about the project. */
     src: "/assets/projects/visionmap/shots/fullpage.webp",
     width: 0.9,
   },
