@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 /**
+ * FROZEN COPY — poster maker, v1 (illustration only).
+ *
+ * Kept because v1 produced the nine posters currently on the site and its
+ * behaviour is known good. poster.mjs has moved on to compositing real
+ * screenshots into the artwork; if that turns out to be the wrong call, this
+ * is the thing to come back to. Run it with `node scripts/poster-v1.mjs`.
+ *
+ * Original header follows.
+ *
  * Poster maker.
  *
  *   npm run poster -- --slug bernadettejiwa --subject "an open book ..."
@@ -41,15 +50,6 @@ const TARGET_H = 1402;
 
 const STYLE_FILE = path.join(ROOT, "scripts", "poster-style.md");
 const POSTERS_DIR = path.join(ROOT, "public", "assets", "posters");
-/**
- * The untouched illustration, kept beside the composited card.
- *
- * Compositing has to be repeatable: seating a screenshot onto <slug>.png and
- * then doing it again would stack one screenshot on the last. So generation
- * writes the art here, compositing always reads from here, and <slug>.png is
- * the finished card the site loads. Re-run --screen as many times as you like.
- */
-const artPath = (slug) => path.join(POSTERS_DIR, `${slug}-art.png`);
 const POSTERS_TS = path.join(ROOT, "lib", "posters.ts");
 const LOG_DIR = path.join(ROOT, "scripts", "poster-log");
 
@@ -61,12 +61,7 @@ function parseArgs(argv) {
     const a = argv[i];
     if (!a.startsWith("--")) continue;
     const key = a.slice(2);
-    if (
-      key === "dry-run" ||
-      key === "force" ||
-      key === "measure-only" ||
-      key === "no-screen"
-    ) {
+    if (key === "dry-run" || key === "force" || key === "measure-only") {
       out[key] = true;
       continue;
     }
@@ -90,14 +85,6 @@ function usage(msg) {
     --dry-run       print the prompt and stop, no API call
     --measure-only  re-measure an existing poster and rewrite lib/posters.ts
     --force         overwrite an existing poster file
-
-  Seating a real screenshot into the artwork (the "make it real" treatment):
-    --screen <path>   screenshot to composite into the drawn browser frame
-    --screen-width    fraction of poster width (default 0.78)
-    --screen-top      fraction of poster height for its top edge (default 0.52)
-    --screen-x        fraction for its left edge (default: centred)
-    --no-screen       rebuild <slug>.png from the artwork alone, dropping the
-                      screenshot. Use when a capture does not work for you.
 `);
   process.exit(msg ? 1 : 0);
 }
@@ -183,77 +170,6 @@ async function generate(key, prompt, { size, quality }) {
     console.log(`  rate limited, waiting ${Math.round(waitMs / 1000)}s (attempt ${attempt + 1}/5)`);
     await new Promise((r) => setTimeout(r, waitMs));
   }
-}
-
-/* ---------- the screenshot treatment ---------- */
-
-/**
- * Seat a real screenshot into the poster's drawn browser frame.
- *
- * The point is that a generated illustration, however good, is a picture of
- * nothing. A real screen is evidence. But a screenshot blown up full bleed
- * loses the illustration entirely and the grid stops looking like anyone's in
- * particular, so the screen sits small inside the frame with the artwork still
- * reading around it.
- *
- * It deliberately bleeds off the bottom of the card. The plate crops the poster
- * to 8:9 from the top, so a screen anchored low is cut mid-content: enough to
- * show the thing is real, not enough to answer what it does. That unanswered
- * question is the reason to click.
- */
-async function seatScreen(artFile, screenFile, outFile, opts = {}) {
-  const { width: PW, height: PH } = await sharp(artFile).metadata();
-
-  const wFrac = Number(opts.screenWidth ?? 0.78);
-  const topFrac = Number(opts.screenTop ?? 0.52);
-  const w = Math.round(PW * wFrac);
-  const x = Math.round(
-    opts.screenX !== undefined ? PW * Number(opts.screenX) : (PW - w) / 2
-  );
-  const y = Math.round(PH * topFrac);
-  // Tall enough to reach past the poster's foot, so the plate's crop is what
-  // cuts it rather than the image running out.
-  const h = Math.max(1, PH - y);
-
-  const shot = await sharp(screenFile)
-    .resize(w, h, { fit: "cover", position: "top" })
-    .toBuffer();
-
-  // Rounded top corners only: the bottom is cropped away, and rounding a
-  // corner that gets cut just leaves a notch.
-  const r = Math.round(PW * 0.012);
-  const mask = Buffer.from(
-    `<svg width="${w}" height="${h}"><rect x="0" y="0" width="${w}" height="${h}" rx="${r}" ry="${r}"/><rect x="0" y="${h - r}" width="${w}" height="${r}"/></svg>`
-  );
-  const rounded = await sharp(shot)
-    .composite([{ input: mask, blend: "dest-in" }])
-    .png()
-    .toBuffer();
-
-  // A soft contact shadow, so the screen sits ON the artwork rather than
-  // floating in a hole cut out of it.
-  const pad = Math.round(PW * 0.02);
-  const shadow = await sharp({
-    create: {
-      width: w + pad * 2,
-      height: h + pad,
-      channels: 4,
-      background: { r: 40, g: 35, b: 30, alpha: 0.22 },
-    },
-  })
-    .blur(Math.max(1, Math.round(PW * 0.014)))
-    .png()
-    .toBuffer();
-
-  await sharp(artFile)
-    .composite([
-      { input: shadow, left: x - pad, top: y - Math.round(pad / 2) },
-      { input: rounded, left: x, top: y },
-    ])
-    .png()
-    .toFile(outFile);
-
-  return { w, h, x, y };
 }
 
 /* ---------- measurement ---------- */
@@ -361,9 +277,7 @@ async function main() {
 
   const outFile = path.join(POSTERS_DIR, `${args.slug}.png`);
 
-  const skipGenerate =
-    args["measure-only"] || args.screen || args["no-screen"];
-  if (!skipGenerate) {
+  if (!args["measure-only"]) {
     if (!args.subject) usage("--subject is required (or use --measure-only).");
     if (existsSync(outFile) && !args.force && !args["dry-run"]) {
       usage(`${outFile} already exists. Pass --force to overwrite.`);
@@ -389,9 +303,7 @@ async function main() {
     await sharp(raw)
       .resize(TARGET_W, TARGET_H, { fit: "cover", position: "top" })
       .png()
-      .toFile(artPath(args.slug));
-    // The card starts as a copy of the artwork; --screen seats a shot into it.
-    await sharp(artPath(args.slug)).png().toFile(outFile);
+      .toFile(outFile);
     console.log(`  wrote ${path.relative(ROOT, outFile)} (${TARGET_W}x${TARGET_H})`);
 
     // What produced this image, kept next to the script. Without it a revision
@@ -410,31 +322,6 @@ async function main() {
   }
 
   if (!existsSync(outFile)) usage(`No poster at ${outFile}.`);
-
-  // An older poster predates the art/card split: adopt it as the artwork so
-  // compositing has something untouched to work from.
-  if (!existsSync(artPath(args.slug))) {
-    await sharp(outFile).png().toFile(artPath(args.slug));
-    console.log(`  kept the current image as ${args.slug}-art.png`);
-  }
-
-  if (args["no-screen"]) {
-    await sharp(artPath(args.slug)).png().toFile(outFile);
-    console.log("  rebuilt the card from artwork alone, no screenshot");
-  } else if (args.screen) {
-    const shot = path.isAbsolute(args.screen)
-      ? args.screen
-      : path.join(ROOT, args.screen);
-    if (!existsSync(shot)) usage(`No screenshot at ${shot}.`);
-    const box = await seatScreen(artPath(args.slug), shot, outFile, {
-      screenWidth: args["screen-width"],
-      screenTop: args["screen-top"],
-      screenX: args["screen-x"],
-    });
-    console.log(
-      `  seated ${path.basename(shot)} at ${box.w}x${box.h}, ${box.x},${box.y}`
-    );
-  }
 
   const m = await measure(outFile);
   console.log(`  background ${m.bg}`);
