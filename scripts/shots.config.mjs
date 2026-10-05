@@ -34,7 +34,7 @@ export const PROJECTS = [
     slug: "50-states-of-freedom",
     baseUrl: "https://50-states-of-freedom.vercel.app",
     routes: [
-      { name: "home", path: "/", posterTop: 190 },
+      { name: "home", path: "/", posterTop: 0 },
     ],
   },
 
