@@ -182,16 +182,39 @@ const browser = await puppeteer.launch({
   args: ["--hide-scrollbars", "--force-color-profile=srgb"],
 });
 
+const skippedLogins = [];
+
 /* `--login`: open the app and wait. Nothing is captured and nothing is typed
  * for you; close the window when you're signed in to each app you want. */
 if (loginMode) {
-  const page = (await browser.pages())[0] ?? (await browser.newPage());
-  const start = targets[0];
-  await page.goto(start.baseUrl, { waitUntil: "domcontentloaded" }).catch(() => {});
+  /* A tab per app that has an auth-gated route, rather than one tab at the
+   * first app's address. Signing in is the one step a script cannot do, so the
+   * least it can do is not also make you type six URLs. Apps whose server is
+   * down are skipped and named, because an error page in a tab looks exactly
+   * like an app that failed to load. */
+  const needLogin = [];
+  for (const p of targets) {
+    if (!p.routes.some((r) => r.auth)) continue;
+    if (await reachable(p.baseUrl)) needLogin.push(p);
+    else skippedLogins.push(`${p.slug}: ${p.baseUrl} not reachable`);
+  }
+  if (needLogin.length === 0) needLogin.push(targets[0]);
+
+  const first = (await browser.pages())[0] ?? (await browser.newPage());
+  for (const [i, p] of needLogin.entries()) {
+    const page = i === 0 ? first : await browser.newPage();
+    await page.goto(p.baseUrl, { waitUntil: "domcontentloaded" }).catch(() => {});
+  }
   console.log(
-    `\nSigning-in window open at ${start.baseUrl}\n` +
-      `  Sign in to each app you want captured, then press Enter here.\n` +
-      `  The session is kept in ${path.relative(process.cwd(), PROFILE)}/ and reused by later runs.\n`
+    `\nSigning-in window open, one tab per app:\n` +
+      needLogin.map((p) => `    ${p.slug.padEnd(26)} ${p.baseUrl}`).join("\n") +
+      `\n\n  Sign in to each tab you want captured, then press Enter here.\n` +
+      `  The session is kept in ${path.relative(process.cwd(), PROFILE)}/ and reused by later runs.\n` +
+      (skippedLogins.length
+        ? `\n  Not opened, server down:\n` +
+          skippedLogins.map((m) => `    ${m}`).join("\n") +
+          `\n`
+        : "")
   );
 
   /* Enter, not "close the window".

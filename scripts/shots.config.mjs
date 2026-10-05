@@ -134,7 +134,18 @@ export const PROJECTS = [
       /* Candidates for the card screen, compared with --poster --all and then
          left here so the comparison can be re-run when the app changes.
          Member-side: the capture profile is signed in to this one. */
-      { name: "challenges", path: "/challenges", posterOnly: true, wait: 1800 },
+      /* --- Detail-view screens for the case study --- */
+      { name: "challenges", path: "/challenges", auth: "member", wait: 1800 },
+      { name: "whats-on", path: "/whats-on", auth: "member", wait: 1500 },
+      /* A real member's body of work, not the owner's. Hard-coded id because
+         the point is this particular page: a real photograph of real people
+         and a real collection, which is what the empty walls cannot show. */
+      {
+        name: "member-work",
+        path: "/u/60043191-c1f1-4795-9a1e-b25a9363dfd6/work",
+        auth: "member",
+        wait: 1800,
+      },
       { name: "library", path: "/library", posterOnly: true, wait: 1800 },
       { name: "paths", path: "/paths", posterOnly: true, wait: 1800 },
       { name: "make-space", path: "/make-space", posterOnly: true, wait: 1800 },
