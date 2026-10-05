@@ -45,6 +45,31 @@ export const PROJECTS = [
   },
 
   {
+    // The two routes that ARE the case study: /es is the Spanish version the
+    // AI first pass paid for, /accessibility is the statement behind the
+    // accessibility claim. Capturing the home page alone would illustrate
+    // neither.
+    slug: "goldcoast-law",
+    baseUrl: "https://goldcoastlaw.com",
+    routes: [
+      { name: "home", path: "/", wait: 1600 },
+      { name: "es", path: "/es", wait: 1600 },
+      { name: "accessibility", path: "/accessibility", wait: 1200 },
+      { name: "areas-of-practice", path: "/areas-of-practice", wait: 1400 },
+    ],
+  },
+
+  {
+    // Renders client-side, so nothing useful comes back from a plain fetch;
+    // the capture runs a real browser, which is the point.
+    slug: "visionmap",
+    baseUrl: "https://visionmap.coach",
+    routes: [
+      { name: "home", path: "/", wait: 2200 },
+    ],
+  },
+
+  {
     slug: "thestoryoftelling",
     baseUrl: "https://thestoryoftelling.com",
     routes: [
