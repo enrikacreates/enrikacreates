@@ -602,6 +602,46 @@ try {
             }
           }
 
+          /* A route marked `auth` that ends up on a sign-in form captured the
+           * wrong thing, and it looks like a perfectly good screenshot in the
+           * output: three of today's runs quietly produced login pages because
+           * the session was signed in to a different browser than the capture
+           * profile. Fail loudly instead, and say what to do about it. */
+          if (route.auth) {
+            const landed = await page.evaluate(() => ({
+              url: location.pathname + location.search,
+              looksLikeLogin:
+                /\b(sign in|sign up|log in|login)\b/i.test(
+                  document.body.innerText.slice(0, 400)
+                ) && /password/i.test(document.body.innerHTML),
+            }));
+            const redirected =
+              !route.path.startsWith(landed.url.split("?")[0]) &&
+              !landed.url.startsWith(route.path.split("?")[0]);
+            /* `expect` is the reliable form: a signed-out app does not always
+             * redirect or show a password field. Hummingbird's logged-out
+             * state is a welcome screen at the very same URL, which no generic
+             * heuristic can tell from the real thing. Naming a string that
+             * only appears when signed in can. */
+            if (route.expect) {
+              const want = [route.expect].flat();
+              const text = await page.evaluate(() => document.body.innerText);
+              const missing = want.filter((w) => !text.includes(w));
+              if (missing.length) {
+                throw new Error(
+                  `expected ${missing.map((m) => JSON.stringify(m)).join(", ")} on the page and it is not there` +
+                    ` — likely signed out. Run: npm run shots -- --login --project ${project.slug}`
+                );
+              }
+            }
+            if (landed.looksLikeLogin && redirected) {
+              throw new Error(
+                `signed out — landed on ${landed.url}. ` +
+                  `Run: npm run shots -- --login --project ${project.slug}`
+              );
+            }
+          }
+
           /* An app shell scrolls INSIDE itself: React Native Web, and anything
            * else that pins a root to 100vh and puts a scroll container in it,
            * has a document exactly one viewport tall no matter how much
