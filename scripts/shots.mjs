@@ -6,6 +6,7 @@
  *   npm run shots -- --full            full-page instead of one viewport
  *   npm run shots -- --poster          one tall capture per app for the card screens
  *   npm run shots -- --poster --pick   same, but you choose the moment to fire
+ *   npm run shots -- --poster --all    every route, to compare before choosing
  *   npm run shots -- --list            print what would be captured, visit nothing
  *   npm run shots -- --login           open a window to sign in; captures nothing
  *
@@ -64,6 +65,7 @@ const listOnly = flag("list");
 const loginMode = flag("login");
 const posterMode = flag("poster");
 const pickMode = flag("pick");
+const allMode = flag("all");
 
 /* ---------- poster screens ---------- */
 
@@ -106,8 +108,12 @@ const viewports = posterMode ? [POSTER_VP] : VIEWPORTS;
 const posterRoute = (project) =>
   project.routes.find((r) => r.poster) ?? project.routes[0];
 
+/* `--all` captures every route at poster size instead of the one marked, so a
+ * set can be compared side by side before anything is wired into a card. Which
+ * screen sells an app is a judgement made by looking, not by reasoning about
+ * route names. */
 const routesFor = (project) =>
-  posterMode ? [posterRoute(project)] : project.routes;
+  posterMode && !allMode ? [posterRoute(project)] : project.routes;
 
 /* A persistent Chrome profile, so a signed-in session survives between runs.
  *
@@ -434,7 +440,10 @@ try {
              * is 2x and large; nothing downstream wants it. */
             const tmp = path.join(dir, `.${route.name}-poster.png`);
             await page.screenshot({ path: tmp, fullPage: true });
-            const file = path.join(dir, "fullpage.webp");
+            const file = path.join(
+              dir,
+              allMode ? `poster-${route.name}.webp` : "fullpage.webp"
+            );
             const { width: rw, height: rh } = await sharp(tmp).metadata();
 
             /* A marketing page can run eight screens deep, and the hover has
@@ -467,7 +476,7 @@ try {
                 ? "  short — little to reveal on hover"
                 : "";
             console.log(`  ✓ ${file}  ${w}x${h}  ${ratio.toFixed(2)}x tall${note}`);
-            posters.push({ slug: project.slug, route: route.path, w: rw, h: h0 });
+            posters.push({ slug: project.slug, file, w: rw, h: h0 });
             saved++;
             continue;
           }
@@ -500,7 +509,7 @@ if (posters.length) {
   console.log(`\nFor SCREENS in lib/posters.ts:\n`);
   for (const p of posters) {
     console.log(`  "${p.slug}": {`);
-    console.log(`    src: "/assets/projects/${p.slug}/shots/fullpage.webp",`);
+    console.log(`    src: "/${path.relative("public", p.file)}",`);
     console.log(`    top: 0.42,`);
     console.log(`    width: 0.9,`);
     console.log(`    ratio: ${p.h} / ${p.w},`);

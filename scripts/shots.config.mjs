@@ -225,30 +225,34 @@ export const PROJECTS = [
   {
     slug: "crushit",
     baseUrl: "http://localhost:5175",
+    /* `/` redirects to the last realm used, so the realm pages are the real
+     * surfaces. The landing opens on a video, which a still capture can only
+     * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
-      { name: "home", path: "/" },
-      {
-        name: "dashboard",
-        path: "/",
-        auth: "member",
-        wait: 1800,
-        poster: true,
-      },
+      { name: "home", path: "/", auth: "member", wait: 2000 },
+      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
+      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
+      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
+      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
+      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
     ],
   },
 
   {
     slug: "deeplyreader",
     baseUrl: "http://localhost:5188",
+    /* `/` redirects to the last realm used, so the realm pages are the real
+     * surfaces. The landing opens on a video, which a still capture can only
+     * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
-      { name: "home", path: "/" },
-      {
-        name: "dashboard",
-        path: "/",
-        auth: "member",
-        wait: 1800,
-        poster: true,
-      },
+      { name: "home", path: "/", auth: "member", wait: 2000 },
+      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
+      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
+      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
+      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
+      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
     ],
   },
 
@@ -428,45 +432,51 @@ export const PROJECTS = [
   {
     slug: "storeit",
     baseUrl: "http://localhost:3230",
+    /* `/` redirects to the last realm used, so the realm pages are the real
+     * surfaces. The landing opens on a video, which a still capture can only
+     * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
-      { name: "home", path: "/" },
-      {
-        name: "dashboard",
-        path: "/",
-        auth: "member",
-        wait: 1800,
-        poster: true,
-      },
+      { name: "home", path: "/", auth: "member", wait: 2000 },
+      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
+      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
+      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
+      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
+      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
     ],
   },
 
   {
     slug: "caashflow",
     baseUrl: "http://localhost:3220",
+    /* `/` redirects to the last realm used, so the realm pages are the real
+     * surfaces. The landing opens on a video, which a still capture can only
+     * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
-      { name: "home", path: "/" },
-      {
-        name: "dashboard",
-        path: "/",
-        auth: "member",
-        wait: 1800,
-        poster: true,
-      },
+      { name: "home", path: "/", auth: "member", wait: 2000 },
+      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
+      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
+      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
+      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
+      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
     ],
   },
 
   {
     slug: "hummingbird",
     baseUrl: "http://localhost:8082",
+    /* `/` redirects to the last realm used, so the realm pages are the real
+     * surfaces. The landing opens on a video, which a still capture can only
+     * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
-      { name: "home", path: "/" },
-      {
-        name: "dashboard",
-        path: "/",
-        auth: "member",
-        wait: 1800,
-        poster: true,
-      },
+      { name: "home", path: "/", auth: "member", wait: 2000 },
+      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
+      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
+      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
+      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
+      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
     ],
   },
 
@@ -482,30 +492,34 @@ export const PROJECTS = [
   {
     slug: "signaturestyle",
     baseUrl: "http://localhost:5174",
+    /* `/` redirects to the last realm used, so the realm pages are the real
+     * surfaces. The landing opens on a video, which a still capture can only
+     * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
-      { name: "home", path: "/" },
-      {
-        name: "dashboard",
-        path: "/",
-        auth: "member",
-        wait: 1800,
-        poster: true,
-      },
+      { name: "home", path: "/", auth: "member", wait: 2000 },
+      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
+      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
+      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
+      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
+      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
     ],
   },
 
   {
     slug: "visionmap",
     baseUrl: "http://localhost:3001",
+    /* `/` redirects to the last realm used, so the realm pages are the real
+     * surfaces. The landing opens on a video, which a still capture can only
+     * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
-      { name: "home", path: "/" },
-      {
-        name: "dashboard",
-        path: "/",
-        auth: "member",
-        wait: 1800,
-        poster: true,
-      },
+      { name: "home", path: "/", auth: "member", wait: 2000 },
+      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
+      { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
+      { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
+      { name: "lookbooks", path: "/wardrobe/lookbooks", auth: "member", wait: 2000 },
+      { name: "capsule", path: "/wardrobe/capsule", auth: "member", wait: 2000 },
     ],
   },
 ];
