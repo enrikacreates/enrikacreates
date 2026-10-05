@@ -218,14 +218,35 @@ const FLAT_POSTERS = new Set([
  * The screenshot wants to be a FULL PAGE capture, not a viewport one. A
  * viewport-height image has nothing to scroll.
  */
-const SCREENS: Record<string, { src: string; top: number; width: number }> = {
-  "the-daily-story": {
-    src: "/assets/projects/thedailystory/shots/vision-clean-1440.png",
-    top: 0.42,
-    width: 0.9,
-  },
+/**
+ * A real screenshot seated into a poster, in place of the illustrated screen.
+ *
+ * `ratio` is the capture's own height / width, measured not guessed, because
+ * it is what decides how far the shot can travel inside its window on hover.
+ * `travel` is how much of that available scroll to actually use: short of 1,
+ * deliberately, so the card shows real work in motion without spending the
+ * whole page. What is left unseen is the reason to click.
+ */
+export type Screen = {
+  src: string;
+  /** Top of the window, as a share of the plate's height. */
+  top: number;
+  /** Window width, as a share of the card's width. */
+  width: number;
+  /** Capture height / width. */
+  ratio: number;
+  /** Share of the available overflow to scroll through on hover. */
+  travel?: number;
 };
 
+const SCREENS: Record<string, Screen> = {
+  "the-daily-story": {
+    src: "/assets/projects/thedailystory/shots/fullpage.webp",
+    top: 0.42,
+    width: 0.9,
+    ratio: 3450 / 1045,
+  },
+};
 export function getScreen(slug: string) {
   return SCREENS[slug];
 }

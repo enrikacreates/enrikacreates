@@ -12,7 +12,7 @@
 
 import Image from "next/image";
 
-import { getPoster, getScreen } from "@/lib/posters";
+import { getPoster, getScreen, type Screen } from "@/lib/posters";
 
 /**
  * `sizes` has to describe the box the image actually lands in, and this
@@ -25,6 +25,26 @@ const SIZES = {
   card: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   banner: "(max-width: 1000px) 100vw, 1000px",
 } as const;
+
+/** The plate's aspect, as height over width. Mirrors `.poster-plate`. */
+const PLATE_RATIO = 9 / 8;
+
+/**
+ * How far up to slide the capture on hover, as a share of its own height.
+ *
+ * CSS can clip the window but can't know how tall the shot inside it is, so a
+ * single hand-picked number scrolls a viewport-sized capture off the top and
+ * barely moves a full-page one. This derives it instead: work out how much of
+ * the image overflows its window, then use `travel` of that. One full-page
+ * capture and one short one both end up scrolling the same proportion of
+ * whatever they actually have.
+ */
+function revealFor({ top, width, ratio, travel = 0.7 }: Screen) {
+  const windowH = PLATE_RATIO * (1 - top); // in card widths
+  const imageH = width * ratio; // likewise
+  const overflow = Math.max(0, 1 - windowH / imageH); // share of the image
+  return 1 - travel * overflow;
+}
 
 export function PosterArt({
   slug,
@@ -68,6 +88,7 @@ export function PosterArt({
               {
                 "--screen-top": `${screen.top * 100}%`,
                 "--screen-width": `${screen.width * 100}%`,
+                "--screen-reveal": `${(revealFor(screen) * 100).toFixed(2)}%`,
               } as React.CSSProperties
             }
             aria-hidden="true"

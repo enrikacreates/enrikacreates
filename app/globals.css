@@ -895,9 +895,9 @@ body {
   will-change: transform;
 }
 
-/* translateY by a share of the image's own height, so one rule serves a short
-   capture and a tall one: a full-page shot travels far, a viewport shot barely
-   moves, and neither needs its own number. */
+/* --screen-reveal is computed per capture in PosterArt, from the shot's own
+   height against the window it sits in, so a full-page shot and a viewport one
+   scroll the same share of whatever they have rather than the same number. */
 .catalog-item:hover .poster-screen img,
 .featured-cell:hover .poster-screen img,
 .catalog-item:focus-within .poster-screen img,
