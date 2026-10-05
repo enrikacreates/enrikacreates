@@ -657,6 +657,27 @@ try {
             }
           }
 
+          /* Client work can be shown as a working system without showing the
+           * client's business. `blur` takes the selectors holding the names
+           * and titles and softens them in the page before the shot, so the
+           * structure, the phases and the counts still read while nothing
+           * identifiable survives into a file that gets deployed. Done in the
+           * page rather than over the image afterwards, so it stays correct
+           * when the layout moves. */
+          if (route.blur) {
+            const blurred = await page.evaluate((sels, px) => {
+              let n = 0;
+              for (const sel of sels) {
+                for (const el of document.querySelectorAll(sel)) {
+                  el.style.setProperty("filter", `blur(${px}px)`, "important");
+                  n++;
+                }
+              }
+              return n;
+            }, [route.blur].flat(), route.blurAmount ?? 4);
+            console.log(`    blurred ${blurred} element${blurred === 1 ? "" : "s"}`);
+          }
+
           /* An app shell scrolls INSIDE itself: React Native Web, and anything
            * else that pins a root to 100vh and puts a scroll container in it,
            * has a document exactly one viewport tall however much content it

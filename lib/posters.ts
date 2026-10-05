@@ -259,6 +259,11 @@ const SCREENS: Record<string, Screen> = {
        420px-wide screen across the whole card. */
     width: 0.42,
   },
+  "bti-production-hub": {
+    src: "/assets/projects/bti-production-hub/shots/fullpage.webp",
+    top: 0.42,
+    width: 0.9,
+  },
   "50-states-of-freedom": {
     src: "/assets/projects/50-states-of-freedom/shots/fullpage.webp",
     top: 0.42,

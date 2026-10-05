@@ -111,7 +111,26 @@ export const PROJECTS = [
       { name: "flow1-login", path: "/login", wait: 900 },
       // Where it started: a single request form, before any of the rest existed.
       { name: "flow2-request", path: "/requests/new", wait: 1200 },
-      { name: "flow3-board", path: "/board", auth: "member", wait: 1500, poster: true },
+      {
+        name: "flow3-board",
+        path: "/board",
+        auth: "member",
+        wait: 1500,
+        expect: "Production pipeline",
+        poster: true,
+        /* A real client's project names and staff names. The system is the
+           story; whose videos they are is not ours to publish. */
+        blur: [
+          // Scoped to the cards. An unscoped "every muted paragraph" also
+          // caught the page's own subtitle, and an adjacent-sibling rule
+          // matched nothing at all and left every name crisp -- which is the
+          // failure that matters, so this errs wide inside the cards and
+          // leaves everything outside them alone.
+          'article h3[class*="text-navy"]',
+          'article p[class*="text-muted-2"]',
+          'article span[class*="bg-quiet"]',
+        ],
+      },
       { name: "flow4-calendar", path: "/calendar", auth: "member", wait: 1500 },
       { name: "flow5-capacity", path: "/capacity", auth: "member", wait: 1500 },
       { name: "flow6-tasks", path: "/tasks", auth: "member", wait: 1200 },
@@ -468,17 +487,24 @@ export const PROJECTS = [
     slug: "hummingbird",
     baseUrl: "http://localhost:8082",
     routes: [
-      /* A list of real songs with waveforms, tags and takes: content with
-         natural overflow, where the signed-out welcome is one motionless
-         viewport. Expo web renders the phone centred on a decorative
-         backdrop, so the seated screen is narrow rather than full width. */
+      { name: "songbook", path: "/", auth: "member", expect: ["Songbook", "Ridgeline"] },
+      /* The song itself, on its Vibe tab: cover artwork, and the tracks this
+         one is reaching for. Not addressable by URL -- the songbook is the
+         only way in -- so it is reached the way a person reaches it, by
+         pressing the song and then the tab.
+
+         posterShell/posterHeight: Expo web scrolls inside a shell, so the
+         document is one viewport tall however much is in it and the phone is
+         a fifth of a desktop frame wide. A tall viewport lets the app lay
+         itself out long on its own terms; the shell is measured, not touched.
+         posterScale 2 because a 420px column needs the density. */
       {
-        name: "songbook",
+        name: "vibe",
         path: "/",
         auth: "member",
-        wait: 2600,
-        // A real song, not the header: the header renders before any data does.
-        expect: ["Songbook", "Ridgeline"],
+        expect: ["Ridgeline"],
+        click: ["text:Ridgeline", "text:VIBE"],
+        clickWait: 1400,
         poster: true,
         posterShell: true,
         posterHeight: 2200,
