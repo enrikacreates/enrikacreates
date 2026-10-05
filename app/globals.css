@@ -863,13 +863,17 @@ body {
    SignatureStyle the coat and the dress form ran straight through both lines.
    Below means a poster never has to reserve a text zone, which is what lets one
    generated at 4:5 drop into any slot without art-directing around the type. */
-.featured-item.has-flat,
+/* The mount.
+   On a featured card it belongs to the CELL rather than the link, so the
+   signals line underneath the caption sits inside the card's edge instead of
+   floating below it as the one orphaned element in the grid. It stays outside
+   the anchor, which is the reason it was ever separate: it is a label, not a
+   click target, and inside the link it would bloat the accessible name.
+   A catalog card has no signals, so there the link is still the whole card. */
+.featured-cell.has-flat,
 .catalog-item.has-flat {
-  aspect-ratio: auto;
-  /* A mount at rest, not just under the hover shadow. The page is cream, so a
-     lighter card lifts every poster off it and gives the card an edge of its
-     own without drawing a border. Bone rather than pure white: against a warm
-     palette #FFF read as cold and as a hole rather than a surface. */
+  /* Bone rather than pure white: against a warm palette #FFF read as cold, and
+     as a hole rather than a surface. */
   background: var(--bone, #FFFDF7);
   /* Room between the artwork and the card's own edge, so the hover shadow has
      something to sit against. Flush, it cropped; with the mount, it lifts. */
@@ -927,21 +931,47 @@ body {
   min-height: calc(2 * 1.45em);
 }
 
-/* Hover: the shadow stays on the whole card, so the panel picks up the artwork
-   and its caption together. What it was missing is room. With no padding the
-   plate ran flush to the panel's edge, so the shadow read as a crop rather than
-   as a card being lifted. The padding is what turns it into a mount. */
-.catalog-item.has-flat:hover,
+/* The link inside a mounted cell carries none of the surface itself. */
+.featured-item.has-flat {
+  aspect-ratio: auto;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
 .featured-item.has-flat:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+/* Hover: the shadow stays on the whole card, so it picks up the artwork, its
+   caption and its signals together. What it was missing is room. With no
+   padding the plate ran flush to the edge, so the shadow read as a crop rather
+   than as a card being lifted. The padding is what turns it into a mount. */
+.catalog-item.has-flat:hover,
+.featured-cell.has-flat:hover {
   box-shadow: 0 18px 40px rgba(44, 37, 32, 0.18);
 }
 .catalog-item.has-flat,
-.featured-item.has-flat {
+.featured-cell.has-flat {
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.featured-item.has-flat:hover {
+.featured-cell.has-flat:hover {
   transform: translateY(-6px);
+}
+
+/* Inside the mount now, so it needs the gap the card used to give it. */
+.featured-cell.has-flat .featured-signals,
+.catalog-item.has-flat .featured-signals {
+  margin-top: 0.7rem;
+  padding: 0;
+}
+/* On a catalog card the line sits inside the caption block, which is centred
+   nowhere and left-aligned, so it has to match rather than inherit the
+   featured row's own alignment. */
+.catalog-item.has-flat .featured-signals {
+  justify-content: flex-start;
 }
 
 /* The caption now sits on the page rather than on the card's colour, so a dark

@@ -168,7 +168,14 @@ export function WorkSection({
                 // Wrapper so the signals line can sit under the card without
                 // being inside the link: it's a label, not a click target, and
                 // folding it into the anchor would bloat the accessible name.
-                <div className="featured-cell" key={item._id}>
+                // The mount lives on the cell, not the link, so the signals
+                // line can sit visually inside the card while staying outside
+                // the anchor: it's a label, not a click target, and folding it
+                // into the link would bloat the accessible name.
+                <div
+                  className={`featured-cell${poster?.flat ? " has-flat" : ""}`}
+                  key={item._id}
+                >
                 <Link
                   href={`/work/${item.slug}`}
                   className={`featured-item${isDarkColor(item.color) ? " dark-card" : ""}${poster?.flat ? " has-flat" : ""}`}

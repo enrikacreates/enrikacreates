@@ -67,6 +67,16 @@ export function ProjectCard({ item, index }: ProjectCardProps) {
             <span className="card-year">{item.year}</span>
             <h3 className="card-title">{item.title}</h3>
             <p className="card-tagline">{item.tagline}</p>
+            {/* The same line the featured cards carry. The two rows were
+                showing different things about the same projects for no reason
+                other than that only one of them had been given it. */}
+            {item.signals && item.signals.length > 0 && (
+              <ul className="featured-signals">
+                {item.signals.map((sig) => (
+                  <li key={sig}>{sig}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </>
       ) : (
