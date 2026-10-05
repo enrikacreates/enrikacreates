@@ -17,7 +17,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { HeroVideo } from "./HeroVideo";
 import { WorkSection } from "./WorkSection";
 import type { Category, ProjectListItem } from "@/lib/types";
-import { ScreenEngagement } from "./ScreenEngagement";
 
 interface HomeExperienceProps {
   projects: ProjectListItem[];
@@ -173,9 +172,6 @@ export function HomeExperience({
 
   return (
     <>
-      {/* Touch has no hover, so the seated screens need a way to be engaged
-          that a thumb can produce. Renders nothing. */}
-      <ScreenEngagement />
       {/* One stage so the wordmark stays stuck until the whole hero is done. */}
       <div className="hero-stage" ref={stageRef}>
         {heroLogo}

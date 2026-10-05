@@ -880,9 +880,16 @@ body {
   /* Runs past the plate's own edge; the plate crops it, which is what makes
      the screen look cut off mid-content rather than neatly ended. */
   bottom: 0;
-  overflow: hidden;
   border-radius: 6px 6px 0 0;
   z-index: 1;
+
+  /* The viewer scrolls it, rather than watching it scroll. A timed reveal has
+     to guess how long someone wants to look and is wrong for everybody; this
+     just hands them the page. `contain` stops a flick inside the screen from
+     carrying on into the page behind it. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
 
   /* At rest the screen sits low, showing a strip of itself under the artwork:
      enough to say there is something real in there, not enough to read. The
@@ -892,54 +899,85 @@ body {
   transform: translateX(-50%) translateY(var(--screen-peek, 66%));
   transition: transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
+.poster-screen::-webkit-scrollbar { display: none; }
+
 .poster-screen img {
   display: block;
   width: 100%;
   height: auto;
-  /* Long, slow and eased, so it reads as someone scrolling rather than as an
-     animation playing. Returns on its own when the pointer leaves. */
-  transition: transform 3s cubic-bezier(0.22, 0.61, 0.36, 1);
-  will-change: transform;
 }
 
-/* --screen-reveal is computed per capture in PosterArt, from the shot's own
-   height against the window it sits in, so a full-page shot and a viewport one
-   scroll the same share of whatever they have rather than the same number. */
-/* Three ways in, one behaviour. `.is-engaged` is set by an observer on touch,
-   where there is no hover at all: without it a phone would see the peek and
-   nothing else, which is worse than the full screen it used to get. */
-.catalog-item:hover .poster-screen,
-.featured-cell:hover .poster-screen,
-.catalog-item:focus-within .poster-screen,
-.featured-cell:focus-within .poster-screen,
-.catalog-item.is-engaged .poster-screen,
-.featured-cell.is-engaged .poster-screen {
+/* A hint that the screen is yours to scroll. Without it the rise looks like a
+   finished animation rather than an invitation: nothing about a still image
+   says it moves. On the plate rather than inside the window, so it stays put
+   while the content slides under it. */
+.poster-plate:has(.poster-screen)::after {
+  content: "scroll to view";
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%) translateY(4px);
+  z-index: 2;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(20, 18, 16, 0.62);
+  backdrop-filter: blur(3px);
+  color: #fff;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 220ms ease, transform 220ms ease;
+  transition-delay: 420ms; /* after the rise lands, not during it */
+}
+
+.catalog-item:hover .poster-plate:has(.poster-screen)::after,
+.featured-cell:hover .poster-plate:has(.poster-screen)::after,
+.catalog-item:focus-within .poster-plate:has(.poster-screen)::after,
+.featured-cell:focus-within .poster-plate:has(.poster-screen)::after {
+  opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
 
-.catalog-item:hover .poster-screen img,
-.featured-cell:hover .poster-screen img,
-.catalog-item:focus-within .poster-screen img,
-.featured-cell:focus-within .poster-screen img,
-.catalog-item.is-engaged .poster-screen img,
-.featured-cell.is-engaged .poster-screen img {
-  transform: translateY(calc(-100% + var(--screen-reveal, 62%)));
-  /* Waits for the rise to land. Scrolling content that is still moving into
-     frame reads as a glitch rather than as a reveal. */
-  transition-delay: 520ms;
+/* On touch the screen is already risen, so the hint is the only thing telling
+   a thumb there is more under it. No hover to wait for, so no delay. */
+@media (hover: none) {
+  .poster-plate:has(.poster-screen)::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    transition-delay: 0s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-plate:has(.poster-screen)::after { transition: none; }
+}
+
+/* The rise is the whole interaction now. What is inside is the viewer's to
+   scroll, or to ignore and click through, which is the point of the tease. */
+.catalog-item:hover .poster-screen,
+.featured-cell:hover .poster-screen,
+.catalog-item:focus-within .poster-screen,
+.featured-cell:focus-within .poster-screen {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* No hover to wait for, and nothing to tap twice: a touch device gets the
+   screen already risen and scrolls it with a thumb. The peek is a pointer
+   affordance -- it promises a reveal that hovering produces, and a phone
+   cannot hover, so promising it there would be a lie. */
+@media (hover: none) {
+  .poster-screen { transform: translateX(-50%) translateY(0); }
 }
 
 /* Someone who has asked for less motion gets the still. */
-/* Someone who has asked for less motion gets the still -- and gets it fully
-   risen, not peeking, since the peek only makes sense as the first half of a
-   movement they have opted out of. */
+/* Someone who has asked for less motion gets the screen fully risen and still,
+   since the peek only makes sense as the first half of a movement they have
+   opted out of. They can still scroll it. */
 @media (prefers-reduced-motion: reduce) {
-  .poster-screen,
-  .poster-screen img { transition: none; }
-  .poster-screen { transform: translateX(-50%) translateY(0); }
-  .catalog-item:hover .poster-screen img,
-  .featured-cell:hover .poster-screen img,
-  .catalog-item.is-engaged .poster-screen img { transform: none; }
+  .poster-screen { transition: none; transform: translateX(-50%) translateY(0); }
 }
 
 /* The plate that holds a finished poster.
