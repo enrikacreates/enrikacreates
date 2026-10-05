@@ -39,7 +39,7 @@ const PLATE_RATIO = 9 / 8;
  * capture and one short one both end up scrolling the same proportion of
  * whatever they actually have.
  */
-function revealFor({ top, width, ratio, travel = 0.7 }: Screen & { ratio: number }) {
+function revealFor({ top, width, ratio, travel = 0.7 }: Screen & { top: number; ratio: number }) {
   const windowH = PLATE_RATIO * (1 - top); // in card widths
   const imageH = width * ratio; // likewise
   const overflow = Math.max(0, 1 - windowH / imageH); // share of the image

@@ -229,8 +229,9 @@ const FLAT_POSTERS = new Set([
  */
 export type Screen = {
   src: string;
-  /** Top of the window, as a share of the plate's height. */
-  top: number;
+  /** Top of the window, as a share of the plate's height. Defaults to the
+   *  shared SCREEN_TOP; set only when a card genuinely must differ. */
+  top?: number;
   /** Window width, as a share of the card's width. */
   width: number;
   /** Capture height / width. Read from the size manifest; set here only to
@@ -242,18 +243,20 @@ export type Screen = {
 
 import SIZES from "./screen-sizes.json";
 
+/* Every seated screen starts at the same height, so the row of cards reads as
+ * a set rather than as screens sliding about at different depths. Tuning one
+ * card's top to buy its hover a little more travel is a real temptation and it
+ * is visible immediately: a straight edge across the grid is worth more than a
+ * few pixels of scroll on one card. */
+const SCREEN_TOP = 0.42;
+
 const SCREENS: Record<string, Screen> = {
   "the-daily-story": {
     src: "/assets/projects/thedailystory/shots/fullpage.webp",
-    top: 0.42,
     width: 0.9,
   },
   hummingbird: {
     src: "/assets/projects/hummingbird/shots/fullpage.webp",
-    /* Lower than the others. Its shell caps at 920px however tall the capture
-       viewport is, so the capture is 2.19x where the rest are 3.3-4.3x; a
-       shorter window is the only way left to buy the scroll any travel. */
-    top: 0.52,
     /* A phone, not a browser. The capture is the app's own shell cropped out
        of a desktop backdrop, so seating it at the usual 0.9 would stretch a
        420px-wide screen across the whole card. */
@@ -261,38 +264,32 @@ const SCREENS: Record<string, Screen> = {
   },
   "what-is-love": {
     src: "/assets/projects/whatislovebook/shots/fullpage.webp",
-    top: 0.42,
     width: 0.9,
   },
   betterstories: {
     src: "/assets/projects/betterstories/shots/fullpage.webp",
-    /* Lower than the others: the page is 0.90x, one viewport, so a full-height
-       window would leave almost nothing to travel. */
-    top: 0.55,
     width: 0.9,
   },
   "bti-production-hub": {
     src: "/assets/projects/bti-production-hub/shots/fullpage.webp",
-    top: 0.42,
     width: 0.9,
   },
   "50-states-of-freedom": {
     src: "/assets/projects/50-states-of-freedom/shots/fullpage.webp",
-    top: 0.42,
     width: 0.9,
   },
   signaturestyle: {
     src: "/assets/projects/signaturestyle/shots/fullpage.webp",
-    top: 0.42,
     width: 0.9,
   },
   "create-space-collective": {
     src: "/assets/projects/create-space-collective/shots/fullpage.webp",
-    top: 0.42,
     width: 0.9,
   },
 };
-export function getScreen(slug: string): (Screen & { ratio: number }) | undefined {
+export function getScreen(
+  slug: string
+): (Screen & { top: number; ratio: number }) | undefined {
   const screen = SCREENS[slug];
   if (!screen) return undefined;
   const measured: number[] | undefined = (SIZES as Record<string, number[]>)[screen.src];
@@ -304,7 +301,7 @@ export function getScreen(slug: string): (Screen & { ratio: number }) | undefine
    * guessed ratio would scroll it to the wrong place; leaving the screen off
    * falls back to the artwork, which is correct if plainer. */
   if (!ratio) return undefined;
-  return { ...screen, ratio };
+  return { ...screen, top: screen.top ?? SCREEN_TOP, ratio };
 }
 
 export function getPoster(slug: string): Poster | undefined {
