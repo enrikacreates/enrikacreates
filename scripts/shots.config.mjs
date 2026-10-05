@@ -253,7 +253,16 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      /* posterScroll: the clusters stay bloomed only while the page is
+         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      {
+        name: "wardrobe",
+        path: "/wardrobe",
+        auth: "member",
+        wait: 2000,
+        poster: true,
+        posterScroll: 200,
+      },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
       { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
@@ -270,7 +279,16 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      /* posterScroll: the clusters stay bloomed only while the page is
+         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      {
+        name: "wardrobe",
+        path: "/wardrobe",
+        auth: "member",
+        wait: 2000,
+        poster: true,
+        posterScroll: 200,
+      },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
       { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
@@ -460,7 +478,16 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      /* posterScroll: the clusters stay bloomed only while the page is
+         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      {
+        name: "wardrobe",
+        path: "/wardrobe",
+        auth: "member",
+        wait: 2000,
+        poster: true,
+        posterScroll: 200,
+      },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
       { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
@@ -477,7 +504,16 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      /* posterScroll: the clusters stay bloomed only while the page is
+         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      {
+        name: "wardrobe",
+        path: "/wardrobe",
+        auth: "member",
+        wait: 2000,
+        poster: true,
+        posterScroll: 200,
+      },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
       { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
@@ -494,7 +530,16 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      /* posterScroll: the clusters stay bloomed only while the page is
+         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      {
+        name: "wardrobe",
+        path: "/wardrobe",
+        auth: "member",
+        wait: 2000,
+        poster: true,
+        posterScroll: 200,
+      },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
       { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
@@ -520,7 +565,16 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      /* posterScroll: the clusters stay bloomed only while the page is
+         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      {
+        name: "wardrobe",
+        path: "/wardrobe",
+        auth: "member",
+        wait: 2000,
+        poster: true,
+        posterScroll: 200,
+      },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
       { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },
@@ -537,7 +591,16 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      { name: "wardrobe", path: "/wardrobe", auth: "member", wait: 2000, poster: true },
+      /* posterScroll: the clusters stay bloomed only while the page is
+         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      {
+        name: "wardrobe",
+        path: "/wardrobe",
+        auth: "member",
+        wait: 2000,
+        poster: true,
+        posterScroll: 200,
+      },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
       { name: "outfits", path: "/wardrobe/outfits", auth: "member", wait: 2000 },

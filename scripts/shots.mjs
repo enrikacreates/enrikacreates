@@ -437,17 +437,25 @@ try {
            * for the viewport to reach it never loads: lazy images stay blank
            * and reveal-on-scroll sections stay at opacity 0. Walking down the
            * page and back up first is what makes the capture show the page a
-           * person would actually see. */
+           * person would actually see.
+           *
+           * Where it comes to rest matters. A page whose open state is keyed
+           * to having scrolled reads a return to y=0 as "never scrolled" and
+           * folds shut: SignatureStyle's photo clusters bloom at scrollY > 30
+           * and explicitly re-clump at y <= 0, so the lazy-load pass was
+           * closing them in the last moment before the shot. `posterScroll`
+           * leaves the page resting below that line. The capture still starts
+           * at the document origin, so nothing is lost off the top. */
           if (posterMode) {
-            await page.evaluate(async () => {
+            await page.evaluate(async (restY) => {
               const step = window.innerHeight * 0.8;
               for (let y = 0; y < document.body.scrollHeight; y += step) {
                 window.scrollTo(0, y);
                 await new Promise((r) => setTimeout(r, 120));
               }
-              window.scrollTo(0, 0);
-              await new Promise((r) => setTimeout(r, 400));
-            });
+              window.scrollTo(0, restY);
+              await new Promise((r) => setTimeout(r, 600));
+            }, route.posterScroll ?? 0);
           }
 
           /* A script can get the width, the chrome and the lazy loading right
