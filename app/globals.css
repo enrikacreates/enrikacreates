@@ -182,6 +182,11 @@ body {
    ~14px of text and the mark is ~45px tall, so anchoring both by their top edge
    left the mark's centre sitting about 12px below theirs. */
 .hero-nav-mark {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
   position: fixed;
   top: 0;
   left: 2rem;
@@ -190,7 +195,20 @@ body {
   align-items: center;
   z-index: 810;
   opacity: var(--logo-shift, 0);
+  /* Only clickable once it has actually faded in. While the hero still owns
+     the wordmark this sits invisible over the collage, and an invisible target
+     that swallows clicks is worse than no target at all. */
   pointer-events: none;
+}
+
+.hero-stage.mark-live .hero-nav-mark {
+  pointer-events: auto;
+}
+
+.hero-nav-mark:focus-visible {
+  outline: 2px solid var(--ink, #2A2724);
+  outline-offset: 6px;
+  border-radius: 4px;
 }
 
 /* 110px keeps it inside the 77px filter bar in the work section (at 150px it
@@ -912,7 +930,10 @@ body {
    says it moves.
 
    "more", because click is what views the case -- the pill must not claim the
-   invitation the click already owns.
+   invitation the click already owns. One line, not two: a second saying "click
+   for full case" would teach what a titled, clickable card already announces,
+   and thirteen of those is chrome rather than help. The arrow is the part that
+   was actually missing, since "scroll" alone does not say which way.
 
    Hung off .card-year, which is the one element sitting directly under the
    plate in BOTH layouts: a catalog item wraps its text in .card-content and a
@@ -927,7 +948,7 @@ body {
 
 .catalog-item:has(.poster-screen) .card-year::after,
 .featured-cell:has(.poster-screen) .card-year::after {
-  content: "scroll to view more";
+  content: "scroll to view more \2193";
   position: absolute;
   left: 50%;
   bottom: calc(100% + 2px);
@@ -954,6 +975,15 @@ body {
 .featured-cell:focus-within .card-year::after {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+/* Taken. Once someone is scrolling, an instruction to scroll is just something
+   in the way; it returns when the screen does, because then it is true again.
+   After the hover rule, which it has to beat at equal specificity. */
+.catalog-item.is-scrolled .card-year::after,
+.featured-cell.is-scrolled .card-year::after {
+  opacity: 0;
+  transition-delay: 0s;
 }
 
 /* On touch the screen is already risen, so the hint is the only thing telling

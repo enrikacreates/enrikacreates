@@ -17,7 +17,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { HeroVideo } from "./HeroVideo";
 import { WorkSection } from "./WorkSection";
 import type { Category, ProjectListItem } from "@/lib/types";
-import { ScreenScrollReset } from "./ScreenScrollReset";
+import { ScreenScroll } from "./ScreenScroll";
 
 interface HomeExperienceProps {
   projects: ProjectListItem[];
@@ -87,12 +87,16 @@ export function HomeExperience({
         "--logo-collapse",
         clamp01(y / LOGO_COLLAPSE_PX).toFixed(4)
       );
-      stage!.style.setProperty(
-        "--logo-shift",
-        clamp01(
-          (y - LOGO_SHIFT_START_PX) / (LOGO_SHIFT_END_PX - LOGO_SHIFT_START_PX)
-        ).toFixed(4)
+      const logoShift = clamp01(
+        (y - LOGO_SHIFT_START_PX) / (LOGO_SHIFT_END_PX - LOGO_SHIFT_START_PX)
       );
+      stage!.style.setProperty("--logo-shift", logoShift.toFixed(4));
+      /* The corner mark is a button, and a button faded to nothing still
+         swallows the clicks that land on it -- here, over the collage the hero
+         is still animating. CSS cannot key pointer-events off a custom
+         property, so the same number that fades it in also says when it is
+         allowed to be pressed. */
+      stage!.classList.toggle("mark-live", logoShift > 0.6);
 
       /**
        * Whether the clip's own left/right edge is visible inside the page.
@@ -173,9 +177,9 @@ export function HomeExperience({
 
   return (
     <>
-      {/* A screen someone scrolled stays where they left it: scrollTop does not
-          know the card was abandoned. Renders nothing. */}
-      <ScreenScrollReset />
+      {/* A natively-scrolling screen cannot rewind itself or retire its own
+          hint; scrollTop knows nothing about hover. Renders nothing. */}
+      <ScreenScroll />
       {/* One stage so the wordmark stays stuck until the whole hero is done. */}
       <div className="hero-stage" ref={stageRef}>
         {heroLogo}
@@ -184,10 +188,26 @@ export function HomeExperience({
             so they hold the corner once the hero stage has released.
             Decorative: the real heading lives in the lockup above. */}
         <div className="hero-nav-bar" aria-hidden="true" />
-        <div className="hero-nav-mark" aria-hidden="true">
+        {/* The one piece of the site that is always in the corner, so it is
+            where people reach for home. A button, not a link: home IS this
+            page, and routing to it would reload what is already here and lose
+            the hero's scroll position on the way. */}
+        <button
+          type="button"
+          className="hero-nav-mark"
+          aria-label="Back to the top"
+          onClick={() =>
+            window.scrollTo({
+              top: 0,
+              behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                ? "auto"
+                : "smooth",
+            })
+          }
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/enrikamark2.svg" alt="" draggable={false} />
-        </div>
+        </button>
 
         <HeroVideo onViewWork={scrollToWork} />
       </div>
