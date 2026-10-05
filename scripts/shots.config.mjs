@@ -535,12 +535,13 @@ export const PROJECTS = [
     slug: "workshopblocks",
     baseUrl: "https://workshopblocks.vercel.app",
     routes: [
-      /* The library, not the landing: the blocks are the product. "Block
-         Library" only renders once signed in, so it also catches a capture
-         that quietly landed on the sign-in form. */
+      /* /library, not the dashboard at /: the wall of colour-coded blocks is
+         the product, and it is a long grid, which is what the card's hover
+         wants. "Block Library" only renders once signed in, so the expectation
+         also catches a capture that quietly landed on the sign-in form. */
       {
         name: "library",
-        path: "/",
+        path: "/library",
         auth: "member",
         wait: 2000,
         expect: "Block Library",
