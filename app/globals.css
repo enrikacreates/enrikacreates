@@ -876,8 +876,11 @@ body {
      as a hole rather than a surface. */
   background: var(--bone, #FFFDF7);
   /* Room between the artwork and the card's own edge, so the hover shadow has
-     something to sit against. Flush, it cropped; with the mount, it lifts. */
-  padding: 14px;
+     something to sit against. Flush, it cropped; with the mount, it lifts.
+     More at the foot than the sides: the caption ends on a small, quiet line of
+     tags, and an even inset let that line sit too close to the card's edge for
+     the block to feel finished. */
+  padding: 14px 14px 22px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -961,11 +964,40 @@ body {
   transform: translateY(-6px);
 }
 
-/* Inside the mount now, so it needs the gap the card used to give it. */
+/* The caption's own spacing, stated here rather than left to whatever gap the
+   container happened to have. On a featured card the year was sitting flush
+   against the artwork at 0px while the signals floated 26px below the tagline,
+   so the block read as detached from the image above it and loose within
+   itself. */
+.featured-item.has-flat .card-year {
+  margin-top: 1.15rem;
+}
+.catalog-item.has-flat .card-content {
+  margin-top: 0.3rem;
+}
+
+/* The cell's own flex gap stacked on top of the signals' margin, 14.4 + 6.4,
+   which is why the featured card's tags sat 21px below the tagline while the
+   catalog's sat at 6. One of the two should own that distance; it is the
+   margin, because the catalog card has no cell gap to rely on. */
+.featured-cell.has-flat {
+  gap: 0;
+}
+
+/* Tucked under the tagline they belong to, not parked at the foot of the card. */
 .featured-cell.has-flat .featured-signals,
 .catalog-item.has-flat .featured-signals {
-  margin-top: 0.7rem;
+  margin-top: 0.4rem;
   padding: 0;
+}
+
+/* The tagline reserved two lines so every card's text block matched. The grid
+   already stretches each cell to the row's height, so the reservation was only
+   pushing the signals away from the line they describe. */
+.featured-item.has-flat .featured-cat,
+.catalog-item.has-flat .card-tagline {
+  min-height: 0;
+  margin-bottom: 0;
 }
 /* On a catalog card the line sits inside the caption block, which is centred
    nowhere and left-aligned, so it has to match rather than inherit the

@@ -19,23 +19,15 @@ import {
 } from "@/lib/sanity/fetch";
 import { HeroLogo } from "@/components/HeroLogo";
 import { HomeExperience } from "@/components/HomeExperience";
-import { rotateFeatured } from "@/lib/featuredRotation";
 
 export default async function HomePage() {
   // Public surfaces show public categories only. The full set lives at /all.
-  const [settings, projects, featuredPool, categories] = await Promise.all([
+  const [settings, projects, featured, categories] = await Promise.all([
     getSiteSettings(),
     getListedProjects(),
     getFeaturedProjects(),
     getListedCategories(),
   ]);
-
-  // Three of the pool lead the page, and which three turns over once per cache
-  // window. Chosen here on the server rather than in the browser: picking after
-  // hydration would visibly reorder the first row a visitor sees. Whichever are
-  // not chosen fall into the catalog below, which already filters out the ones
-  // on show, so nothing is hidden and nothing appears twice.
-  const featured = rotateFeatured(featuredPool);
 
   return (
     <>

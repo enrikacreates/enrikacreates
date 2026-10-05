@@ -170,7 +170,7 @@ const POSTERS: Record<string, Poster> = {
 const FLAT_POSTER_BG: Record<string, string> = {
   visionmap: "#7B997D",
   bernadettejiwa: "#F6ABA8",
-  "goldcoast-law": "#FDD68E",
+  "goldcoast-law": "#F2D592",
   "create-space-collective": "#FBBCA6",
   signaturestyle: "#FDB8A1",
   "50-states-of-freedom": "#AEC0A1",
