@@ -131,6 +131,18 @@ export const PROJECTS = [
       { name: "studio", path: "/studio" },
       { name: "celebrate", path: "/celebrate" },
 
+      /* Candidates for the card screen, compared with --poster --all and then
+         left here so the comparison can be re-run when the app changes.
+         Member-side: the capture profile is signed in to this one. */
+      { name: "challenges", path: "/challenges", posterOnly: true, wait: 1800 },
+      { name: "library", path: "/library", posterOnly: true, wait: 1800 },
+      { name: "paths", path: "/paths", posterOnly: true, wait: 1800 },
+      { name: "make-space", path: "/make-space", posterOnly: true, wait: 1800 },
+      { name: "living-room", path: "/living-room", posterOnly: true, wait: 1800 },
+      { name: "show-and-tell", path: "/show-and-tell", posterOnly: true, wait: 1800 },
+      { name: "made-it-wall", path: "/made-it-wall", posterOnly: true, wait: 1800 },
+      { name: "pods", path: "/pods", posterOnly: true, wait: 1800 },
+
       /* --- Onboarding flow: login, welcome, dashboard, profile nudge --- */
       { name: "flow1-login", path: "/login" },
       // Admin-only preview that forces the welcome open without consuming the

@@ -112,8 +112,13 @@ const posterRoute = (project) =>
  * set can be compared side by side before anything is wired into a card. Which
  * screen sells an app is a judgement made by looking, not by reasoning about
  * route names. */
-const routesFor = (project) =>
-  posterMode && !allMode ? [posterRoute(project)] : project.routes;
+const routesFor = (project) => {
+  if (posterMode) return allMode ? project.routes : [posterRoute(project)];
+  /* Routes that exist only to be compared as card screens would otherwise
+     double the length of an ordinary run for case-study shots nobody asked
+     for. */
+  return project.routes.filter((r) => !r.posterOnly);
+};
 
 /* A persistent Chrome profile, so a signed-in session survives between runs.
  *
@@ -349,7 +354,7 @@ try {
           /* Long settings pages keep their most interesting controls below the
            * fold, and a viewport capture of the top of one says nothing. Scroll
            * to a named thing first, by CSS selector or "text:Label". */
-          if (route.scrollTo) {
+          if (route.scrollTo && !posterMode) {
             await page.evaluate((sel) => {
               // Case-insensitive: labels are often uppercased in CSS, so the
               // DOM text is "Reader voice" where the screen says READER VOICE.
@@ -374,8 +379,11 @@ try {
            * still at least `clipMin` wide, plus `pad` of breathing room. Text
            * rather than a CSS selector on purpose, because the class names here
            * are generated utility soup and would rot on the next restyle. */
+          /* A poster screen is the whole page by definition, so a route's
+             clipTo (which crops a case-study shot to one component) is not
+             just unused here, it fails loudly on pages that redirect. */
           let clip;
-          if (route.clipTo) {
+          if (route.clipTo && !posterMode) {
             clip = await page.evaluate(
               (sel, min) => {
                 const want = sel.replace(/^text:/, "").toLowerCase();
