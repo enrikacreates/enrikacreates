@@ -289,8 +289,11 @@ try {
            * fills the frame, rather than cropping emptiness out afterwards. */
           await page.setViewport({
             width: posterMode ? vp.width : route.vw && !vp.mobile ? route.vw : vp.width,
-            height: vp.height,
-            deviceScaleFactor: posterMode ? POSTER.scale : 2, // retina, so it holds up scaled down
+            height: posterMode ? (route.posterHeight ?? vp.height) : vp.height,
+            /* A full-width page capture at 1x is already a downsample by the
+             * time a card shows it. A phone shell cropped out of one is only
+             * ~420px wide, so it needs the extra density to stay sharp. */
+            deviceScaleFactor: posterMode ? (route.posterScale ?? POSTER.scale) : 2,
             isMobile: vp.mobile,
             hasTouch: vp.mobile,
           });
@@ -625,8 +628,20 @@ try {
              * only appears when signed in can. */
             if (route.expect) {
               const want = [route.expect].flat();
-              const text = await page.evaluate(() => document.body.innerText);
-              const missing = want.filter((w) => !text.includes(w));
+              /* Poll rather than read once. A fixed `wait` is a guess about how
+                 long someone else's database takes, and losing that race
+                 photographs a loading state -- Hummingbird's songbook came back
+                 reading "0 SONGS" and "gathering your songbook..." while its
+                 own data was still in flight. */
+              const deadline = Date.now() + (route.expectTimeout ?? 15000);
+              let text = "";
+              let missing = want;
+              while (Date.now() < deadline) {
+                text = await page.evaluate(() => document.body.innerText);
+                missing = want.filter((w) => !text.includes(w));
+                if (!missing.length) break;
+                await new Promise((r) => setTimeout(r, 400));
+              }
               if (missing.length) {
                 throw new Error(
                   `expected ${missing.map((m) => JSON.stringify(m)).join(", ")} on the page and it is not there` +
@@ -644,37 +659,46 @@ try {
 
           /* An app shell scrolls INSIDE itself: React Native Web, and anything
            * else that pins a root to 100vh and puts a scroll container in it,
-           * has a document exactly one viewport tall no matter how much
-           * content there is. A full-page capture of one is a single screen
-           * with nothing to reveal. Letting the inner container grow to its
-           * own content turns it back into a page that can be photographed
-           * whole, which is what Hummingbird's songbook needs to scroll. */
-          if (posterMode && route.posterExpand) {
-            const grew = await page.evaluate(() => {
-              const before = document.documentElement.scrollHeight;
-              for (const el of document.querySelectorAll("*")) {
+           * has a document exactly one viewport tall however much content it
+           * holds, and its shell is a narrow column on a wide backdrop.
+           *
+           * Do NOT try to free the scroller. Undoing the height chain does
+           * expand the document, but a windowed list re-measures against the
+           * broken box and renders nothing: Hummingbird came back reading
+           * "0 SONGS" and "gathering your songbook..." with its data already
+           * loaded. `posterHeight` asks for a very tall viewport instead, so
+           * the app lays itself out long of its own accord, and the shell is
+           * only measured, never modified. */
+          let shellBox = null;
+          if (posterMode && route.posterShell) {
+            shellBox = await page.evaluate(() => {
+              const scrollers = [...document.querySelectorAll("*")].filter((el) => {
                 const cs = getComputedStyle(el);
-                const scrolls = /auto|scroll/.test(cs.overflowY);
-                if (scrolls && el.scrollHeight > el.clientHeight + 40) {
-                  el.style.setProperty("height", "auto", "important");
-                  el.style.setProperty("max-height", "none", "important");
-                  el.style.setProperty("overflow", "visible", "important");
-                }
-              }
-              /* The shell above it is usually pinned to the viewport too, so
-               * the freed content would just overflow a box that stays 100vh. */
-              for (const el of [document.documentElement, document.body,
-                                ...document.querySelectorAll("#root, #__next, [data-reactroot]")]) {
-                if (!el) continue;
-                el.style.setProperty("height", "auto", "important");
-                el.style.setProperty("min-height", "0", "important");
-                el.style.setProperty("overflow", "visible", "important");
-              }
-              return [before, document.documentElement.scrollHeight];
+                return (
+                  /auto|scroll|hidden/.test(cs.overflowY) &&
+                  el.clientHeight > 200 &&
+                  el.clientWidth > 200 &&
+                  el.clientWidth < window.innerWidth * 0.8
+                );
+              });
+              if (!scrollers.length) return null;
+              // The tallest narrow column is the shell, not a card inside it.
+              scrollers.sort((a, b) => b.clientHeight - a.clientHeight);
+              const r = scrollers[0].getBoundingClientRect();
+              return {
+                x: Math.max(0, Math.round(r.x + window.scrollX)),
+                y: Math.max(0, Math.round(r.y + window.scrollY)),
+                width: Math.round(r.width),
+                height: Math.round(r.height),
+              };
             });
-            await new Promise((r) => setTimeout(r, 500));
-            console.log(`    expanded the scroll container: ${grew[0]}px -> ${grew[1]}px`);
+            if (shellBox) {
+              console.log(
+                `    shell ${shellBox.width}x${shellBox.height} at ${shellBox.x},${shellBox.y}`
+              );
+            }
           }
+
 
           if (posterMode) {
             /* Straight to webp at the card's own width. The intermediate png
@@ -693,31 +717,56 @@ try {
              * capture rather than speed the animation up, so every card moves
              * at the same pace and a long page simply shows its first stretch.
              * `posterTop` starts the crop lower where the top is the dull bit. */
-            const top = Math.min(route.posterTop ?? 0, Math.max(0, rh - 100));
-            const maxH = Math.round(rw * POSTER.ratio.max);
-            const h0 = Math.min(rh - top, maxH);
-            const cropped = top > 0 || h0 < rh;
+            /* An expanded app shell is cropped to the shell itself; everything
+               else keeps the full width of the page. */
+            /* expandBox is measured in CSS pixels; the capture is in device
+               pixels, which are not the same thing above 1x. */
+            const dpr = route.posterScale ?? POSTER.scale;
+            const box = shellBox
+              ? {
+                  left: Math.max(0, Math.min(Math.round(shellBox.x * dpr), rw - 1)),
+                  width: Math.min(
+                    Math.round(shellBox.width * dpr),
+                    rw - Math.max(0, Math.round(shellBox.x * dpr))
+                  ),
+                  top0: Math.max(0, Math.min(Math.round(shellBox.y * dpr), rh - 1)),
+                  height: Math.min(
+                    Math.round(shellBox.height * dpr),
+                    rh - Math.max(0, Math.round(shellBox.y * dpr))
+                  ),
+                }
+              : { left: 0, width: rw, top0: 0, height: rh };
+
+            const top = Math.min(route.posterTop ?? 0, Math.max(0, box.height - 100));
+            const maxH = Math.round(box.width * POSTER.ratio.max);
+            const h0 = Math.min(box.height - top, maxH);
+            const cropped = box.left > 0 || box.width < rw || top > 0 || h0 < box.height;
 
             let pipeline = sharp(tmp);
             if (cropped) {
-              pipeline = pipeline.extract({ left: 0, top, width: rw, height: h0 });
+              pipeline = pipeline.extract({
+                left: box.left,
+                top: box.top0 + top,
+                width: box.width,
+                height: h0,
+              });
             }
             await pipeline
-              .resize({ width: Math.min(rw, POSTER.width) })
+              .resize({ width: Math.min(box.width, POSTER.width) })
               .webp({ quality: 82 })
               .toFile(file);
             await unlink(tmp).catch(() => {});
 
-            const ratio = h0 / rw;
+            const ratio = h0 / box.width;
             const w = POSTER.width;
             const h = Math.round(w * ratio);
             const note = cropped
-              ? `  (page is ${(rh / rw).toFixed(2)}x, capped)`
+              ? `  (cropped from ${rw}x${rh})`
               : ratio < POSTER.ratio.min
                 ? "  short — little to reveal on hover"
                 : "";
             console.log(`  ✓ ${file}  ${w}x${h}  ${ratio.toFixed(2)}x tall${note}`);
-            posters.push({ slug: project.slug, file, w: rw, h: h0 });
+            posters.push({ slug: project.slug, file, w: box.width, h: h0 });
             saved++;
             continue;
           }

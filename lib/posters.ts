@@ -248,6 +248,17 @@ const SCREENS: Record<string, Screen> = {
     top: 0.42,
     width: 0.9,
   },
+  hummingbird: {
+    src: "/assets/projects/hummingbird/shots/fullpage.webp",
+    /* Lower than the others. Its shell caps at 920px however tall the capture
+       viewport is, so the capture is 2.19x where the rest are 3.3-4.3x; a
+       shorter window is the only way left to buy the scroll any travel. */
+    top: 0.52,
+    /* A phone, not a browser. The capture is the app's own shell cropped out
+       of a desktop backdrop, so seating it at the usual 0.9 would stretch a
+       420px-wide screen across the whole card. */
+    width: 0.42,
+  },
   "50-states-of-freedom": {
     src: "/assets/projects/50-states-of-freedom/shots/fullpage.webp",
     top: 0.42,
