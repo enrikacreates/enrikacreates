@@ -204,7 +204,7 @@ async function generate(key, prompt, { size, quality }) {
 async function seatScreen(artFile, screenFile, outFile, opts = {}) {
   const { width: PW, height: PH } = await sharp(artFile).metadata();
 
-  const wFrac = Number(opts.screenWidth ?? 0.78);
+  const wFrac = Number(opts.screenWidth ?? 0.74);
   const topFrac = Number(opts.screenTop ?? 0.52);
   const w = Math.round(PW * wFrac);
   const x = Math.round(
@@ -230,18 +230,21 @@ async function seatScreen(artFile, screenFile, outFile, opts = {}) {
     .png()
     .toBuffer();
 
-  // A soft contact shadow, so the screen sits ON the artwork rather than
-  // floating in a hole cut out of it.
-  const pad = Math.round(PW * 0.02);
+  // A contact shadow, kept faint on purpose. At 0.22 alpha over a short blur
+  // the blurred rectangle still read as a grey band with edges of its own,
+  // which is worse than no shadow: it looked like a second object rather than
+  // depth. Wide blur, low alpha, so it only has to stop the screen floating in
+  // a hole cut out of the artwork.
+  const pad = Math.round(PW * 0.045);
   const shadow = await sharp({
     create: {
       width: w + pad * 2,
       height: h + pad,
       channels: 4,
-      background: { r: 40, g: 35, b: 30, alpha: 0.22 },
+      background: { r: 60, g: 52, b: 44, alpha: 0.1 },
     },
   })
-    .blur(Math.max(1, Math.round(PW * 0.014)))
+    .blur(Math.max(1, Math.round(PW * 0.035)))
     .png()
     .toBuffer();
 
