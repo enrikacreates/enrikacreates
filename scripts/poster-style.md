@@ -25,11 +25,22 @@ rectangle with a narrow title bar and three small circles at its top left,
 drawn in a single hairline weight, low contrast, clearly background furniture
 rather than part of the subject.
 
-The subject is centred and built from cut-paper shapes with visible paper
-grain and fibre texture, faceted into flat planes of colour, with soft
-contact shadows underneath so the pieces read as physical paper. Mix in one or
-two elements rendered as detailed black-and-white engraved or etched
-illustration, at a smaller scale, set into the composition.
+Build the image in three clear depth planes, not as one flat layer. Something
+sits behind the subject, the subject sits on the ground shape, and something
+sits in front of or beside it closer to the viewer. Overlap the planes so each
+one partly hides the one behind it. This layering is the single most important
+part of the style.
+
+Everything is built from cut-paper shapes with visible paper grain and fibre
+texture, faceted into flat planes of colour, with soft contact shadows beneath
+each piece so they read as physical paper at different heights.
+
+Set detailed black-and-white engraved or etched illustrations into the
+composition as accents, and place them at more than one depth: one small one
+far back among the background shapes, one larger in the foreground near the
+viewer. The contrast between flat colour paper and fine engraved line is what
+gives the image its character, and spreading the engravings across depths is
+what stops it flattening out.
 
 Scatter a few small hand-drawn black marks around the subject: short straight
 strokes in groups of three, small zigzags, short wavy lines. Sparse, never

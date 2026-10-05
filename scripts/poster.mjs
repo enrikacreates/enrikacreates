@@ -42,6 +42,7 @@ const TARGET_H = 1402;
 const STYLE_FILE = path.join(ROOT, "scripts", "poster-style.md");
 const POSTERS_DIR = path.join(ROOT, "public", "assets", "posters");
 const POSTERS_TS = path.join(ROOT, "lib", "posters.ts");
+const LOG_DIR = path.join(ROOT, "scripts", "poster-log");
 
 /* ---------- args ---------- */
 
@@ -68,6 +69,8 @@ function usage(msg) {
     --slug          project slug; also the output filename
     --subject       the per-project subject line
     --color         background colour hint for the prompt (default: let it choose)
+    --notes         revision notes, appended to the prompt. Use with --force to
+                    redo one poster: --notes "navy background, fewer papers"
     --size          API image size (default 1024x1536)
     --quality       low | medium | high (default high)
     --dry-run       print the prompt and stop, no API call
@@ -98,13 +101,18 @@ async function apiKey() {
 
 /* ---------- prompt ---------- */
 
-async function buildPrompt({ subject, color }) {
+async function buildPrompt({ subject, color, notes }) {
   const raw = await readFile(STYLE_FILE, "utf8");
   const body = raw.split(/^---$/m).slice(1).join("---").trim();
   if (!body) usage(`${STYLE_FILE} has no prompt body under its --- separator.`);
-  return body
+  const base = body
     .replaceAll("{{SUBJECT}}", subject)
     .replaceAll("{{COLOR}}", color || "a single colour from the project's palette");
+
+  // Notes go last and are marked as corrections, so they override the style
+  // above rather than reading as more of the brief. A revision is usually
+  // "the same thing but less of X", which only works if X is already stated.
+  return notes ? `${base}\n\nImportant corrections, these take priority over anything above:\n${notes}` : base;
 }
 
 /* ---------- generation ---------- */
@@ -288,6 +296,20 @@ async function main() {
       .png()
       .toFile(outFile);
     console.log(`  wrote ${path.relative(ROOT, outFile)} (${TARGET_W}x${TARGET_H})`);
+
+    // What produced this image, kept next to the script. Without it a revision
+    // is guesswork: "make it less cramped" needs the original wording to amend.
+    await mkdir(LOG_DIR, { recursive: true });
+    await writeFile(
+      path.join(LOG_DIR, `${args.slug}.md`),
+      `# ${args.slug}\n\n` +
+        `Generated ${new Date().toISOString()} · ${IMAGE_MODEL} · ${args.size} · ${args.quality}\n\n` +
+        `## Subject\n\n${args.subject}\n\n` +
+        (args.color ? `## Colour\n\n${args.color}\n\n` : "") +
+        (args.notes ? `## Revision notes\n\n${args.notes}\n\n` : "") +
+        `## Full prompt\n\n${prompt}\n`
+    );
+    console.log(`  logged the prompt to ${path.relative(ROOT, path.join(LOG_DIR, `${args.slug}.md`))}`);
   }
 
   if (!existsSync(outFile)) usage(`No poster at ${outFile}.`);
