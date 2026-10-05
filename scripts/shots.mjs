@@ -684,8 +684,10 @@ try {
               let text = "";
               let missing = want;
               while (Date.now() < deadline) {
-                text = await page.evaluate(() => document.body.innerText);
-                missing = want.filter((w) => !text.includes(w));
+                text = await page.evaluate(() => document.body.innerText.toLowerCase());
+                // Case-insensitive: labels are routinely uppercased in CSS, so
+                // the DOM says "Spaces" where the screen says SPACES.
+                missing = want.filter((w) => !text.includes(w.toLowerCase()));
                 if (!missing.length) break;
                 await new Promise((r) => setTimeout(r, 400));
               }

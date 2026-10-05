@@ -270,6 +270,18 @@ const SCREENS: Record<string, Screen> = {
     src: "/assets/projects/betterstories/shots/fullpage.webp",
     width: 0.9,
   },
+  "goldcoast-law": {
+    src: "/assets/projects/goldcoast-law/shots/fullpage.webp",
+    width: 0.9,
+  },
+  bernadettejiwa: {
+    src: "/assets/projects/bernadettejiwa/shots/fullpage.webp",
+    width: 0.9,
+  },
+  visionmap: {
+    src: "/assets/projects/visionmap/shots/fullpage.webp",
+    width: 0.9,
+  },
   "bti-production-hub": {
     src: "/assets/projects/bti-production-hub/shots/fullpage.webp",
     width: 0.9,

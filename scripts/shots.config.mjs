@@ -473,11 +473,23 @@ export const PROJECTS = [
 
   {
     slug: "storeit",
-    baseUrl: "http://localhost:3230",
+    baseUrl: "https://store-it-murex.vercel.app",
     /* `/` redirects to the last realm used, so the realm pages are the real
      * surfaces. The landing opens on a video, which a still capture can only
      * photograph one arbitrary frame of, so it is not a poster candidate. */
-    routes: [{ name: "home", path: "/" }],
+    routes: [
+      /* "Store it. Find it." appears on the signed-OUT page too, so the
+         expectation is a section that only exists once there is something to
+         show. */
+      {
+        name: "home",
+        path: "/",
+        auth: "member",
+        wait: 2000,
+        expect: ["Categories", "Spaces"],
+        poster: true,
+      },
+    ],
   },
 
   {
@@ -521,10 +533,19 @@ export const PROJECTS = [
 
   {
     slug: "workshopblocks",
-    baseUrl: "http://localhost:5173",
+    baseUrl: "https://workshopblocks.vercel.app",
     routes: [
-      { name: "login", path: "/" },
-      { name: "builder", path: "/workshops/new", auth: "needs a signed-in user" },
+      /* The library, not the landing: the blocks are the product. "Block
+         Library" only renders once signed in, so it also catches a capture
+         that quietly landed on the sign-in form. */
+      {
+        name: "library",
+        path: "/",
+        auth: "member",
+        wait: 2000,
+        expect: "Block Library",
+        poster: true,
+      },
     ],
   },
 
