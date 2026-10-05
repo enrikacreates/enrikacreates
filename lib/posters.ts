@@ -282,6 +282,14 @@ const SCREENS: Record<string, Screen> = {
     src: "/assets/projects/visionmap/shots/fullpage.webp",
     width: 0.9,
   },
+  deeplyreader: {
+    src: "/assets/projects/deeplyreader/shots/fullpage.webp",
+    width: 0.9,
+  },
+  thestoryoftelling: {
+    src: "/assets/projects/thestoryoftelling/shots/fullpage.webp",
+    width: 0.9,
+  },
   "bti-production-hub": {
     src: "/assets/projects/bti-production-hub/shots/fullpage.webp",
     width: 0.9,
