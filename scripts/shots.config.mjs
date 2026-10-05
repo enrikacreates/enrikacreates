@@ -137,6 +137,11 @@ export const PROJECTS = [
       /* --- Detail-view screens for the case study --- */
       { name: "challenges", path: "/challenges", auth: "member", wait: 1800 },
       { name: "whats-on", path: "/whats-on", auth: "member", wait: 1500 },
+      /* The member feed: real people's posts, real photographs, comments.
+         Compared against the landing for the card and lost on the strength of
+         the landing's hero, but it is the screen that shows the product with
+         people actually in it, which is what a case study is for. */
+      { name: "living-room", path: "/living-room", auth: "member", wait: 1800 },
       /* A real member's body of work, not the owner's. Hard-coded id because
          the point is this particular page: a real photograph of real people
          and a real collection, which is what the empty walls cannot show. */
@@ -149,7 +154,7 @@ export const PROJECTS = [
       { name: "library", path: "/library", posterOnly: true, wait: 1800 },
       { name: "paths", path: "/paths", posterOnly: true, wait: 1800 },
       { name: "make-space", path: "/make-space", posterOnly: true, wait: 1800 },
-      { name: "living-room", path: "/living-room", posterOnly: true, wait: 1800 },
+      
       { name: "show-and-tell", path: "/show-and-tell", posterOnly: true, wait: 1800 },
       { name: "made-it-wall", path: "/made-it-wall", posterOnly: true, wait: 1800 },
       { name: "pods", path: "/pods", posterOnly: true, wait: 1800 },
@@ -253,15 +258,19 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* posterScroll: the clusters stay bloomed only while the page is
-         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      /* The two states worth showing fight each other by scroll: the masthead
+         is full size only at scrollY === 0, the photo clusters bloom only past
+         30. So rest at the top for the masthead and open the clusters by
+         parking the cursor on one, which blooms all of them. */
       {
         name: "wardrobe",
         path: "/wardrobe",
         auth: "member",
         wait: 2000,
         poster: true,
-        posterScroll: 200,
+        posterScroll: 0,
+        posterHover: 'div[class*="aspect-"] img',
+        posterHoverPark: true,
       },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
@@ -279,15 +288,19 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* posterScroll: the clusters stay bloomed only while the page is
-         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      /* The two states worth showing fight each other by scroll: the masthead
+         is full size only at scrollY === 0, the photo clusters bloom only past
+         30. So rest at the top for the masthead and open the clusters by
+         parking the cursor on one, which blooms all of them. */
       {
         name: "wardrobe",
         path: "/wardrobe",
         auth: "member",
         wait: 2000,
         poster: true,
-        posterScroll: 200,
+        posterScroll: 0,
+        posterHover: 'div[class*="aspect-"] img',
+        posterHoverPark: true,
       },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
@@ -478,15 +491,19 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* posterScroll: the clusters stay bloomed only while the page is
-         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      /* The two states worth showing fight each other by scroll: the masthead
+         is full size only at scrollY === 0, the photo clusters bloom only past
+         30. So rest at the top for the masthead and open the clusters by
+         parking the cursor on one, which blooms all of them. */
       {
         name: "wardrobe",
         path: "/wardrobe",
         auth: "member",
         wait: 2000,
         poster: true,
-        posterScroll: 200,
+        posterScroll: 0,
+        posterHover: 'div[class*="aspect-"] img',
+        posterHoverPark: true,
       },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
@@ -504,15 +521,19 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* posterScroll: the clusters stay bloomed only while the page is
-         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      /* The two states worth showing fight each other by scroll: the masthead
+         is full size only at scrollY === 0, the photo clusters bloom only past
+         30. So rest at the top for the masthead and open the clusters by
+         parking the cursor on one, which blooms all of them. */
       {
         name: "wardrobe",
         path: "/wardrobe",
         auth: "member",
         wait: 2000,
         poster: true,
-        posterScroll: 200,
+        posterScroll: 0,
+        posterHover: 'div[class*="aspect-"] img',
+        posterHoverPark: true,
       },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
@@ -530,15 +551,19 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* posterScroll: the clusters stay bloomed only while the page is
-         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      /* The two states worth showing fight each other by scroll: the masthead
+         is full size only at scrollY === 0, the photo clusters bloom only past
+         30. So rest at the top for the masthead and open the clusters by
+         parking the cursor on one, which blooms all of them. */
       {
         name: "wardrobe",
         path: "/wardrobe",
         auth: "member",
         wait: 2000,
         poster: true,
-        posterScroll: 200,
+        posterScroll: 0,
+        posterHover: 'div[class*="aspect-"] img',
+        posterHoverPark: true,
       },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
@@ -565,15 +590,19 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* posterScroll: the clusters stay bloomed only while the page is
-         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      /* The two states worth showing fight each other by scroll: the masthead
+         is full size only at scrollY === 0, the photo clusters bloom only past
+         30. So rest at the top for the masthead and open the clusters by
+         parking the cursor on one, which blooms all of them. */
       {
         name: "wardrobe",
         path: "/wardrobe",
         auth: "member",
         wait: 2000,
         poster: true,
-        posterScroll: 200,
+        posterScroll: 0,
+        posterHover: 'div[class*="aspect-"] img',
+        posterHoverPark: true,
       },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },
@@ -591,15 +620,19 @@ export const PROJECTS = [
      * photograph one arbitrary frame of, so it is not a poster candidate. */
     routes: [
       { name: "home", path: "/", auth: "member", wait: 2000 },
-      /* posterScroll: the clusters stay bloomed only while the page is
-         scrolled past 30px. Resting at 0 photographs them folded shut. */
+      /* The two states worth showing fight each other by scroll: the masthead
+         is full size only at scrollY === 0, the photo clusters bloom only past
+         30. So rest at the top for the masthead and open the clusters by
+         parking the cursor on one, which blooms all of them. */
       {
         name: "wardrobe",
         path: "/wardrobe",
         auth: "member",
         wait: 2000,
         poster: true,
-        posterScroll: 200,
+        posterScroll: 0,
+        posterHover: 'div[class*="aspect-"] img',
+        posterHoverPark: true,
       },
       { name: "styles", path: "/wardrobe/styles", auth: "member", wait: 2000 },
       { name: "closet", path: "/wardrobe/items", auth: "member", wait: 2000 },

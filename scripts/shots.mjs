@@ -3,6 +3,7 @@
  *
  *   npm run shots                      every project in shots.config.mjs
  *   npm run shots -- --project 50-states-of-freedom
+ *   npm run shots -- --route challenges,living-room   just these routes
  *   npm run shots -- --full            full-page instead of one viewport
  *   npm run shots -- --poster          one tall capture per app for the card screens
  *   npm run shots -- --poster --pick   same, but you choose the moment to fire
@@ -60,6 +61,9 @@ const value = (name) => {
 };
 
 const only = value("project");
+/* Capturing one app means capturing all ~25 of its routes at both viewports.
+ * Usually only a handful have changed, or are wanted. */
+const onlyRoutes = value("route")?.split(",").map((r) => r.trim()).filter(Boolean);
 const fullPage = flag("full");
 const listOnly = flag("list");
 const loginMode = flag("login");
@@ -113,6 +117,7 @@ const posterRoute = (project) =>
  * screen sells an app is a judgement made by looking, not by reasoning about
  * route names. */
 const routesFor = (project) => {
+  if (onlyRoutes) return project.routes.filter((r) => onlyRoutes.includes(r.name));
   if (posterMode) return allMode ? project.routes : [posterRoute(project)];
   /* Routes that exist only to be compared as card screens would otherwise
      double the length of an ordinary run for case-study shots nobody asked
@@ -498,6 +503,103 @@ try {
               return n;
             });
             if (pinned) console.log(`    hid ${pinned} pinned element${pinned === 1 ? "" : "s"}`);
+          }
+
+          /* Some open states are reachable only with the pointer parked on
+           * something, and cannot be reached by scrolling at all. On
+           * SignatureStyle the masthead is full size only at scrollY === 0
+           * while the photo clusters bloom at scrollY > 30, so the two states
+           * she wants are mutually exclusive by scroll. Hover is the way out:
+           * the gallery also blooms on engagement, and a parked cursor holds
+           * that open while the page stays at the top. Puppeteer's hover
+           * dispatches real pointer events, so React's onMouseEnter fires.
+           *
+           * The cursor is left where it is: moving it away would un-engage. */
+          if (posterMode && route.posterHover) {
+            /* mouse.move to a measured point, NOT page.hover(selector):
+             * hover() scrolls the element into view first, and that scroll is
+             * itself a state change. It condensed SignatureStyle's masthead,
+             * costing the capture the one thing the top of the page is for.
+             * Only elements already on screen are eligible, which is the right
+             * constraint anyway: the open state has to be reachable from where
+             * the page rests. */
+            const box = await page.evaluate((sel) => {
+              for (const el of document.querySelectorAll(sel)) {
+                const r = el.getBoundingClientRect();
+                if (r.width < 20 || r.height < 20) continue;
+                /* The point aimed at has to be on screen; the element itself
+                 * may run past the fold, which most of them do once a tall
+                 * masthead is in frame. */
+                const x = r.x + r.width / 2;
+                const y = Math.min(r.y + r.height / 2, window.innerHeight - 8);
+                if (y > r.y && y > 0 && x > 0 && x < window.innerWidth) return { x, y };
+              }
+              return null;
+            }, route.posterHover);
+            if (!box) {
+              throw new Error(
+                `posterHover: nothing matching ${route.posterHover} is on screen at rest`
+              );
+            }
+            await page.mouse.move(box.x, box.y);
+            await new Promise((r) => setTimeout(r, route.posterHoverWait ?? 1400));
+
+            /* The cursor that opened the gallery is also sitting ON a card,
+             * which lifts and scales it and shows its label: one photo
+             * singled out in a composition meant to read as a whole.
+             *
+             * It cannot simply be parked in a corner. The engagement that
+             * holds every cluster open is released on mouseleave of the
+             * gallery, so moving outside folds the whole thing back to clumps
+             * and the capture comes back saying "hover to explore". It has to
+             * land in a gap BETWEEN the cards: still inside the gallery, on
+             * none of them. */
+            if (route.posterHoverPark) {
+              const gap = await page.evaluate((sel) => {
+                const cards = [...document.querySelectorAll(sel)].filter((e) => {
+                  const r = e.getBoundingClientRect();
+                  return r.width > 20 && r.height > 20;
+                });
+                if (!cards.length) return null;
+
+                /* The gallery blooms on mouseenter of its own container and
+                 * releases on mouseleave, so the cursor has to stay inside it.
+                 * The container is not addressable by class, so take the
+                 * smallest ancestor holding every card. */
+                let box = cards[0];
+                while (box && !cards.every((c) => box.contains(c))) box = box.parentElement;
+                if (!box) return null;
+                const b = box.getBoundingClientRect();
+
+                const rects = cards.map((c) => c.getBoundingClientRect());
+                const pad = 8; // cards are rotated, so their boxes understate the edges
+                const free = (x, y) =>
+                  !rects.some(
+                    (r) =>
+                      x >= r.left - pad && x <= r.right + pad &&
+                      y >= r.top - pad && y <= r.bottom + pad
+                  ) && box.contains(document.elementFromPoint(x, y));
+
+                const x0 = Math.max(b.left + 2, 2);
+                const x1 = Math.min(b.right - 2, window.innerWidth - 2);
+                const y0 = Math.max(b.top + 2, 2);
+                const y1 = Math.min(b.bottom - 2, window.innerHeight - 2);
+                const N = 40;
+                for (let gy = 0; gy <= N; gy++) {
+                  for (let gx = 0; gx <= N; gx++) {
+                    const x = x0 + ((x1 - x0) * gx) / N;
+                    const y = y0 + ((y1 - y0) * gy) / N;
+                    if (free(x, y)) return { x, y };
+                  }
+                }
+                return null;
+              }, route.posterHover);
+              if (!gap) {
+                throw new Error("posterHoverPark: no gap inside the gallery to rest the cursor in");
+              }
+              await page.mouse.move(gap.x, gap.y);
+              await new Promise((r) => setTimeout(r, 900));
+            }
           }
 
           if (posterMode) {
