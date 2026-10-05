@@ -822,6 +822,38 @@ body {
 /* Holds the layers so a card type can rescale the whole composition at once.
    Anchored at the top: shrinking toward the middle would lift the artwork away
    from the card's top edge and open a gap the design doesn't have. */
+/* A grid track is minmax(auto, 1fr), so its floor is the widest thing inside
+   it that refuses to shrink. On a 375px phone the single catalog column was
+   resolving to 499px and hanging the cards 156px off the screen, clipped rather
+   than scrollable because body is overflow:clip. min-width:0 lets the card
+   shrink to its track, and the caption wraps instead of setting the floor. */
+.catalog-item,
+.featured-cell {
+  min-width: 0;
+}
+.catalog-item .card-title,
+.catalog-item .card-tagline,
+.featured-signals {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Phone: lift the collage out of the middle of its box.
+   The pin reserves a viewport of height, but a 16:9 collage on a 375px-wide
+   screen can only ever paint 375x211, so 380px of that reservation is empty and
+   `contain` centres the artwork in the middle of it. The result is a wordmark, a
+   statement, then a long blank, then the plants floating halfway down. Anchoring
+   the paint near the top closes the gap under the statement and pools the spare
+   height below, where the quote and the cue arrive on scroll anyway.
+
+   Not `cover`: that would fill the space by cropping the composition, and the
+   plants are meant to read whole. */
+@media (max-width: 640px) {
+  .hero-video {
+    object-position: 50% 8%;
+  }
+}
+
 /* ── A finished poster ───────────────────────────────────────────────────────
    One image, generated at 4:5, already carrying its own ground, colour field
    and browser window. Everything the layered system adds would be drawn a
