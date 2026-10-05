@@ -875,7 +875,6 @@ body {
 .poster-screen {
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
   top: var(--screen-top, 57%);
   width: var(--screen-width, 74%);
   /* Runs past the plate's own edge; the plate crops it, which is what makes
@@ -884,6 +883,14 @@ body {
   overflow: hidden;
   border-radius: 6px 6px 0 0;
   z-index: 1;
+
+  /* At rest the screen sits low, showing a strip of itself under the artwork:
+     enough to say there is something real in there, not enough to read. The
+     poster is what the grid reads as; the screen is the tease. On engagement
+     it rises into place and only then scrolls, so the two moves are legible
+     as two moves rather than one muddle. */
+  transform: translateX(-50%) translateY(var(--screen-peek, 66%));
+  transition: transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .poster-screen img {
   display: block;
@@ -898,18 +905,41 @@ body {
 /* --screen-reveal is computed per capture in PosterArt, from the shot's own
    height against the window it sits in, so a full-page shot and a viewport one
    scroll the same share of whatever they have rather than the same number. */
+/* Three ways in, one behaviour. `.is-engaged` is set by an observer on touch,
+   where there is no hover at all: without it a phone would see the peek and
+   nothing else, which is worse than the full screen it used to get. */
+.catalog-item:hover .poster-screen,
+.featured-cell:hover .poster-screen,
+.catalog-item:focus-within .poster-screen,
+.featured-cell:focus-within .poster-screen,
+.catalog-item.is-engaged .poster-screen,
+.featured-cell.is-engaged .poster-screen {
+  transform: translateX(-50%) translateY(0);
+}
+
 .catalog-item:hover .poster-screen img,
 .featured-cell:hover .poster-screen img,
 .catalog-item:focus-within .poster-screen img,
-.featured-cell:focus-within .poster-screen img {
+.featured-cell:focus-within .poster-screen img,
+.catalog-item.is-engaged .poster-screen img,
+.featured-cell.is-engaged .poster-screen img {
   transform: translateY(calc(-100% + var(--screen-reveal, 62%)));
+  /* Waits for the rise to land. Scrolling content that is still moving into
+     frame reads as a glitch rather than as a reveal. */
+  transition-delay: 520ms;
 }
 
 /* Someone who has asked for less motion gets the still. */
+/* Someone who has asked for less motion gets the still -- and gets it fully
+   risen, not peeking, since the peek only makes sense as the first half of a
+   movement they have opted out of. */
 @media (prefers-reduced-motion: reduce) {
+  .poster-screen,
   .poster-screen img { transition: none; }
+  .poster-screen { transform: translateX(-50%) translateY(0); }
   .catalog-item:hover .poster-screen img,
-  .featured-cell:hover .poster-screen img { transform: none; }
+  .featured-cell:hover .poster-screen img,
+  .catalog-item.is-engaged .poster-screen img { transform: none; }
 }
 
 /* The plate that holds a finished poster.
