@@ -221,8 +221,8 @@ const FLAT_POSTERS = new Set([
 const SCREENS: Record<string, { src: string; top: number; width: number }> = {
   "the-daily-story": {
     src: "/assets/projects/thedailystory/shots/vision-clean-1440.png",
-    top: 0.57,
-    width: 0.74,
+    top: 0.42,
+    width: 0.9,
   },
 };
 
