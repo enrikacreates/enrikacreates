@@ -126,7 +126,11 @@ export const PROJECTS = [
          looks right in View Source finds no element at all on the live page.
          The headings are really there. */
       { name: "authors", path: "/", scrollTo: "text:Meet the Authors", wait: 1600 },
-      { name: "supporters", path: "/", scrollTo: "#earlysupporters-section", wait: 1600 },
+      /* No supporters route. #earlysupporters-section is an anchor at y=0, so
+         scrolling to it never moved the page and the shot was the home page
+         wearing a supporters caption; the section's own heading ("Thank You
+         For Being an Early Supporter") is a hidden post-signup state, not
+         something a visitor sees. */
       { name: "videos", path: "/", scrollTo: "text:Hear More", wait: 2500, embedThumbnails: true },
             /* The paragraph, not the camfed.org link: scrollTo searches headings and
          text blocks, not anchors. */
