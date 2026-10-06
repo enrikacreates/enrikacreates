@@ -17,7 +17,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { HeroVideo } from "./HeroVideo";
 import { WorkSection } from "./WorkSection";
 import type { Category, ProjectListItem } from "@/lib/types";
-import { ScreenScroll } from "./ScreenScroll";
 
 interface HomeExperienceProps {
   projects: ProjectListItem[];
@@ -177,9 +176,6 @@ export function HomeExperience({
 
   return (
     <>
-      {/* A natively-scrolling screen cannot rewind itself or retire its own
-          hint; scrollTop knows nothing about hover. Renders nothing. */}
-      <ScreenScroll />
       {/* One stage so the wordmark stays stuck until the whole hero is done. */}
       <div className="hero-stage" ref={stageRef}>
         {heroLogo}

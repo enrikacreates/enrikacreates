@@ -905,13 +905,14 @@ body {
   border-radius: 4px 4px 0 0;
   z-index: 1;
 
-  /* The viewer scrolls it, rather than watching it scroll. A timed reveal has
-     to guess how long someone wants to look and is wrong for everybody; this
-     just hands them the page. `contain` stops a flick inside the screen from
-     carrying on into the page behind it. */
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
+  /* No scrolling in here. A card that can be read competes with the click it
+     exists to earn: satisfy the curiosity in the grid and nobody reaches the
+     case. The depth belongs on the case page; this is the tease.
+
+     It was also never reliable -- a wheel over a card went to the page as
+     often as to the screen, and a nested scroller inside a full-width card is
+     a trap on a phone. */
+  overflow: hidden;
 
   /* A lift, not a peek.
      
@@ -937,91 +938,10 @@ body {
   transform: translateX(-50%) translateY(var(--screen-lift));
   transition: transform 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.poster-screen::-webkit-scrollbar { display: none; }
-
 .poster-screen img {
   display: block;
   width: 100%;
   height: auto;
-}
-
-/* A hint that the screen is yours to scroll. Without it the rise looks like a
-   finished animation rather than an invitation: nothing about a still image
-   says it moves.
-
-   "more", because click is what views the case -- the pill must not claim the
-   invitation the click already owns. One line, not two: a second saying "click
-   for full case" would teach what a titled, clickable card already announces,
-   and thirteen of those is chrome rather than help. The arrow is the part that
-   was actually missing, since "scroll" alone does not say which way.
-
-   Hung off .card-year, which is the one element sitting directly under the
-   plate in BOTH layouts: a catalog item wraps its text in .card-content and a
-   featured cell does not, so anchoring to the wrapper only lit up half the
-   grid. And on the card rather than inside the plate, because the plate clips
-   its own children -- a pill in there can only sit on the image, competing
-   with the very screen it points at. */
-.catalog-item:has(.poster-screen) .card-year,
-.featured-cell:has(.poster-screen) .card-year {
-  position: relative;
-}
-
-.catalog-item:has(.poster-screen) .card-year::after,
-.featured-cell:has(.poster-screen) .card-year::after {
-  content: "scroll to view more \2193";
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 2px);
-  transform: translateX(-50%) translateY(4px);
-  z-index: 2;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: rgba(20, 18, 16, 0.62);
-  backdrop-filter: blur(3px);
-  color: #fff;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 220ms ease, transform 220ms ease;
-  transition-delay: 120ms; /* a beat, so a cursor passing through does not flash it */
-}
-
-.catalog-item:hover .card-year::after,
-.featured-cell:hover .card-year::after,
-.catalog-item:focus-within .card-year::after,
-.featured-cell:focus-within .card-year::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* Taken. Once someone is scrolling, an instruction to scroll is just something
-   in the way; it returns when the screen does, because then it is true again.
-   After the hover rule, which it has to beat at equal specificity. */
-.catalog-item.is-scrolled .card-year::after,
-.featured-cell.is-scrolled .card-year::after {
-  opacity: 0;
-  transition-delay: 0s;
-}
-
-/* On touch the screen is already risen, so the hint is the only thing telling
-   a thumb there is more under it. No hover to wait for, so no delay. */
-@media (hover: none) {
-  .catalog-item:has(.poster-screen) .card-year::after,
-  .featured-cell:has(.poster-screen) .card-year::after {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    transition-delay: 0s;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .catalog-item:has(.poster-screen) .card-year::after,
-  .featured-cell:has(.poster-screen) .card-year::after {
-    transition: none;
-  }
 }
 
 /* The whole of the hover: it settles. What is inside is the viewer's to scroll,
@@ -1034,8 +954,8 @@ body {
 }
 
 /* Touch gets the screen, not the hidden state. There is no hover to reveal it
-   with, so carrying the lift over leaves a phone looking at posters with no
-   way in -- and a hint reading "scroll to view more" pointing at nothing. */
+   with, so carrying the lift over would leave a phone looking at posters and
+   nothing else. */
 @media (hover: none) {
   .poster-screen { --screen-lift: 0px; }
 }
