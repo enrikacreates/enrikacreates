@@ -898,7 +898,7 @@ body {
   /* Runs past the plate's own edge; the plate crops it, which is what makes
      the screen look cut off mid-content rather than neatly ended. */
   bottom: 0;
-  border-radius: 6px 6px 0 0;
+  border-radius: 4px 4px 0 0;
   z-index: 1;
 
   /* The viewer scrolls it, rather than watching it scroll. A timed reveal has
@@ -917,17 +917,17 @@ body {
      only shifts a little -- far too small to hide anything, big enough that
      the card answers when you arrive.
 
-     The window's own top sits inside the browser outline the poster draws, and
-     the lift pushes it back down to where it rests. So the resting view is
-     unchanged -- artwork leading, most of the screen still showing -- and the
-     hover opens it all the way up into that frame rather than nudging it.
-     Hiding the screen entirely at rest looked better as a grid and gave away
-     the only thing it is there to say.
+     The window spans the whole plate and the lift pushes it down, so at rest
+     the artwork leads with most of the screen still showing, and on hover the
+     screen rises to cover the poster completely. The artwork attracts; the
+     product convinces once someone is actually looking.
 
-     Fixed pixels rather than a share of the window, so featured cards and
-     catalog cards move by the same amount instead of the bigger ones
-     lurching. */
-  --screen-lift: 94px;
+     A percentage, not pixels, now that the window is exactly as tall as the
+     plate: 42% of its own height is 42% of the card at any size, so the
+     resting line stays level whatever the grid does to the columns.
+
+  */
+  --screen-lift: 42%;
   transform: translateX(-50%) translateY(var(--screen-lift));
   transition: transform 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
