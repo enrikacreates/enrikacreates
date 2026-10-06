@@ -98,6 +98,12 @@ export const PROJECTS = [
   },
 
   {
+    /* A frozen snapshot: one page, no CMS, nothing behind a login. */
+    slug: "storyrepublic",
+    baseUrl: "https://storyrepublic-archive.vercel.app",
+    routes: [{ name: "home", path: "/", wait: 2000, poster: true }],
+  },
+  {
     slug: "thestoryoftelling",
     baseUrl: "https://thestoryoftelling.com",
     routes: [
