@@ -44,11 +44,10 @@ export function ScreenScroll() {
 
       const onLeave = () => {
         if (screen.scrollTop === 0) return;
-        // Only once it has dropped back out of sight. Rewinding a screen still
-        // on its way down shows the rewind, which reads as a glitch.
-        window.setTimeout(() => {
-          screen.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
-        }, 420);
+        // Visible, now that nothing drops out of sight first -- and better for
+        // being visible: the card winding itself back is what tells the next
+        // person it moves at all.
+        screen.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
       };
 
       screen.addEventListener("scroll", onScroll, { passive: true });
