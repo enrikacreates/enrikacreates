@@ -120,10 +120,17 @@ export const PROJECTS = [
          photographs three black squares in the middle of the page, which the
          card's hover then scrolls straight through. */
       { name: "home", path: "/", wait: 3000, poster: true, embedThumbnails: true },
-      // Sections are addressed by id, not by a heading string: the page is one
-      // document with hash routing, so a text match lands nowhere useful.
-      { name: "authors", path: "/", scrollTo: "#authors", wait: 1600 },
+      /* Addressed by their headings, not by id. Carrd ships ids like #authors
+         and #videos in the HTML, but renders one tall #home-section and the
+         rest resolve to nothing or to zero-height anchors, so a selector that
+         looks right in View Source finds no element at all on the live page.
+         The headings are really there. */
+      { name: "authors", path: "/", scrollTo: "text:Meet the Authors", wait: 1600 },
       { name: "supporters", path: "/", scrollTo: "#earlysupporters-section", wait: 1600 },
+      { name: "videos", path: "/", scrollTo: "text:Hear More", wait: 2500, embedThumbnails: true },
+            /* The paragraph, not the camfed.org link: scrollTo searches headings and
+         text blocks, not anchors. */
+      { name: "camfed", path: "/", scrollTo: "text:All proceeds", wait: 1800 },
     ],
   },
 
