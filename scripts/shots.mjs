@@ -782,6 +782,44 @@ try {
             }
           }
 
+          /* Open every collapsed section before shooting.
+           *
+           * A dashboard photographed shut is a list of headings: VisionMap's
+           * map came back as four closed rows where the actual map -- goals,
+           * dates, the through-line -- sits inside them. Opening one reveals
+           * more that are themselves shut, so this goes round until nothing is
+           * left closed or it runs out of passes, rather than assuming one
+           * click is enough. aria-expanded is the honest signal here: a
+           * component that reports it is closed is one a person could open. */
+          if (route.expandAll) {
+            let opened = 0;
+            for (let pass = 0; pass < (route.expandPasses ?? 4); pass++) {
+              const n = await page.evaluate(() => {
+                /* Not menus. aria-expanded is also how a dropdown reports
+                   itself, and clicking those opened a goal-picker and an
+                   upload popover that then hung over the capture. A menu says
+                   so with aria-haspopup; a collapsed section does not. */
+                const shut = [
+                  ...document.querySelectorAll('[aria-expanded="false"]'),
+                ].filter((el) => !el.hasAttribute("aria-haspopup"));
+                shut.forEach((el) => el.click());
+                return shut.length;
+              });
+              opened += n;
+              if (!n) break;
+              await new Promise((r) => setTimeout(r, route.expandWait ?? 700));
+            }
+            /* Dismiss whatever opened that should not have. Expanding a
+               section can bring up a popover of its own -- VisionMap's vision
+               board raises an upload chooser -- and those do not announce
+               themselves as menus, so they cannot be filtered out beforehand.
+               Escape closes them and costs nothing when there is none. */
+            await page.keyboard.press("Escape");
+            await page.mouse.move(2, 2);
+            await new Promise((r) => setTimeout(r, 400));
+            if (opened) console.log(`    opened ${opened} collapsed section${opened === 1 ? "" : "s"}`);
+          }
+
           /* Client work can be shown as a working system without showing the
            * client's business. `blur` takes the selectors holding the names
            * and titles and softens them in the page before the shot, so the

@@ -86,6 +86,9 @@ export const PROJECTS = [
         auth: "member",
         wait: 2600,
         expect: "Year in Review",
+        /* Shut, the map is four headings. Open, it is the thing itself: the
+           Big Three with their dates, the through-line, the vision board. */
+        expandAll: true,
         poster: true,
       },
       { name: "goals", path: "/goals", auth: "member", wait: 2200, expect: "All Goals" },
