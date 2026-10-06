@@ -340,6 +340,11 @@ export const PROJECTS = [
         auth: "member",
         wait: 3000,
         expect: "Bookmark this moment",
+        /* "Captures for <your address>". A screenshot on a public portfolio is
+           a scraping target, and the line says nothing about the product that
+           the captures underneath it do not already say. */
+        blur: ".sp-acct b",
+        blurAmount: 5,
       },
       { name: "voices", path: "/?voices", auth: "member", wait: 2500, expect: "Voice library" },
       { name: "quotes", path: "/?saved=quotes", auth: "member", wait: 2500, expect: "Quotes" },
