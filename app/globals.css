@@ -921,9 +921,10 @@ body {
      only shifts a little -- far too small to hide anything, big enough that
      the card answers when you arrive.
 
-     The window spans the plate and the lift pushes it almost clear, leaving a
-     strip of screen along the bottom edge: the grid reads as artwork, but the
-     strip is there to say something real is behind it. On hover the screen
+     The window spans the plate and the lift pushes most of it clear, leaving
+     roughly the bottom third as screen: the poster still leads, and the strip
+     is deep enough to carry a headline rather than a sliver of nav, so a
+     visitor who never hovers has already seen a real page. On hover the screen
      rises to cover the poster. The artwork attracts; the product convinces
      once someone is actually looking.
 
@@ -932,7 +933,7 @@ body {
      where a pixel value leaves more showing on wide cards than narrow ones.
 
   */
-  --screen-lift: 94%;
+  --screen-lift: 65%;
   transform: translateX(-50%) translateY(var(--screen-lift));
   transition: transform 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
