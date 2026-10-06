@@ -124,6 +124,7 @@ body {
      of this element's (constant) flow height. */
   background: transparent;
   overflow: hidden;
+
   pointer-events: none;
 }
 
@@ -913,6 +914,14 @@ body {
      often as to the screen, and a nested scroller inside a full-width card is
      a trap on a phone. */
   overflow: hidden;
+
+  /* Which edge the capture meets. A short one is pinned to the bottom so the
+     screen always reaches the card's edge and the slack falls at the top, on
+     the poster; a tall one is pinned to the top so what shows is the start of
+     the page rather than its footer. */
+  display: flex;
+  flex-direction: column;
+  justify-content: var(--screen-justify, flex-start);
 
   /* A lift, not a peek.
      

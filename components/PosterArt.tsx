@@ -26,6 +26,26 @@ const SIZES = {
   banner: "(max-width: 1000px) 100vw, 1000px",
 } as const;
 
+/** The plate's aspect, height over width. Mirrors `.poster-plate`. */
+const PLATE_RATIO = 9 / 8;
+
+/**
+ * Which end of the window a capture is pinned to.
+ *
+ * A capture seated narrow, or simply short, can render shorter than the window
+ * that holds it, and then it floats with poster showing underneath -- the
+ * screen stops short of the card's own bottom edge and the join looks like a
+ * mistake. Those are pinned to the bottom instead, so the screen always meets
+ * the edge and any slack falls at the top, where the poster is meant to show.
+ *
+ * Taller captures stay pinned to the top, because the part worth seeing is the
+ * beginning of the page, not its footer.
+ */
+function pinnedToBottom({ width, ratio }: { width: number; ratio: number }) {
+  const windowHeight = PLATE_RATIO; // the window spans the plate
+  return width * ratio < windowHeight;
+}
+
 
 export function PosterArt({
   slug,
@@ -72,6 +92,7 @@ export function PosterArt({
               {
                 "--screen-top": `${screen.top * 100}%`,
                 "--screen-width": `${screen.width * 100}%`,
+                "--screen-justify": pinnedToBottom(screen) ? "flex-end" : "flex-start",
               } as React.CSSProperties
             }
             aria-hidden="true"
