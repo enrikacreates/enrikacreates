@@ -35,6 +35,27 @@ export const metadata: Metadata = {
     title: "Enrika Creates",
     description:
       "I design storytelling experiences that inspire hope and ignite purpose.",
+    /* Without this, a shared link gets whichever image the crawler happens to
+       find first, which was a project poster -- a card for one piece of work
+       standing in for the whole site. The hero collage is the thing that
+       introduces her, so it is the thing that should arrive in a message.
+       Built from the animation's final frame, multiplied onto the page's own
+       cream the way the page does it, so the card matches what you land on. */
+    images: [
+      {
+        url: "/assets/hero/share.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Enrika surrounded by plants, a typewriter, a sewing machine, a camera and a colour fan",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Enrika Creates",
+    description:
+      "I design storytelling experiences that inspire hope and ignite purpose.",
+    images: ["/assets/hero/share.jpg"],
   },
 };
 
