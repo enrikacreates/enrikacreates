@@ -915,10 +915,17 @@ body {
      a visitor who never points at a card never learns the screens exist, and
      the grid reads as illustration again. So the screen stays in full view and
      only shifts a little -- far too small to hide anything, big enough that
-     the card answers when you arrive. Fixed pixels rather than a share of the
-     window, so featured cards and catalog cards move by the same amount
-     instead of the bigger ones lurching. */
-  --screen-lift: 20px;
+     the card answers when you arrive.
+
+     90px of a ~227px window: the artwork gets to lead and the rise is a real
+     movement, while about 60% of the screen still shows, so someone who never
+     hovers still learns there is a working product behind the illustration.
+     Hiding it entirely looked better as a grid and gave that away.
+
+     Fixed pixels rather than a share of the window, so featured cards and
+     catalog cards move by the same amount instead of the bigger ones
+     lurching. */
+  --screen-lift: 90px;
   transform: translateX(-50%) translateY(var(--screen-lift));
   transition: transform 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
