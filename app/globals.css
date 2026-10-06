@@ -909,12 +909,18 @@ body {
   overscroll-behavior: contain;
   scrollbar-width: none;
 
-  /* Seated where it sits, not hidden. The peek -- resting it low and raising
-     it on hover -- was a tease nobody could find: a visitor who never hovers
-     never learns there is a screen there at all, and on the grid the cards
-     read as illustration again. Showing the screen is what makes the card say
-     "this is real", which is the whole reason it is there. */
-  transform: translateX(-50%);
+  /* A lift, not a peek.
+     
+     Hiding the screen and raising it on hover was a tease nobody could find:
+     a visitor who never points at a card never learns the screens exist, and
+     the grid reads as illustration again. So the screen stays in full view and
+     only shifts a little -- far too small to hide anything, big enough that
+     the card answers when you arrive. Fixed pixels rather than a share of the
+     window, so featured cards and catalog cards move by the same amount
+     instead of the bigger ones lurching. */
+  --screen-lift: 14px;
+  transform: translateX(-50%) translateY(var(--screen-lift));
+  transition: transform 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .poster-screen::-webkit-scrollbar { display: none; }
 
@@ -1003,12 +1009,24 @@ body {
   }
 }
 
-/* No hover state left to describe: the screen is always in place, and what is
-   inside it is the viewer's to scroll or to ignore and click through. */
+/* The whole of the hover: it settles. What is inside is the viewer's to scroll,
+   or to ignore and click through. */
+.catalog-item:hover .poster-screen,
+.featured-cell:hover .poster-screen,
+.catalog-item:focus-within .poster-screen,
+.featured-cell:focus-within .poster-screen {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Nothing to lift towards on touch, where every card is "hovered" and none is.
+   The screen simply sits where it belongs. */
+@media (hover: none) {
+  .poster-screen { transform: translateX(-50%) translateY(0); }
+}
 
 /* Someone who has asked for less motion gets the still. */
 @media (prefers-reduced-motion: reduce) {
-  .poster-screen { transition: none; }
+  .poster-screen { transition: none; transform: translateX(-50%) translateY(0); }
 }
 
 /* The plate that holds a finished poster.
