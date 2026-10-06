@@ -794,17 +794,26 @@ try {
           if (route.expandAll) {
             let opened = 0;
             for (let pass = 0; pass < (route.expandPasses ?? 4); pass++) {
-              const n = await page.evaluate(() => {
+              const n = await page.evaluate((skip) => {
                 /* Not menus. aria-expanded is also how a dropdown reports
                    itself, and clicking those opened a goal-picker and an
                    upload popover that then hung over the capture. A menu says
                    so with aria-haspopup; a collapsed section does not. */
                 const shut = [
                   ...document.querySelectorAll('[aria-expanded="false"]'),
-                ].filter((el) => !el.hasAttribute("aria-haspopup"));
+                ].filter((el) => {
+                  if (el.hasAttribute("aria-haspopup")) return false;
+                  /* Named exceptions, for controls that claim to be
+                     disclosures and are not. VisionMap's "Add image" carries
+                     aria-expanded and opens a file chooser, which then hangs
+                     over the shot; nothing in the markup separates it from a
+                     real section, so it is named here rather than guessed at. */
+                  const label = el.textContent.trim().toLowerCase();
+                  return !skip.some((w) => label.includes(w.toLowerCase()));
+                });
                 shut.forEach((el) => el.click());
                 return shut.length;
-              });
+              }, route.expandSkip ?? []);
               opened += n;
               if (!n) break;
               await new Promise((r) => setTimeout(r, route.expandWait ?? 700));

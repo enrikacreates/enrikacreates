@@ -89,6 +89,8 @@ export const PROJECTS = [
         /* Shut, the map is four headings. Open, it is the thing itself: the
            Big Three with their dates, the through-line, the vision board. */
         expandAll: true,
+        /* Carries aria-expanded but opens a file chooser, not a section. */
+        expandSkip: ["Add image"],
         poster: true,
       },
       { name: "goals", path: "/goals", auth: "member", wait: 2200, expect: "All Goals" },
