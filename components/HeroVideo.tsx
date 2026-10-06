@@ -55,6 +55,10 @@ const POSTER_TALL = "/assets/hero/hero-poster-vertical.jpg";
 /** Matches the breakpoint that gives .hero-video its 3/4 ratio in globals.css. */
 const TALL_QUERY = "(max-width: 640px)";
 
+/** Where the reveal ends on a phone, as a share of the clip. The last stretch
+ *  is leaves still arriving after the collage already reads as whole. */
+const TALL_END = 0.6;
+
 /**
  * Exponent applied to scroll progress before mapping to video time.
  *
@@ -180,7 +184,19 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
     function onScroll() {
       const p = progress();
       const duration = video!.duration || 0;
-      target.current = Math.pow(p, TIME_CURVE) * duration;
+      /* On a phone the reveal stops short of the end.
+       *
+       * The clip keeps unfurling leaves well past the point where the collage
+       * has said what it has to say, and on a narrow screen that tail is a
+       * long wait for a picture that already looks finished: you have arrived
+       * and the animation has not. Ending at TALL_END leaves it on a frame
+       * that reads as complete, and gives the remaining scroll to the work
+       * below, which is what the page is for.
+       *
+       * The curve still runs over the full scroll, so the motion does not
+       * speed up to compensate; it simply has a nearer finish line. */
+      const end = tall.matches ? duration * TALL_END : duration;
+      target.current = Math.pow(p, TIME_CURVE) * end;
       paintOverlays(p);
     }
 
@@ -295,7 +311,8 @@ export function HeroVideo({ onViewWork }: { onViewWork?: () => void }) {
       const p = progress();
       paintOverlays(p);
       if (video!.readyState >= 1 && Number.isFinite(video!.duration)) {
-        video!.currentTime = video!.duration;
+        video!.currentTime =
+          video!.duration * (tall.matches ? TALL_END : 1);
       }
     }
 
