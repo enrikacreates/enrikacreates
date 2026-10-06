@@ -243,12 +243,19 @@ export type Screen = {
 
 import SIZES from "./screen-sizes.json";
 
-/* Every seated screen starts at the same height, so the row of cards reads as
- * a set rather than as screens sliding about at different depths. Tuning one
- * card's top to buy its hover a little more travel is a real temptation and it
- * is visible immediately: a straight edge across the grid is worth more than a
- * few pixels of scroll on one card. */
-const SCREEN_TOP = 0.42;
+/* Where the window sits when it is OPEN: just inside the browser outline the
+ * posters draw. That frame is the natural ceiling for the reveal -- filling the
+ * whole card would paint over a composition built around it, where filling the
+ * frame completes the thing the artwork is already drawing.
+ *
+ * At rest the window is pushed back down by --screen-lift, so this number is
+ * not where the screen appears on an untouched card.
+ *
+ * One value for every card, so the row reads as a set rather than as screens
+ * sliding about at different depths. Tuning one card's top is a real
+ * temptation and it shows immediately: a straight edge across the grid is
+ * worth more than a few pixels on one card. */
+const SCREEN_TOP = 0.15;
 
 const SCREENS: Record<string, Screen> = {
   "the-daily-story": {

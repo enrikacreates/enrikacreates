@@ -917,15 +917,17 @@ body {
      only shifts a little -- far too small to hide anything, big enough that
      the card answers when you arrive.
 
-     90px of a ~227px window: the artwork gets to lead and the rise is a real
-     movement, while about 60% of the screen still shows, so someone who never
-     hovers still learns there is a working product behind the illustration.
-     Hiding it entirely looked better as a grid and gave that away.
+     The window's own top sits inside the browser outline the poster draws, and
+     the lift pushes it back down to where it rests. So the resting view is
+     unchanged -- artwork leading, most of the screen still showing -- and the
+     hover opens it all the way up into that frame rather than nudging it.
+     Hiding the screen entirely at rest looked better as a grid and gave away
+     the only thing it is there to say.
 
      Fixed pixels rather than a share of the window, so featured cards and
      catalog cards move by the same amount instead of the bigger ones
      lurching. */
-  --screen-lift: 90px;
+  --screen-lift: 94px;
   transform: translateX(-50%) translateY(var(--screen-lift));
   transition: transform 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -1025,11 +1027,10 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Nothing to lift towards on touch, where every card is "hovered" and none is.
-   The screen simply sits where it belongs. */
-@media (hover: none) {
-  .poster-screen { transform: translateX(-50%) translateY(0); }
-}
+/* Touch keeps the lift rather than zeroing it. Opening the window fully there
+   would hand a phone the frame-filling view permanently, which is the hover
+   state with nothing left to reveal -- and would bury the artwork on the one
+   screen size where a card is the whole width of the page. */
 
 /* Someone who has asked for less motion gets the still. */
 @media (prefers-reduced-motion: reduce) {
