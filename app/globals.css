@@ -893,7 +893,11 @@ body {
 .poster-screen {
   position: absolute;
   left: 50%;
-  top: var(--screen-top, 57%);
+  /* A band of poster left above the screen even when it is fully up, so the
+     card still reads as artwork holding a screen rather than a screenshot
+     that has taken the whole tile. */
+  --screen-inset: 12px;
+  top: calc(var(--screen-top, 57%) + var(--screen-inset));
   width: var(--screen-width, 74%);
   /* Runs past the plate's own edge; the plate crops it, which is what makes
      the screen look cut off mid-content rather than neatly ended. */
@@ -917,17 +921,18 @@ body {
      only shifts a little -- far too small to hide anything, big enough that
      the card answers when you arrive.
 
-     The window spans the whole plate and the lift pushes it down, so at rest
-     the artwork leads with most of the screen still showing, and on hover the
-     screen rises to cover the poster completely. The artwork attracts; the
-     product convinces once someone is actually looking.
+     The window spans the plate and the lift pushes it almost clear, leaving a
+     strip of screen along the bottom edge: the grid reads as artwork, but the
+     strip is there to say something real is behind it. On hover the screen
+     rises to cover the poster. The artwork attracts; the product convinces
+     once someone is actually looking.
 
-     A percentage, not pixels, now that the window is exactly as tall as the
-     plate: 42% of its own height is 42% of the card at any size, so the
-     resting line stays level whatever the grid does to the columns.
+     A percentage, not pixels, because it is measured against the window's own
+     height: the same share of the card whatever width the grid gives it,
+     where a pixel value leaves more showing on wide cards than narrow ones.
 
   */
-  --screen-lift: 42%;
+  --screen-lift: 94%;
   transform: translateX(-50%) translateY(var(--screen-lift));
   transition: transform 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -1027,10 +1032,12 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Touch keeps the lift rather than zeroing it. Opening the window fully there
-   would hand a phone the frame-filling view permanently, which is the hover
-   state with nothing left to reveal -- and would bury the artwork on the one
-   screen size where a card is the whole width of the page. */
+/* Touch gets the screen, not the hidden state. There is no hover to reveal it
+   with, so carrying the lift over leaves a phone looking at posters with no
+   way in -- and a hint reading "scroll to view more" pointing at nothing. */
+@media (hover: none) {
+  .poster-screen { --screen-lift: 0px; }
+}
 
 /* Someone who has asked for less motion gets the still. */
 @media (prefers-reduced-motion: reduce) {
