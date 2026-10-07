@@ -40,7 +40,7 @@ export default async function HomePage() {
             tagline={settings?.tagline ?? "Designer. Builder. Storyteller."}
             statement={
               settings?.heroStatement ??
-              "I design storytelling experiences that inspire hope and ignite purpose."
+              "I design storytelling experiences people love using."
             }
           />
         }

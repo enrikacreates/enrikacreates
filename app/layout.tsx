@@ -22,10 +22,14 @@ import "./globals.css";
  * reference. The deployment URL still works and still serves; it just no
  * longer claims to be the site.
  */
+/* These three descriptions are the hard-coded fallbacks AND what every share
+ * card and search result actually uses: metadata cannot read Sanity here. They
+ * had drifted from the line on the page -- the site said one thing and every
+ * shared link said another -- so they are kept in step by hand. */
 export const metadata: Metadata = {
   title: "Enrika Creates",
   description:
-    "I design storytelling experiences that inspire hope and ignite purpose.",
+    "I design storytelling experiences people love using.",
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   openGraph: {
@@ -34,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "Enrika Creates",
     title: "Enrika Creates",
     description:
-      "I design storytelling experiences that inspire hope and ignite purpose.",
+      "I design storytelling experiences people love using.",
     /* Without this, a shared link gets whichever image the crawler happens to
        find first, which was a project poster -- a card for one piece of work
        standing in for the whole site. The hero collage is the thing that
@@ -54,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Enrika Creates",
     description:
-      "I design storytelling experiences that inspire hope and ignite purpose.",
+      "I design storytelling experiences people love using.",
     images: ["/assets/hero/share.jpg"],
   },
 };
