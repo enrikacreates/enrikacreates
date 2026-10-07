@@ -101,7 +101,23 @@ export const PROJECTS = [
     /* A frozen snapshot: one page, no CMS, nothing behind a login. */
     slug: "storyrepublic",
     baseUrl: "https://storyrepublic-archive.vercel.app",
-    routes: [{ name: "home", path: "/", wait: 2000, poster: true }],
+    routes: [
+      { name: "home", path: "/", wait: 2000 },
+      /* The workshop is a section the nav reveals, not a page, so a plain
+         capture of "/" never shows it however long you wait. This is the
+         screen worth keeping: Seth Godin and Bernadette introducing the Story
+         Skills Workshop, stamped "Archived 2026". */
+      {
+        name: "workshop",
+        path: "/",
+        click: ["text:Workshop"],
+        clickWait: 1500,
+        wait: 2500,
+        expect: "The Story Skills Workshop",
+        embedThumbnails: true,
+        poster: true,
+      },
+    ],
   },
   {
     slug: "thestoryoftelling",
