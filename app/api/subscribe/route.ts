@@ -23,7 +23,10 @@ import { NextResponse } from "next/server";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const NOTIFY = "enrika@smallgorillacreative.com";
+/* A plus address, so signups thread on their own and a filter can catch them
+   by the To: header rather than by guessing at subject lines. Delivers to the
+   same mailbox. */
+const NOTIFY = "enrika+subs@smallgorillacreative.com";
 /** A verified Postmark sender signature. */
 const FROM = "enrika@smallgorillacreative.com";
 
