@@ -168,6 +168,7 @@ const POSTERS: Record<string, Poster> = {
  * pixel is not good enough.
  */
 const FLAT_POSTER_BG: Record<string, string> = {
+  bizchicks: "#2D6CB1",
   storyrepublic: "#484E30",
   storeit: "#D16A42",
   workshopblocks: "#E7BC58",
@@ -187,6 +188,7 @@ const FLAT_POSTER_BG: Record<string, string> = {
 };
 
 const FLAT_POSTERS = new Set([
+  "bizchicks",
   "storyrepublic",
   "storeit",
   "workshopblocks",
@@ -315,6 +317,10 @@ const SCREENS: Record<string, Screen> = {
   },
   storyrepublic: {
     src: "/assets/projects/storyrepublic/shots/fullpage.webp",
+    width: 0.9,
+  },
+  bizchicks: {
+    src: "/assets/projects/bizchicks/shots/fullpage.webp",
     width: 0.9,
   },
   "bti-production-hub": {
