@@ -1,13 +1,12 @@
 # Enrika Creates — Portfolio + Journal
 
-Next.js 14 (App Router) + Sanity CMS. A storytelling portfolio with a
+Next.js 14 (App Router) + Sanity CMS. A storytelling product portfolio with a
 scroll-driven collage hero, a filterable work catalog, deep-linkable project
 pages, and a blog/journal — all editable from an embedded Sanity Studio.
 
 **This repo doubles as the reusable template** for migrating a vanilla
 HTML/CSS/JS site to Next.js + Sanity. Files carry `MIGRATION TEMPLATE NOTE`
-comments explaining the patterns so they can be lifted into future projects
-(e.g. the Modern Tribe / Afros & Kinks stores).
+comments explaining the patterns so they can be lifted into future projects.
 
 ---
 
