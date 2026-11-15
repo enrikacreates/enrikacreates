@@ -20,6 +20,9 @@ const nextConfig = {
       // Long-form case studies: hand-built HTML decks in /public/case, served
       // at a clean URL. Same pattern as /appplan above.
       { source: "/case/:slug", destination: "/case/:slug.html" },
+      // Design Compass one-sheet, exported from its canvas by
+      // scripts/export-compass.mjs.
+      { source: "/compass", destination: "/compass.html" },
     ];
   },
   // Single-page model: the catalog lives on the home page now. Old /work
